@@ -142,7 +142,10 @@ Kullanıcılara gönderilecek hatırlatma ve bildirim kayıtlarını tutar.
 Veritabanı tasarlanırken veri tekrarını azaltmak amacıyla tablolar arasında birincil anahtar (Primary Key) ve yabancı anahtar (Foreign Key) ilişkileri kullanılacaktır. Böylece veri bütünlüğü korunacak ve tablolar arasındaki bağlantılar güvenli bir şekilde sağlanacaktır.
 
 
-# ER Diyagramı Taslağı
+# ER Diyagramı 
+Veritabanındaki tablolar arasındaki ilişkiler aşağıdaki diyagramda gösterilmiştir.
+
+![ER Diyagramı](ER_diyagramı.png)
 
 ## Tablolar Arasındaki İlişkiler
 
