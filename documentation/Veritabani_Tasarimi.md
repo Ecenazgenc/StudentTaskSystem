@@ -33,7 +33,7 @@ Sisteme kayıt olan kullanıcıların bilgilerini tutar.
 
 Kullanıcı rollerini tutar.
 
-Örnek roller:
+Roller:
 
 * Admin
 * Öğrenci
@@ -140,3 +140,117 @@ Kullanıcılara gönderilecek hatırlatma ve bildirim kayıtlarını tutar.
 # 5. Veritabanı Tasarım Notları
 
 Veritabanı tasarlanırken veri tekrarını azaltmak amacıyla tablolar arasında birincil anahtar (Primary Key) ve yabancı anahtar (Foreign Key) ilişkileri kullanılacaktır. Böylece veri bütünlüğü korunacak ve tablolar arasındaki bağlantılar güvenli bir şekilde sağlanacaktır.
+
+
+# ER Diyagramı Taslağı
+
+## Tablolar Arasındaki İlişkiler
+
+```
+Roles
+  │
+  │ 1 - N
+  ▼
+Users
+  │
+  ├──────────────┐
+  │              │
+  │1-N           │1-N
+  ▼              ▼
+Courses       Notifications
+  │
+  │1-N
+  ▼
+Tasks
+  │
+  ├──────────────┐
+  │              │
+  │N-1           │1-N
+  ▼              ▼
+Categories    Comments
+                  │
+                  │1-N
+                  ▼
+             Attachments
+```
+
+## İlişkiler
+
+* Bir rol birden fazla kullanıcıya atanabilir.
+* Bir kullanıcı birden fazla ders oluşturabilir.
+* Bir ders birden fazla görev içerebilir.
+* Bir kategori birden fazla görevde kullanılabilir.
+* Bir göreve birden fazla yorum eklenebilir.
+* Bir göreve birden fazla dosya eklenebilir.
+* Bir kullanıcı birden fazla bildirim alabilir.
+
+
+ER Diyagramında Görünmesi Gereken Son Hali
+
+
+                ROLES
+              ----------
+              PK RoleId
+                 RoleName
+                   |
+                   | 1
+                   |
+                   | N
+                USERS
+              ----------
+              PK UserId
+                 FirstName
+                 LastName
+                 Email
+                 Password
+              FK RoleId
+                 |
+        ┌────────┼───────────┐
+        |        |           |
+       1-N      1-N        1-N
+        |        |           |
+    COURSES   TASKS   NOTIFICATIONS
+    --------  -------- --------------
+PK CourseId  PK TaskId PK NotificationId
+   CourseName   Title     Message
+FK UserId      Description IsRead
+               DueDate     CreatedDate
+               Status   FK UserId
+               Priority
+            FK UserId
+            FK CourseId
+            FK CategoryId
+                 |
+                 |
+                N-1
+                 |
+          CATEGORIES
+          -----------
+          PK CategoryId
+             CategoryName
+
+
+TASKS
+  |
+  |1-N
+  |
+COMMENTS
+---------
+PK CommentId
+CommentText
+CreatedDate
+FK TaskId
+FK UserId
+
+
+TASKS
+  |
+  |1-N
+  |
+ATTACHMENTS
+------------
+PK AttachmentId
+FileName
+FilePath
+UploadDate
+FK TaskId
