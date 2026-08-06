@@ -14,7 +14,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "Comments")
-public class Comments {
+public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,15 +30,15 @@ public class Comments {
 
     @ManyToOne
     @JoinColumn(name = "TaskId")
-    private Tasks task;
+    private Task task;
 
 
     @ManyToOne
     @JoinColumn(name = "UserId")
-    private Users user;
+    private User user;
 
 
-    public Comments() {}
+    public Comment() {}
 
     public int getCommentId() {return commentId;}
     public void setCommentId(int commentId) {this.commentId = commentId;}
@@ -49,9 +49,9 @@ public class Comments {
     public LocalDateTime getCreatedDate() { return createdDate;}
     public void setCreatedDate(LocalDateTime createdDate) {this.createdDate = createdDate;}
 
-    public Tasks getTask() {return task;}
-    public void setTask(Tasks task) {this.task = task; }
+    public Task getTask() {return task;}
+    public void setTask(Task task) {this.task = task; }
 
-    public Users getUser() {return user;}
-    public void setUser(Users user) {this.user = user; }
+    public User getUser() {return user;}
+    public void setUser(User user) {this.user = user; }
 }

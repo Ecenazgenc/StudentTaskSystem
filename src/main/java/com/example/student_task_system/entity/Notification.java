@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "Notifications")
-public class Notifications {
+public class Notification {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,10 +32,10 @@ public class Notifications {
 
     @ManyToOne
     @JoinColumn(name = "UserId")
-    private Users user;
+    private User user;
 
 
-    public Notifications() {}
+    public Notification() {}
 
     public int getNotificationId() {return notificationId;}
     public void setNotificationId(int notificationId) {this.notificationId = notificationId;}
@@ -49,6 +49,6 @@ public class Notifications {
     public LocalDateTime getCreatedDate() {return createdDate;}
     public void setCreatedDate(LocalDateTime createdDate) { this.createdDate = createdDate;}
 
-    public Users getUser() {return user;}
-    public void setUser(Users user) {this.user = user;}
+    public User getUser() {return user;}
+    public void setUser(User user) {this.user = user;}
 }

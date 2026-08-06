@@ -2,6 +2,8 @@ package com.example.student_task_system.entity;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,7 +16,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "Users")
-public class Users {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,21 +37,25 @@ public class Users {
 
     @ManyToOne
     @JoinColumn(name = "RoleId")
-    private Roles role;
+    private Role role;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
-    private List<Courses> courses;
+    private List<Course> courses;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
-    private List<Tasks> tasks;
+    private List<Task> tasks;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
-    private List<Comments> comments;
+    private List<Comment> comments;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
-    private List<Notifications> notifications;
+    private List<Notification> notifications;
 
-    public Users(){}
+    public User(){}
     
 
     public int getUserId() { return userId;}
@@ -67,18 +73,18 @@ public class Users {
     public String getPassword() {return password;}
     public void setPassword(String password) {this.password = password;}
 
-    public Roles getRole() {return role;}
-    public void setRole(Roles role) {this.role = role;}
+    public Role getRole() {return role;}
+    public void setRole(Role role) {this.role = role;}
 
-    public List<Courses> getCourses() {return courses;}
-    public void setCourses(List<Courses> courses) {this.courses = courses;}
+    public List<Course> getCourses() {return courses;}
+    public void setCourses(List<Course> courses) {this.courses = courses;}
 
-    public List<Tasks> getTasks() {return tasks;}
-    public void setTasks(List<Tasks> tasks) {this.tasks = tasks;}
+    public List<Task> getTasks() {return tasks;}
+    public void setTasks(List<Task> tasks) {this.tasks = tasks;}
 
-    public List<Comments> getComments() {return comments;}
-    public void setComments(List<Comments> comments) {this.comments = comments;}
+    public List<Comment> getComments() {return comments;}
+    public void setComments(List<Comment> comments) {this.comments = comments;}
 
-    public List<Notifications> getNotifications() {return notifications;}
-    public void setNotifications(List<Notifications> notifications) {this.notifications = notifications;}
+    public List<Notification> getNotifications() {return notifications;}
+    public void setNotifications(List<Notification> notifications) {this.notifications = notifications;}
 }

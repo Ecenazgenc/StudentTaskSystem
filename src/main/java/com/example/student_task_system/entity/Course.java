@@ -2,6 +2,8 @@ package com.example.student_task_system.entity;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,7 +16,7 @@ import jakarta.persistence.Table;
     
     @Entity
     @Table(name = "Courses")
-       public class Courses {
+       public class Course {
 
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,14 +29,15 @@ import jakarta.persistence.Table;
     
         @ManyToOne
         @JoinColumn(name = "UserId")
-        private Users user;
+        private User user;
     
     
+        @JsonIgnore
         @OneToMany(mappedBy = "course")
-        private List<Tasks> tasks;
+        private List<Task> tasks;
     
     
-        public Courses() {}
+        public Course() {}
     
     
         public int getCourseId() { return courseId;}
@@ -45,12 +48,12 @@ import jakarta.persistence.Table;
         public void setCourseName(String courseName) {this.courseName = courseName;}
 
     
-        public Users getUser() {return user;}
-        public void setUser(Users user) {this.user = user;}
+        public User getUser() {return user;}
+        public void setUser(User user) {this.user = user;}
     
     
-        public List<Tasks> getTasks() {return tasks;}
-        public void setTasks(List<Tasks> tasks) { this.tasks = tasks;}
+        public List<Task> getTasks() {return tasks;}
+        public void setTasks(List<Task> tasks) { this.tasks = tasks;}
     }
 
 

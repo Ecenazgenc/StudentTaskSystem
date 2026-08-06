@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "Attachments")
-public class Attachments {
+public class Attachment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,10 +32,10 @@ public class Attachments {
 
     @ManyToOne
     @JoinColumn(name = "TaskId")
-    private Tasks task;
+    private Task task;
 
 
-    public Attachments() {}
+    public Attachment() {}
 
     public int getAttachmentId() {return attachmentId;}
     public void setAttachmentId(int attachmentId) { this.attachmentId = attachmentId;}
@@ -49,6 +49,6 @@ public class Attachments {
     public LocalDateTime getUploadDate() { return uploadDate;}
     public void setUploadDate(LocalDateTime uploadDate) {this.uploadDate = uploadDate;}
 
-    public Tasks getTask() { return task;}
-    public void setTask(Tasks task) {this.task = task;}
+    public Task getTask() { return task;}
+    public void setTask(Task task) {this.task = task;}
 }
