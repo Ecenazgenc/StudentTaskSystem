@@ -188,9 +188,6 @@ Categories    Comments
 * Bir kullanıcı birden fazla bildirim alabilir.
 
 
-ER Diyagramında Görünmesi Gereken Son Hali
-
-
                 ROLES
               ----------
               PK RoleId
@@ -208,34 +205,43 @@ ER Diyagramında Görünmesi Gereken Son Hali
                  Password
               FK RoleId
                  |
-        ┌────────┼───────────┐
-        |        |           |
-       1-N      1-N        1-N
-        |        |           |
-    COURSES   TASKS   NOTIFICATIONS
-    --------  -------- --------------
-PK CourseId  PK TaskId PK NotificationId
-   CourseName   Title     Message
-FK UserId      Description IsRead
-               DueDate     CreatedDate
-               Status   FK UserId
-               Priority
-            FK UserId
-            FK CourseId
-            FK CategoryId
-                 |
-                 |
-                N-1
-                 |
-          CATEGORIES
-          -----------
-          PK CategoryId
-             CategoryName
+        ┌────────┴───────────┐
+        |                    |
+       1-N                  1-N
+        |                    |
+    COURSES             NOTIFICATIONS
+    --------            --------------
+PK CourseId            PK NotificationId
+   CourseName             Message
+FK UserId                 IsRead
+                          CreatedDate
+                          FK UserId
+
+ 
+       COURSES             CATEGORIES
+       --------            -----------
+          |                PK CategoryId
+          | 1-N               CategoryName
+          |                    |
+          └───────┐ ┌──────────┘
+                  | |
+                  | | N-1
+                  | |
+                 TASKS
+               --------
+               PK TaskId
+                  Title
+                  Description
+                  DueDate
+                  Status
+                  Priority
+               FK CourseId       <-- (DEĞİŞTİ: FK UserId buradan tamamen silindi. Task artık User'a değil, Course'a bağlı.)
+               FK CategoryId
 
 
 TASKS
   |
-  |1-N
+  | 1-N
   |
 COMMENTS
 ---------
@@ -248,12 +254,13 @@ FK UserId
 
 TASKS
   |
-  |1-N
+  | 1-N
   |
 ATTACHMENTS
 ------------
 PK AttachmentId
 FileName
-FilePath
+FilePath                 
 UploadDate
 FK TaskId
+FK UserId                <-- (YENİ EKLENDİ: Artık bir dosyanın hangi kullanıcı tarafından yüklendiğini tutuyoruz.)
