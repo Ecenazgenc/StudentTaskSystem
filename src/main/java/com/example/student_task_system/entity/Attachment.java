@@ -23,7 +23,7 @@ public class Attachment {
     @Column(name = "FileName")
     private String fileName;
 
-    @Column(name = "FilePath")
+    @Column(name = "FilePath", columnDefinition = "VARCHAR(MAX)")
     private String filePath;
 
     @Column(name = "UploadDate")
@@ -34,6 +34,9 @@ public class Attachment {
     @JoinColumn(name = "TaskId")
     private Task task;
 
+    @ManyToOne
+    @JoinColumn(name = "UserId")
+    private User user;
 
     public Attachment() {}
 
@@ -51,4 +54,7 @@ public class Attachment {
 
     public Task getTask() { return task;}
     public void setTask(Task task) {this.task = task;}
+
+    public User getUser() { return user;}
+    public void setUser(User user) {this.user = user;}
 }

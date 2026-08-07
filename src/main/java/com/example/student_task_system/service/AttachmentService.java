@@ -18,11 +18,14 @@ public class AttachmentService {
 
     private final AttachmentRepository attachmentRepository;
     private final TaskRepository taskRepository;
+    private final com.example.student_task_system.repository.UserRepository userRepository;
 
     public AttachmentService(AttachmentRepository attachmentRepository,
-                             TaskRepository taskRepository) {
+                             TaskRepository taskRepository,
+                             com.example.student_task_system.repository.UserRepository userRepository) {
         this.attachmentRepository = attachmentRepository;
         this.taskRepository = taskRepository;
+        this.userRepository = userRepository;
     }
 
     public List<AttachmentDTO> getAllAttachments() {
@@ -48,6 +51,10 @@ public class AttachmentService {
                 .orElseThrow(() -> new BadRequestException("Geçersiz görev: id=" + request.taskId()));
         attachment.setTask(task);
 
+        com.example.student_task_system.entity.User user = userRepository.findById(request.userId())
+                .orElseThrow(() -> new BadRequestException("Geçersiz kullanıcı: id=" + request.userId()));
+        attachment.setUser(user);
+
         Attachment saved = attachmentRepository.save(attachment);
         return AttachmentDTO.fromEntity(saved);
     }
@@ -62,6 +69,10 @@ public class AttachmentService {
         Task task = taskRepository.findById(request.taskId())
                 .orElseThrow(() -> new BadRequestException("Geçersiz görev: id=" + request.taskId()));
         attachment.setTask(task);
+        
+        com.example.student_task_system.entity.User user = userRepository.findById(request.userId())
+                .orElseThrow(() -> new BadRequestException("Geçersiz kullanıcı: id=" + request.userId()));
+        attachment.setUser(user);
 
         Attachment saved = attachmentRepository.save(attachment);
         return AttachmentDTO.fromEntity(saved);

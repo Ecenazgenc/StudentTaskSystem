@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 public record AttachmentDTO(int attachmentId, String fileName, String filePath,
-                            LocalDateTime uploadDate, int taskId, String taskTitle) {
+                            LocalDateTime uploadDate, int taskId, String taskTitle, int userId) {
 
     public static AttachmentDTO fromEntity(Attachment attachment) {
         int tid = 0;
@@ -17,11 +17,16 @@ public record AttachmentDTO(int attachmentId, String fileName, String filePath,
             tid = attachment.getTask().getTaskId();
             tTitle = attachment.getTask().getTitle();
         }
+        
+        int uid = 0;
+        if (attachment.getUser() != null) {
+            uid = attachment.getUser().getUserId();
+        }
 
         return new AttachmentDTO(
             attachment.getAttachmentId(), attachment.getFileName(),
             attachment.getFilePath(), attachment.getUploadDate(),
-            tid, tTitle
+            tid, tTitle, uid
         );
     }
 
@@ -31,10 +36,12 @@ public record AttachmentDTO(int attachmentId, String fileName, String filePath,
             String fileName,
 
             @NotBlank(message = "Dosya yolu boş olamaz")
-            @Size(max = 500, message = "Dosya yolu en fazla 500 karakter olabilir")
             String filePath,
 
             @Positive(message = "Geçerli bir görev ID'si giriniz")
-            int taskId
+            int taskId,
+            
+            @Positive(message = "Geçerli bir kullanıcı ID'si giriniz")
+            int userId
     ) {}
 }

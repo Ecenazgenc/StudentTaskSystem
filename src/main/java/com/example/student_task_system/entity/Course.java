@@ -33,7 +33,7 @@ import jakarta.persistence.Table;
     
     
         @JsonIgnore
-        @OneToMany(mappedBy = "course")
+        @OneToMany(mappedBy = "course", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
         private List<Task> tasks;
     
     

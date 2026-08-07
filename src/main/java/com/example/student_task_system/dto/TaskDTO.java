@@ -9,17 +9,10 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 public record TaskDTO(int taskId, String title, String description, LocalDateTime dueDate,
-                      String status, String priority, int userId, String userFullName,
+                      String status, String priority,
                       int courseId, String courseName, int categoryId, String categoryName) {
 
     public static TaskDTO fromEntity(Task task) {
-        int uid = 0;
-        String fullName = null;
-        if (task.getUser() != null) {
-            uid = task.getUser().getUserId();
-            fullName = task.getUser().getFirstName() + " " + task.getUser().getLastName();
-        }
-
         int cid = 0;
         String cName = null;
         if (task.getCourse() != null) {
@@ -37,7 +30,7 @@ public record TaskDTO(int taskId, String title, String description, LocalDateTim
         return new TaskDTO(
             task.getTaskId(), task.getTitle(), task.getDescription(),
             task.getDueDate(), task.getStatus(), task.getPriority(),
-            uid, fullName, cid, cName, catId, catName
+            cid, cName, catId, catName
         );
     }
 
@@ -58,9 +51,6 @@ public record TaskDTO(int taskId, String title, String description, LocalDateTim
             @NotBlank(message = "Öncelik boş olamaz")
             @Size(max = 50, message = "Öncelik en fazla 50 karakter olabilir")
             String priority,
-
-            @Positive(message = "Geçerli bir kullanıcı ID'si giriniz")
-            int userId,
 
             @Positive(message = "Geçerli bir ders ID'si giriniz")
             int courseId,

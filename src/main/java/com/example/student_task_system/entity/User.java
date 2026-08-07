@@ -40,19 +40,16 @@ public class User {
     private Role role;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
     private List<Course> courses;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "user")
-    private List<Task> tasks;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
     private List<Notification> notifications;
 
     public User(){}
@@ -79,8 +76,6 @@ public class User {
     public List<Course> getCourses() {return courses;}
     public void setCourses(List<Course> courses) {this.courses = courses;}
 
-    public List<Task> getTasks() {return tasks;}
-    public void setTasks(List<Task> tasks) {this.tasks = tasks;}
 
     public List<Comment> getComments() {return comments;}
     public void setComments(List<Comment> comments) {this.comments = comments;}

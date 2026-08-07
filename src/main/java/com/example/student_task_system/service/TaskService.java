@@ -75,10 +75,6 @@ public class TaskService {
         task.setStatus(request.status());
         task.setPriority(request.priority());
 
-        User user = userRepository.findById(request.userId())
-                .orElseThrow(() -> new BadRequestException("Geçersiz kullanıcı: id=" + request.userId()));
-        task.setUser(user);
-
         Course course = courseRepository.findById(request.courseId())
                 .orElseThrow(() -> new BadRequestException("Geçersiz ders: id=" + request.courseId()));
         task.setCourse(course);

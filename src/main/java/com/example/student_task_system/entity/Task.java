@@ -41,10 +41,6 @@ public class Task {
 
 
     @ManyToOne
-    @JoinColumn(name = "UserId")
-    private User user;
-
-    @ManyToOne
     @JoinColumn(name = "CourseId")
     private Course course;
 
@@ -53,11 +49,11 @@ public class Task {
     private Category category;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "task")
+    @OneToMany(mappedBy = "task", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "task")
+    @OneToMany(mappedBy = "task", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
     private List<Attachment> attachments;
 
 
@@ -80,9 +76,6 @@ public class Task {
 
     public String getPriority() {return priority;}
     public void setPriority(String priority) {this.priority = priority;}
-
-    public User getUser() { return user;}
-    public void setUser(User user) {this.user = user;}
 
     public Course getCourse() {return course;}
     public void setCourse(Course course) {this.course = course;}
