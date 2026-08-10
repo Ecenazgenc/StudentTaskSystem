@@ -2,9 +2,16 @@ const API_BASE = '/api';
 
 export async function fetchWithFallback(endpoint, options = {}, fallbackData = null) {
   try {
+    const token = localStorage.getItem('stss_jwt_token');
+    const headers = {
+      'Content-Type': 'application/json',
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+      ...options.headers,
+    };
+
     const response = await fetch(`${API_BASE}${endpoint}`, {
-      headers: { 'Content-Type': 'application/json', ...options.headers },
       ...options,
+      headers,
     });
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     return await response.json();
@@ -13,6 +20,11 @@ export async function fetchWithFallback(endpoint, options = {}, fallbackData = n
     return fallbackData;
   }
 }
+
+export const authApi = {
+  login: (email, password, fallback) => fetchWithFallback('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) }, fallback),
+  register: (user, fallback) => fetchWithFallback('/auth/register', { method: 'POST', body: JSON.stringify(user) }, fallback),
+};
 
 export const userApi = {
   getAll: (fallback) => fetchWithFallback('/users', {}, fallback),

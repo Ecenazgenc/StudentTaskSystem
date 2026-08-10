@@ -1,5 +1,6 @@
 package com.example.student_task_system.service;
 
+import com.example.student_task_system.config.FileSecurityUtils;
 import com.example.student_task_system.dto.AttachmentDTO;
 import com.example.student_task_system.entity.Attachment;
 import com.example.student_task_system.entity.Task;
@@ -43,7 +44,8 @@ public class AttachmentService {
 
     public AttachmentDTO saveAttachment(AttachmentDTO.Request request) {
         Attachment attachment = new Attachment();
-        attachment.setFileName(request.fileName());
+        String safeName = FileSecurityUtils.sanitizeFileName(request.fileName());
+        attachment.setFileName(safeName);
         attachment.setFilePath(request.filePath());
         attachment.setUploadDate(LocalDateTime.now());
 

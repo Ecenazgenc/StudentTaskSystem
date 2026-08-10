@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { PartyPopper, X } from "lucide-react";
+import { PartyPopper, ClipboardList, Bell, X } from "lucide-react";
 
 export default function EmailToast({ email, onClose }) {
   useEffect(() => {
@@ -12,6 +12,21 @@ export default function EmailToast({ email, onClose }) {
 
   if (!email) return null;
 
+  const isWelcome = email.type === "WELCOME";
+  const isAnnouncement = email.type === "ANNOUNCEMENT";
+
+  const getTitle = () => {
+    if (isWelcome) return "Hoş Geldiniz! 🎉";
+    if (isAnnouncement) return "Duyuru İletildi! 📢";
+    return "Yeni Görev Atandı! 📝";
+  };
+
+  const getIcon = () => {
+    if (isWelcome) return <PartyPopper size={17} />;
+    if (isAnnouncement) return <Bell size={17} />;
+    return <ClipboardList size={17} />;
+  };
+
   return (
     <div className="fixed top-5 right-5 z-50 max-w-xs w-full">
       <div className="stss-card rounded-xl p-4 bg-[#FFFDF8] border border-[#3E8E7E]/30 shadow-xl relative overflow-hidden">
@@ -19,9 +34,16 @@ export default function EmailToast({ email, onClose }) {
         <div className="flex items-center justify-between gap-3 pt-1">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-full bg-[#3E8E7E]/15 text-[#3E8E7E] flex items-center justify-center shrink-0">
-              <PartyPopper size={17} />
+              {getIcon()}
             </div>
-            <p className="text-sm font-semibold text-[#24262B]">Hoş Geldiniz! 🎉</p>
+            <div>
+              <p className="text-sm font-semibold text-[#24262B]">
+                {getTitle()}
+              </p>
+              {email.subject && (
+                <p className="text-xs text-[#24262B]/60 mt-0.5 truncate max-w-[180px]">{email.subject}</p>
+              )}
+            </div>
           </div>
           <button
             onClick={onClose}

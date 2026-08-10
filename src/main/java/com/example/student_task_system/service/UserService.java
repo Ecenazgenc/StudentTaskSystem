@@ -7,6 +7,7 @@ import com.example.student_task_system.exception.BadRequestException;
 import com.example.student_task_system.exception.ResourceNotFoundException;
 import com.example.student_task_system.repository.RoleRepository;
 import com.example.student_task_system.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,10 +18,12 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, RoleRepository roleRepository) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<UserDTO> getAllUsers() {
@@ -36,7 +39,28 @@ public class UserService {
         return UserDTO.fromEntity(user);
     }
 
+    public UserDTO authenticate(String email, String rawPassword) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new BadRequestException("Geçersiz e-posta veya şifre"));
+
+        if (user.getPassword() != null && user.getPassword().startsWith("$2a$")) {
+            if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
+                throw new BadRequestException("Geçersiz e-posta veya şifre");
+            }
+        } else {
+            if (!rawPassword.equals(user.getPassword())) {
+                throw new BadRequestException("Geçersiz e-posta veya şifre");
+            }
+        }
+
+        return UserDTO.fromEntity(user);
+    }
+
     public UserDTO saveUser(UserDTO.Request request) {
+        if (userRepository.existsByEmail(request.email())) {
+            throw new BadRequestException("Bu e-posta adresi zaten kullanımda: " + request.email());
+        }
+
         User user = new User();
         applyRequestToEntity(user, request);
         User saved = userRepository.save(user);
@@ -63,7 +87,14 @@ public class UserService {
         user.setFirstName(request.firstName());
         user.setLastName(request.lastName());
         user.setEmail(request.email());
-        user.setPassword(request.password());
+        
+        if (request.password() != null && !request.password().isBlank()) {
+            if (request.password().startsWith("$2a$")) {
+                user.setPassword(request.password());
+            } else {
+                user.setPassword(passwordEncoder.encode(request.password()));
+            }
+        }
 
         Role role = roleRepository.findById(request.roleId())
                 .orElseThrow(() -> new BadRequestException("Geçersiz rol: id=" + request.roleId()));

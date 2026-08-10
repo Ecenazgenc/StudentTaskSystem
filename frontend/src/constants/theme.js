@@ -1,4 +1,4 @@
-import { Circle, Clock, CheckCircle2 } from "lucide-react";
+import { Circle, Clock, CheckCircle2, AlertTriangle } from "lucide-react";
 
 export const TAPE = [
   { bg: "#E2725B", tint: "#FBEAE5" }, // kiremit
@@ -14,11 +14,19 @@ export const PRIORITY_STYLE = {
   Düşük: { color: "#3E6B5C", label: "Düşük", dot: "#3E8E7E" },
 };
 
-export const STATUSES = ["Bekliyor", "Tamamlandı"];
+export const STATUSES = ["Bekliyor", "Tamamlandı", "Gecikmiş"];
 
 export const STATUS_ICON = {
   Bekliyor: Circle,
   Tamamlandı: CheckCircle2,
+  Gecikmiş: AlertTriangle,
+};
+
+// Teslim edilmemiş ve tarihi geçmiş mi?
+export const isOverdue = (task) => {
+  if (!task.dueDate) return false;
+  if (task.status === "Tamamlandı") return false;
+  return daysUntil(task.dueDate) < 0;
 };
 
 export const CURRENT_USER = {
@@ -29,7 +37,11 @@ export const CURRENT_USER = {
   roleId: 2,
 };
 
-export const tapeFor = (courseId) => TAPE[(courseId - 1) % TAPE.length];
+export const tapeFor = (courseId) => {
+  const id = Math.abs(Number(courseId) || 1);
+  const idx = Math.max(0, id - 1) % TAPE.length;
+  return TAPE[idx] || TAPE[0];
+};
 
 export const fmtDate = (iso) => {
   if (!iso) return "";

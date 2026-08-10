@@ -1,5 +1,6 @@
 package com.example.student_task_system.service;
 
+import com.example.student_task_system.config.XssSanitizerUtils;
 import com.example.student_task_system.dto.CommentDTO;
 import com.example.student_task_system.entity.Comment;
 import com.example.student_task_system.entity.Task;
@@ -44,7 +45,7 @@ public class CommentService {
 
     public CommentDTO saveComment(CommentDTO.Request request) {
         Comment comment = new Comment();
-        comment.setCommentText(request.commentText());
+        comment.setCommentText(XssSanitizerUtils.sanitize(request.commentText()));
         comment.setCreatedDate(LocalDateTime.now());
 
         Task task = taskRepository.findById(request.taskId())
@@ -63,7 +64,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Yorum bulunamadı: id=" + id));
 
-        comment.setCommentText(request.commentText());
+        comment.setCommentText(XssSanitizerUtils.sanitize(request.commentText()));
 
         Task task = taskRepository.findById(request.taskId())
                 .orElseThrow(() -> new BadRequestException("Geçersiz görev: id=" + request.taskId()));

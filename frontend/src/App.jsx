@@ -14,9 +14,11 @@ import CoursesPage from "./pages/CoursesPage";
 import NotificationsPage from "./pages/NotificationsPage";
 
 import ProfileModal from "./components/ProfileModal";
+import CalendarPage from "./pages/CalendarPage";
 import { MOCK_USERS } from "./pages/LoginPage";
 
 import { todayPlus } from "./constants/theme";
+import { isOverdue } from "./constants/theme";
 import { triggerTaskAssignmentEmail } from "./services/emailService";
 import { userApi, taskApi, courseApi, commentApi, attachmentApi, fetchWithFallback } from "./services/api";
 import {
@@ -33,6 +35,47 @@ export default function App() {
     const saved = localStorage.getItem("stss_user");
     return saved ? JSON.parse(saved) : null;
   });
+
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const saved = localStorage.getItem("stss_theme");
+    if (saved) return saved === "dark";
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  });
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handleChange = (e) => {
+      if (!localStorage.getItem("stss_theme")) {
+        setIsDarkMode(e.matches);
+      }
+    };
+
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener("change", handleChange);
+    } else {
+      mediaQuery.addListener(handleChange);
+    }
+
+    return () => {
+      if (mediaQuery.removeEventListener) {
+        mediaQuery.removeEventListener("change", handleChange);
+      } else {
+        mediaQuery.removeListener(handleChange);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("stss_theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("stss_theme", "light");
+    }
+  }, [isDarkMode]);
+
+  const toggleDarkMode = () => setIsDarkMode((prev) => !prev);
 
   const [page, setPageState] = useState(() => {
     return localStorage.getItem("stss_page") || "panel";
@@ -51,7 +94,7 @@ export default function App() {
   const [attachments, setAttachments] = useState([]);
   const [users, setUsers] = useState(() => {
     const saved = localStorage.getItem("stss_all_users");
-    return saved ? JSON.parse(saved) : MOCK_USERS;
+    return saved ? JSON.parse(saved) : [];
   });
   const [notifications, setNotifications] = useState(() => {
     const saved = localStorage.getItem("stss_notifications");
@@ -96,61 +139,107 @@ export default function App() {
     ]);
 
     if (backendUsers && backendUsers.length > 0) {
-      setUsers(backendUsers);
-      localStorage.setItem("stss_all_users", JSON.stringify(backendUsers));
-    } else {
       const savedUsers = localStorage.getItem("stss_all_users");
-      setUsers(savedUsers ? JSON.parse(savedUsers) : MOCK_USERS);
+      const localUsers = savedUsers ? JSON.parse(savedUsers) : [];
+
+      const normalizedUsers = backendUsers.map((u) => ({
+        ...u,
+        roleName: u.roleName || (u.roleId === 1 ? "Admin" : "Öğrenci"),
+      }));
+
+      // localStorage'da olup backend'de olmayan kullanıcıları birleştir (yeni kayıt olanlar)
+      const backendUserIds = new Set(normalizedUsers.map((u) => u.userId));
+      const onlyLocalUsers = localUsers.filter((u) => !backendUserIds.has(u.userId));
+      const mergedUsers = [...normalizedUsers, ...onlyLocalUsers];
+
+      setUsers(mergedUsers);
+      localStorage.setItem("stss_all_users", JSON.stringify(mergedUsers));
+    } else {
+      // Backend kapalı: localStorage'daki son gerçek veriyi kullan
+      const savedUsers = localStorage.getItem("stss_all_users");
+      if (savedUsers) setUsers(JSON.parse(savedUsers));
+      // MOCK_USERS kullanılmıyor — sahte veri gösterilmez
     }
 
     if (backendTasks && backendTasks.length > 0) {
+      // localStorage'daki güncel statusları al (backend güncelleme başarısız olmuş olabilir)
+      const savedTasks = localStorage.getItem("stss_tasks");
+      const localTasks = savedTasks ? JSON.parse(savedTasks) : [];
+      const localStatusMap = {};
+      localTasks.forEach((t) => { localStatusMap[t.taskId] = t.status; });
+
       const loadedTasks = backendTasks.map((t) => ({
         taskId: t.taskId,
         title: t.title,
         description: t.description,
         dueDate: t.dueDate ? t.dueDate.slice(0, 10) : "",
-        status: t.status,
+        // Eğer localStorage'da daha güncel bir status varsa onu kullan
+        status: localStatusMap[t.taskId] || t.status,
         priority: t.priority,
         courseId: t.courseId,
         categoryId: t.categoryId,
       }));
-      setTasks(loadedTasks);
-      localStorage.setItem("stss_tasks", JSON.stringify(loadedTasks));
+
+      // localStorage'da olup backend'de olmayan görevleri de ekle (yeni eklenenler backend'e kaydedilememiş olabilir)
+      const backendIds = new Set(loadedTasks.map((t) => t.taskId));
+      const onlyLocal = localTasks.filter((t) => !backendIds.has(t.taskId));
+      const merged = [...loadedTasks, ...onlyLocal];
+
+      setTasks(merged);
+      localStorage.setItem("stss_tasks", JSON.stringify(merged));
     } else {
       const savedTasks = localStorage.getItem("stss_tasks");
       setTasks(savedTasks ? JSON.parse(savedTasks) : INIT_TASKS);
     }
 
     if (backendCourses && backendCourses.length > 0) {
+      const savedCourses = localStorage.getItem("stss_courses");
+      const localCourses = savedCourses ? JSON.parse(savedCourses) : [];
+
       const loadedCourses = backendCourses.map((c) => ({
         courseId: c.courseId,
         courseName: c.courseName,
         userId: c.userId,
       }));
-      setCourses(loadedCourses);
-      localStorage.setItem("stss_courses", JSON.stringify(loadedCourses));
+
+      // localStorage'da olup backend'de olmayan dersleri birleştir
+      const backendCourseIds = new Set(loadedCourses.map((c) => c.courseId));
+      const onlyLocalCourses = localCourses.filter((c) => !backendCourseIds.has(c.courseId));
+      const mergedCourses = [...loadedCourses, ...onlyLocalCourses];
+
+      setCourses(mergedCourses);
+      localStorage.setItem("stss_courses", JSON.stringify(mergedCourses));
     } else {
       const savedCourses = localStorage.getItem("stss_courses");
       setCourses(savedCourses ? JSON.parse(savedCourses) : INIT_COURSES);
     }
 
     if (backendComments && backendComments.length > 0) {
-      const loaded = backendComments.map((c) => ({
+      const savedComments = localStorage.getItem("stss_comments");
+      const localComments = savedComments ? JSON.parse(savedComments) : [];
+
+      const loadedComments = backendComments.map((c) => ({
         commentId: c.commentId,
         taskId: c.taskId,
         userId: c.userId,
         commentText: c.commentText,
         createdDate: c.createdDate ? c.createdDate.slice(0, 10) : "",
       }));
-      setComments(loaded);
-      localStorage.setItem("stss_comments", JSON.stringify(loaded));
+
+      // localStorage'da olup backend'de olmayan yorumları birleştir
+      const backendCommentIds = new Set(loadedComments.map((c) => c.commentId));
+      const onlyLocalComments = localComments.filter((c) => !backendCommentIds.has(c.commentId));
+      const mergedComments = [...loadedComments, ...onlyLocalComments];
+
+      setComments(mergedComments);
+      localStorage.setItem("stss_comments", JSON.stringify(mergedComments));
     } else {
       const saved = localStorage.getItem("stss_comments");
       setComments(saved ? JSON.parse(saved) : INIT_COMMENTS);
     }
 
     if (backendAttachments && backendAttachments.length > 0) {
-      const loaded = backendAttachments.map((a) => ({
+      const backendLoaded = backendAttachments.map((a) => ({
         attachmentId: a.attachmentId,
         taskId: a.taskId,
         userId: a.userId,
@@ -159,8 +248,18 @@ export default function App() {
         fileUrl: a.filePath,
         uploadDate: a.uploadDate ? a.uploadDate.slice(0, 10) : "",
       }));
-      setAttachments(loaded);
-      localStorage.setItem("stss_attachments", JSON.stringify(loaded));
+
+      // localStorage'da backend'de olmayan yerel dosyalar varsa (base64 vb.) birleştir
+      const savedAttachments = localStorage.getItem("stss_attachments");
+      const localAttachments = savedAttachments ? JSON.parse(savedAttachments) : [];
+      const backendIds = new Set(backendLoaded.map((a) => a.attachmentId));
+      const onlyLocal = localAttachments.filter(
+        (a) => !backendIds.has(a.attachmentId) && (a.filePath?.startsWith("data:") || a.fileUrl?.startsWith("data:"))
+      );
+      const merged = [...backendLoaded, ...onlyLocal];
+
+      setAttachments(merged);
+      localStorage.setItem("stss_attachments", JSON.stringify(merged));
     } else {
       const saved = localStorage.getItem("stss_attachments");
       setAttachments(saved ? JSON.parse(saved) : INIT_ATTACHMENTS);
@@ -178,6 +277,31 @@ export default function App() {
       setDataLoaded(false);
     }
   }, [currentUser, loadDataFromBackend]);
+
+  // Veri yüklendikten sonra gecikmiş görevler için bildirim üret
+  useEffect(() => {
+    if (!dataLoaded || !currentUser || currentUser.roleId === 1) return;
+    setNotifications((prev) => {
+      const existingMessages = new Set(prev.map((n) => n.message));
+      const overdueNotifs = tasks
+        .filter((t) => isOverdue(t))
+        .filter((t) => {
+          const msg = `«gecikme»: "${t.title}" görevi teslim tarihini geçti!`;
+          return !existingMessages.has(msg);
+        })
+        .map((t) => ({
+          notificationId: Date.now() + t.taskId,
+          userId: currentUser.userId,
+          message: `«gecikme»: "${t.title}" görevi teslim tarihini geçti!`,
+          isRead: false,
+          createdDate: todayPlus(0),
+        }));
+      if (overdueNotifs.length === 0) return prev;
+      const updated = [...overdueNotifs, ...prev];
+      localStorage.setItem("stss_notifications", JSON.stringify(updated));
+      return updated;
+    });
+  }, [dataLoaded, tasks, currentUser]);
 
   const handleLogin = (user) => {
     setCurrentUser(user);
@@ -239,59 +363,65 @@ export default function App() {
     }
   };
 
-  const handleAddComment = async (taskId, text) => {
-    const newComment = {
-      commentId: nextId(comments, "commentId"),
-      taskId,
-      userId: currentUser.userId,
-      commentText: text,
-      createdDate: todayPlus(0),
-    };
-    setComments((cs) => {
-      const updated = [...cs, newComment];
+  const handleAddComment = (taskId, text) => {
+    if (!text || !text.trim()) return;
+    const trimmed = text.trim();
+
+    setComments((prev) => {
+      const maxId = prev.reduce((max, c) => {
+        const id = Number(c.commentId);
+        return !isNaN(id) && id > max ? id : max;
+      }, 0);
+      const newComment = {
+        commentId: maxId + 1,
+        taskId: Number(taskId),
+        userId: currentUser.userId,
+        commentText: trimmed,
+        createdDate: todayPlus(0),
+      };
+      const updated = [...prev, newComment];
       localStorage.setItem("stss_comments", JSON.stringify(updated));
       return updated;
     });
 
-    try {
-      await commentApi.create({ commentText: text, taskId, userId: currentUser.userId > 2 ? 1 : currentUser.userId });
-    } catch (e) {
-      console.warn("Yorum DB kaydı atlandı:", e);
-    }
+    commentApi.create({ commentText: trimmed, taskId: Number(taskId), userId: currentUser.userId })
+      .catch((e) => console.warn("Yorum DB kaydı atlandı:", e));
   };
 
-  const handleAddAttachment = async (taskId, fileName, fileUrl) => {
+  const handleAddAttachment = (taskId, fileName, fileUrl) => {
     const fname = fileName || `dosya_${Math.floor(Math.random() * 900 + 100)}.pdf`;
     const filePath = fileUrl || `/uploads/${fname}`;
 
-    const newAttachment = {
-      attachmentId: nextId(attachments, "attachmentId"),
-      taskId,
-      userId: currentUser.userId,
-      fileName: fname,
-      filePath: filePath,
-      fileUrl: filePath,
-      uploadDate: todayPlus(0),
-    };
-
-    setAttachments((as) => {
-      const updated = [...as, newAttachment];
+    setAttachments((prev) => {
+      const maxId = prev.reduce((max, a) => {
+        const id = Number(a.attachmentId);
+        return !isNaN(id) && id > max ? id : max;
+      }, 0);
+      const newAttachment = {
+        attachmentId: maxId + 1,
+        taskId: Number(taskId),
+        userId: currentUser.userId,
+        fileName: fname,
+        filePath,
+        fileUrl: filePath,
+        uploadDate: todayPlus(0),
+      };
+      const updated = [...prev, newAttachment];
       localStorage.setItem("stss_attachments", JSON.stringify(updated));
       return updated;
     });
 
-    try {
-      const created = await attachmentApi.create({
-        fileName: fname,
-        filePath: filePath,
-        taskId: taskId,
-        userId: currentUser.userId,
-      });
-      if (created?.attachmentId) {
-        newAttachment.attachmentId = created.attachmentId;
-      }
-    } catch (e) {
-      console.warn("Dosya DB kaydı atlandı:", e);
+    attachmentApi.create({ fileName: fname, filePath, taskId: Number(taskId), userId: currentUser.userId })
+      .catch((e) => console.warn("Dosya DB kaydı atlandı:", e));
+
+    const registeredStudents = (users || []).filter((u) => u.roleId === 2);
+    const updatedAtts = [...attachments, { taskId: Number(taskId), userId: currentUser.userId }];
+    const taskAtts = updatedAtts.filter((a) => a.taskId === Number(taskId));
+    const submittedIds = new Set(taskAtts.map((a) => a.userId));
+    const allSubmitted = registeredStudents.length > 0 && registeredStudents.every((s) => submittedIds.has(s.userId));
+
+    if (allSubmitted) {
+      handleStatusChange(taskId, "Tamamlandı");
     }
   };
 
@@ -372,24 +502,31 @@ export default function App() {
   // --- DERS İŞLEMLERİ ---
 
   const handleAddCourse = async (courseName) => {
-    let created = null;
-    try {
-      created = await courseApi.create({ courseName, userId: currentUser.userId });
-    } catch (e) {
-      console.warn("Ders DB ekleme atlandı:", e);
-    }
+    if (!courseName || !courseName.trim()) return;
+    const name = courseName.trim();
+    const targetUserId = currentUser?.userId || 1;
+    const tempId = Date.now();
 
-    const newCourse = {
-      courseId: created?.courseId || nextId(courses, "courseId"),
-      courseName,
-      userId: currentUser.userId,
-    };
+    const newCourse = { courseId: tempId, courseName: name, userId: targetUserId };
 
-    setCourses((cs) => {
-      const updated = [...cs, newCourse];
+    setCourses((prev) => {
+      const updated = [...prev, newCourse];
       localStorage.setItem("stss_courses", JSON.stringify(updated));
       return updated;
     });
+
+    try {
+      const created = await courseApi.create({ courseName: name, userId: targetUserId > 0 ? targetUserId : 1 });
+      if (created?.courseId) {
+        setCourses((prev) => {
+          const updated = prev.map((c) => (c.courseId === tempId ? { ...c, courseId: created.courseId } : c));
+          localStorage.setItem("stss_courses", JSON.stringify(updated));
+          return updated;
+        });
+      }
+    } catch (e) {
+      console.warn("Ders DB ekleme atlandı:", e);
+    }
   };
 
   const handleDeleteCourse = async (courseId) => {
@@ -418,6 +555,28 @@ export default function App() {
 
   // --- BİLDİRİM İŞLEMLERİ ---
 
+  const handleSendNotification = (message, targetUserId = null) => {
+    const newNotif = {
+      notificationId: Date.now(),
+      userId: targetUserId,
+      message: `📢 DUYURU: ${message}`,
+      isRead: false,
+      createdDate: todayPlus(0),
+    };
+
+    setNotifications((ns) => {
+      const updated = [newNotif, ...ns];
+      localStorage.setItem("stss_notifications", JSON.stringify(updated));
+      return updated;
+    });
+
+    setEmailToast({
+      id: Date.now(),
+      type: "ANNOUNCEMENT",
+      subject: targetUserId ? "Özel bildirim kullanıcıya iletildi!" : "Genel duyuru tüm öğrencilere iletildi!",
+    });
+  };
+
   const handleMarkRead = (id) => {
     setNotifications((ns) => {
       const updated = ns.map((n) => (n.notificationId === id ? { ...n, isRead: true } : n));
@@ -435,8 +594,9 @@ export default function App() {
   };
 
   const pageTitles = {
-    panel: isAdmin ? "Admin Paneli" : "Panel",
+    panel: isAdmin ? "Yönetim Paneli" : "Panel",
     gorevler: isAdmin ? "Tüm Görevler" : "Görevler",
+    takvim: "Takvim",
     dersler: isAdmin ? "Tüm Dersler" : "Derslerim",
     bildirimler: "Bildirimler"
   };
@@ -454,11 +614,13 @@ export default function App() {
         mobileOpen={mobileOpen}
         setMobileOpen={setMobileOpen}
         onOpenProfile={() => setShowProfile(true)}
+        isDarkMode={isDarkMode}
+        onToggleDarkMode={toggleDarkMode}
       />
 
       <main className="flex-1 min-w-0">
-        <div className="md:hidden flex items-center gap-3 px-4 py-3 border-b border-[#24262B]/10 bg-[#F5F0E4] sticky top-0 z-20">
-          <button onClick={() => setMobileOpen(true)} className="p-1.5 rounded hover:bg-[#24262B]/8">
+        <div className="md:hidden flex items-center gap-3 px-4 py-3 border-b border-[#24262B]/10 bg-[#F5F0E4] dark:bg-[#181920] sticky top-0 z-20">
+          <button onClick={() => setMobileOpen(true)} className="p-1.5 rounded hover:bg-[#24262B]/8 dark:hover:bg-white/10">
             <MoreVertical size={18} />
           </button>
           <p className="stss-display font-semibold text-[15px]">{pageTitles[page]}</p>
@@ -467,7 +629,15 @@ export default function App() {
         <div className="px-5 sm:px-8 py-8 max-w-6xl mx-auto">
           {page === "panel" && (
             isAdmin ? (
-              <AdminDashboard tasks={tasks} courses={courses} users={users} setUsers={setUsers} />
+              <AdminDashboard
+                tasks={tasks}
+                courses={courses}
+                users={users}
+                setUsers={setUsers}
+                attachments={attachments}
+                onRefresh={loadDataFromBackend}
+                onSendNotification={handleSendNotification}
+              />
             ) : (
               <Dashboard currentUser={currentUser} tasks={tasks} courses={courses} setPage={setPage} />
             )
@@ -484,6 +654,17 @@ export default function App() {
               setFilters={setFilters}
               isAdmin={isAdmin}
               allUsers={users}
+              currentUser={currentUser}
+            />
+          )}
+          {page === "takvim" && (
+            <CalendarPage
+              tasks={tasks}
+              courses={courses}
+              onOpenTask={setSelectedTaskId}
+              isAdmin={isAdmin}
+              currentUser={currentUser}
+              attachments={attachments}
             />
           )}
           {page === "dersler" && (
@@ -494,6 +675,9 @@ export default function App() {
               notifications={notifications}
               onMarkRead={handleMarkRead}
               onMarkAllRead={handleMarkAllRead}
+              isAdmin={isAdmin}
+              users={users}
+              onSendNotification={handleSendNotification}
             />
           )}
         </div>

@@ -78,3 +78,51 @@ body {
     transform: none !important;
   }
 }
+
+/* Dark Mode support */
+.dark body {
+  background-color: #121316;
+  color: #E2E4E9;
+}
+
+.dark .stss-root {
+  background: #121316;
+  color: #E2E4E9;
+}
+
+.dark .stss-paper {
+  background-image: radial-gradient(rgba(226,228,233,0.04) 1px, transparent 1px);
+}
+
+.dark .stss-card {
+  background: #1C1D24;
+  border-color: rgba(255,255,255,0.08);
+  color: #E2E4E9;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+.dark .stss-card:hover {
+  box-shadow: 0 10px 24px rgba(0,0,0,0.5);
+}
+
+.dark input, .dark select, .dark textarea {
+  background-color: #262832 !important;
+  color: #E2E4E9 !important;
+  border-color: rgba(255,255,255,0.15) !important;
+}
+
+.dark table th {
+  color: rgba(226,228,233,0.6) !important;
+}
+
+.dark table tr {
+  border-color: rgba(255,255,255,0.08) !important;
+}
+
+.dark table td {
+  color: #E2E4E9 !important;
+}
+
+.dark .stss-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.2);
+}
