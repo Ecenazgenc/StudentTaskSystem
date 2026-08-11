@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import { X, Tag, Calendar, Paperclip, FileText, Upload, MessageSquare, Send, Trash2, CheckCircle2, Clock, Download, Lock, Check, Award, Star } from "lucide-react";
-import { tapeFor, fmtDate, PRIORITY_STYLE, CURRENT_USER } from "../constants/theme";
+import { tapeFor, fmtDate, PRIORITY_STYLE, CURRENT_USER, daysUntil } from "../constants/theme";
+import { notificationApi } from "../services/api";
 
 export default function TaskModal({ task, course, category, comments, attachments, onClose, onStatusChange, onAddComment, onAddAttachment, onDeleteAttachment, onDelete, isAdmin, allUsers, currentUser }) {
   const [draft, setDraft] = useState("");
@@ -36,19 +37,37 @@ export default function TaskModal({ task, course, category, comments, attachment
   const gradeKey = `${task.taskId}_${currentUser?.userId}`;
   const currentStudentGrade = gradesMap[gradeKey];
 
-  const handleSaveGrade = (targetStudentId) => {
+  const handleSaveGrade = async (targetStudentId) => {
     if (!targetStudentId) return;
     const key = `${task.taskId}_${targetStudentId}`;
+    const gradeVal = Number(inputGrade) || 0;
+    const feedbackVal = inputFeedback.trim();
+
     const updated = {
       ...gradesMap,
       [key]: {
-        grade: Number(inputGrade) || 0,
-        feedback: inputFeedback.trim(),
+        grade: gradeVal,
+        feedback: feedbackVal,
         gradedAt: new Date().toLocaleDateString("tr-TR"),
       },
     };
     setGradesMap(updated);
     localStorage.setItem("stss_grades", JSON.stringify(updated));
+
+    try {
+      let notifMsg = `DEĞERLENDİRME: "${task.title}" başlıklı ödeviniz notlandırıldı. Notunuz: ${gradeVal}/100.`;
+      if (feedbackVal) {
+        notifMsg += ` Geri bildirim: "${feedbackVal}"`;
+      }
+
+      await notificationApi.create({
+        message: notifMsg,
+        userId: Number(targetStudentId)
+      });
+    } catch(e) {
+      console.warn("Bildirim gönderilemedi:", e);
+    }
+
     alert("Ödev notu ve geri bildirim başarıyla kaydedildi! 🌟");
   };
 
@@ -70,67 +89,146 @@ export default function TaskModal({ task, course, category, comments, attachment
 
   const downloadAttachmentFile = (a) => {
     const fileData = a.filePath || a.fileUrl;
-    if (!fileData || fileData === "#" || fileData.startsWith("/uploads/")) {
-      const blob = new Blob([`Görev Defteri Ödev Dosyası İçeriği: ${a.fileName}\nTamamlandı.`], { type: "text/plain;charset=utf-8" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = a.fileName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
-      return;
+    
+    // Base64 Data URL -> Binary Blob çevirici (PDF ve Görseller için tam uyumlu)
+    const dataURLtoBlob = (dataurl) => {
+      try {
+        const arr = dataurl.split(',');
+        if (arr.length < 2) return null;
+        const mimeMatch = arr[0].match(/:(.*?);/);
+        const mime = mimeMatch ? mimeMatch[1] : 'application/octet-stream';
+        
+        let base64Str = arr[1].replace(/\s/g, '');
+        while (base64Str.length % 4 !== 0) {
+          base64Str += '=';
+        }
+
+        const bstr = atob(base64Str);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n);
+        }
+
+        // ISO 32000-1 PDF standardı uyarınca %PDF- imzası ilk 1024 bayt içinde yer alabilir
+        const isPdfType = mime === 'application/pdf' || dataurl.includes('application/pdf') || (a.fileName && a.fileName.toLowerCase().endsWith('.pdf'));
+        if (isPdfType) {
+          const sample = String.fromCharCode(...u8arr.slice(0, Math.min(u8arr.length, 1024)));
+          if (!sample.includes('%PDF-')) {
+            console.warn("Geçersiz PDF verisi tespiti.");
+            return null;
+          }
+          return new Blob([u8arr], { type: 'application/pdf' });
+        }
+
+        return new Blob([u8arr], { type: mime });
+      } catch (err) {
+        console.error("Base64 dönüşüm hatası:", err);
+        return null;
+      }
+    };
+
+    // Örnek dosyalarda geçerli PDF yapısı oluşturucu
+    const createValidMockPDFBlob = (title) => {
+      const content = `%PDF-1.4
+1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj
+2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >> endobj
+3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >> endobj
+4 0 obj << /Length 75 >> stream
+BT /F1 16 Tf 50 700 Td (Gorev Defteri Odev Dosyasi: ${title || 'Odev'}) Tj ET
+endstream endobj
+5 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000262 00000 n 
+0000000388 00000 n 
+trailer << /Size 6 /Root 1 0 R >>
+startxref
+463
+%%EOF`;
+      return new Blob([content], { type: "application/pdf" });
+    };
+
+    let blob = null;
+
+    if (fileData && fileData.startsWith("data:")) {
+      blob = dataURLtoBlob(fileData);
     }
 
-    if (fileData.startsWith("data:")) {
-      try {
-        fetch(fileData)
-          .then((res) => res.blob())
-          .then((blob) => {
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.href = url;
-            link.download = a.fileName || "ödev_dosyası";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            setTimeout(() => URL.revokeObjectURL(url), 1000);
-          });
-      } catch (err) {
-        console.error("Dosya indirme hatası:", err);
+    if (!blob) {
+      const isPdf = a.fileName && a.fileName.toLowerCase().endsWith(".pdf");
+      if (isPdf) {
+        blob = createValidMockPDFBlob(a.fileName);
+      } else {
+        blob = new Blob([`Görev Defteri Ödev Dosyası İçeriği: ${a.fileName}\nTamamlandı.`], { type: "text/plain;charset=utf-8" });
+      }
+    }
+
+    const url = URL.createObjectURL(blob);
+    const isImage = a.fileName && /\.(png|jpe?g|gif|webp|bmp|svg)$/i.test(a.fileName);
+
+    if (isImage) {
+      const win = window.open(url, "_blank");
+      if (!win) {
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = a.fileName || "görsel_dosyası";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       }
     } else {
+      // PDF ve diğer tüm belgeler için doğrudan güvenli dosya indirme (Chrome PDF extension blob hatasını önler)
       const link = document.createElement("a");
-      link.href = fileData;
-      link.download = a.fileName || "ödev_dosyası";
-      link.target = "_blank";
+      link.href = url;
+      link.download = a.fileName || "ödev_dosyası.pdf";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     }
+
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
   };
 
-  const getUserInfo = (uid) => {
-    if (!uid) return { name: "Kullanıcı", isAdmin: false };
-    if (uid === 99 || (currentUser && currentUser.userId === uid && isAdmin)) {
+  const getUserInfo = (uid, fallbackName = null) => {
+    if (!uid && !fallbackName) return { name: "Kullanıcı", isAdmin: false };
+    if (currentUser && currentUser.userId === uid) {
+      const isAdm = currentUser.roleId === 1 || currentUser.email === "admin@ogr.edu.tr" || currentUser.userId === 99 || isAdmin;
+      const fullName = `${currentUser.firstName || ""} ${currentUser.lastName || ""}`.trim();
+      const displayName = isAdm ? (fullName && fullName !== "Sistem Yöneticisi" ? fullName : "Sistem Yöneticisi") : (fullName || "Kullanıcı");
+      return { name: displayName, isAdmin: isAdm };
+    }
+    if (uid === 99) {
       return { name: "Sistem Yöneticisi", isAdmin: true };
     }
     const u = (allUsers || []).find((x) => x.userId === uid);
     if (u) {
       const isAdm = u.roleId === 1 || u.email === "admin@ogr.edu.tr" || u.userId === 99;
-      return { name: `${u.firstName} ${u.lastName}`, isAdmin: isAdm };
+      const fullName = `${u.firstName || ""} ${u.lastName || ""}`.trim();
+      const displayName = isAdm ? (fullName && fullName !== "Sistem Yöneticisi" ? fullName : "Sistem Yöneticisi") : (fullName || "Kullanıcı");
+      return { name: displayName, isAdmin: isAdm };
+    }
+    if (fallbackName) {
+      return { name: fallbackName, isAdmin: false };
     }
     return { name: "Kullanıcı", isAdmin: false };
   };
 
-  const getUserName = (uid) => {
-    const info = getUserInfo(uid);
+  const getUserName = (uid, fallbackName = null) => {
+    const info = getUserInfo(uid, fallbackName);
     return info.isAdmin ? `${info.name} (Admin)` : info.name;
   };
 
+  const isExpired = !isSubmitted && (task.status === "Tamamlandı" || (task.dueDate && daysUntil(task.dueDate) < 0));
+
   const statusColor = isSubmitted 
     ? { bg: "#E6F1EE", text: "#3E8E7E", icon: CheckCircle2 }
+    : isExpired
+    ? { bg: "#FBEAE5", text: "#B8402C", icon: Clock }
     : { bg: "#FFF3E0", text: "#E2725B", icon: Clock };
   
   const StatusIcon = statusColor.icon;
@@ -164,7 +262,7 @@ export default function TaskModal({ task, course, category, comments, attachment
             </span>
             <span>·</span>
             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded font-bold text-[11px]" style={{ background: statusColor.bg, color: statusColor.text }}>
-              <StatusIcon size={12} /> {isSubmitted ? "Tamamlandı" : task.status}
+              <StatusIcon size={12} /> {isSubmitted ? "Tamamlandı" : (task.dueDate && daysUntil(task.dueDate) < 0) ? "Süresi Bitti" : isExpired ? "Kapatıldı" : task.status}
             </span>
           </div>
 
@@ -286,7 +384,7 @@ export default function TaskModal({ task, course, category, comments, attachment
             </div>
 
             {/* Dosya Yükleme Butonu */}
-            {(!isSubmitted || isAdmin) && (
+            {((!isSubmitted && !isExpired) || isAdmin) && (
               <>
                 <input
                   ref={fileInputRef}
@@ -313,7 +411,7 @@ export default function TaskModal({ task, course, category, comments, attachment
             <p className="stss-mono text-[10.5px] text-[#24262B]/60 dark:text-white/60 mb-2 flex items-center gap-1.5 font-bold"><MessageSquare size={12} /> YORUMLAR ({comments.length})</p>
             <div className="space-y-2.5 mb-3">
               {comments.map((c) => {
-                const info = getUserInfo(c.userId);
+                const info = getUserInfo(c.userId, c.userFullName);
                 return (
                   <div
                     key={c.commentId}
@@ -341,7 +439,7 @@ export default function TaskModal({ task, course, category, comments, attachment
               {comments.length === 0 && <p className="text-[12px] text-[#24262B]/40 dark:text-white/40 italic">Henüz yorum yok.</p>}
             </div>
 
-            {(!isSubmitted || isAdmin) && (
+            {((!isSubmitted && !isExpired) || isAdmin) && (
               <div className="flex items-center gap-2">
                 <input
                   value={draft}
@@ -379,12 +477,27 @@ export default function TaskModal({ task, course, category, comments, attachment
           )}
 
           {isAdmin && (
-            <button
-              onClick={() => onDelete(task.taskId)}
-              className="mt-6 inline-flex items-center gap-1.5 text-[12px] text-[#B8402C] hover:underline font-semibold cursor-pointer"
-            >
-              <Trash2 size={13} /> Görevi sil
-            </button>
+            <div className="mt-6 flex items-center justify-between">
+              {task.status !== "Tamamlandı" ? (
+                <button
+                  onClick={() => onStatusChange(task.taskId, "Tamamlandı")}
+                  className="inline-flex items-center gap-1.5 text-[12.5px] px-3 py-1.5 rounded-md bg-[#24262B] text-white dark:bg-white dark:text-[#121316] font-semibold cursor-pointer hover:opacity-80"
+                >
+                  <Lock size={14} /> Görevi Sonlandır
+                </button>
+              ) : (
+                <div className="inline-flex items-center gap-1.5 text-[12.5px] text-[#24262B]/50 dark:text-white/50 font-semibold">
+                  <Lock size={14} /> Görev Sonlandırıldı
+                </div>
+              )}
+              
+              <button
+                onClick={() => onDelete(task.taskId)}
+                className="inline-flex items-center gap-1.5 text-[12px] text-[#B8402C] hover:underline font-semibold cursor-pointer"
+              >
+                <Trash2 size={13} /> Görevi sil
+              </button>
+            </div>
           )}
         </div>
       </div>

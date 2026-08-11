@@ -31,8 +31,7 @@ public record UserDTO(int userId, String firstName, String lastName,
             @Size(max = 150, message = "Email en fazla 150 karakter olabilir")
             String email,
 
-            @NotBlank(message = "Şifre boş olamaz")
-            @Size(min = 6, max = 255, message = "Şifre 6-255 karakter arasında olmalıdır")
+            @Size(max = 255, message = "Şifre en fazla 255 karakter olabilir")
             String password,
 
             @Positive(message = "Geçerli bir rol ID'si giriniz")

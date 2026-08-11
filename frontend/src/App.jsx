@@ -8,6 +8,7 @@ import NewTaskModal from "./components/NewTaskModal";
 import EmailToast from "./components/EmailToast";
 
 import LoginPage from "./pages/LoginPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import CoursesPage from "./pages/CoursesPage";
@@ -20,7 +21,7 @@ import { MOCK_USERS } from "./pages/LoginPage";
 import { todayPlus } from "./constants/theme";
 import { isOverdue } from "./constants/theme";
 import { triggerTaskAssignmentEmail } from "./services/emailService";
-import { userApi, taskApi, courseApi, commentApi, attachmentApi, fetchWithFallback } from "./services/api";
+import { authApi, userApi, taskApi, courseApi, commentApi, attachmentApi, notificationApi, fetchWithFallback } from "./services/api";
 import {
   INIT_COURSES,
   CATEGORIES,
@@ -92,9 +93,22 @@ export default function App() {
   const [tasks, setTasks] = useState([]);
   const [comments, setComments] = useState([]);
   const [attachments, setAttachments] = useState([]);
+  const DEFAULT_USERS = [
+    { userId: 99, firstName: "Sistem", lastName: "Yöneticisi", email: "admin@ogr.edu.tr", roleId: 1, roleName: "Admin" },
+    ...MOCK_USERS
+  ];
+
   const [users, setUsers] = useState(() => {
     const saved = localStorage.getItem("stss_all_users");
-    return saved ? JSON.parse(saved) : [];
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch (e) {
+        console.error("User parse error", e);
+      }
+    }
+    return DEFAULT_USERS;
   });
   const [notifications, setNotifications] = useState(() => {
     const saved = localStorage.getItem("stss_notifications");
@@ -115,27 +129,36 @@ export default function App() {
       MOCK_USERS[idx] = { ...MOCK_USERS[idx], ...updatedUserData };
     }
 
+    setUsers((prevUsers) => {
+      const updatedList = prevUsers.map((u) =>
+        u.userId === updatedUserData.userId ? { ...u, ...updatedUserData } : u
+      );
+      localStorage.setItem("stss_all_users", JSON.stringify(updatedList));
+      return updatedList;
+    });
+
     try {
       await userApi.update(updatedUserData.userId, {
         firstName: updatedUserData.firstName,
         lastName: updatedUserData.lastName,
         email: updatedUserData.email,
-        password: updatedUserData.password,
-        roleId: updatedUserData.roleId,
+        password: updatedUserData.password || "",
+        roleId: updatedUserData.roleId || 2,
       });
     } catch (e) {
-      console.warn("Kullanıcı profil güncelleme DB kaydı atlandı:", e);
+      console.warn("Kullanıcı profil güncelleme DB kaydı hatası:", e);
     }
   };
 
   // Veritabanından verileri çek, backend kapalıysa mock data kullan
   const loadDataFromBackend = useCallback(async () => {
-    const [backendTasks, backendCourses, backendComments, backendAttachments, backendUsers] = await Promise.all([
+    const [backendTasks, backendCourses, backendComments, backendAttachments, backendUsers, backendNotifications] = await Promise.all([
       fetchWithFallback("/tasks", {}, null),
       fetchWithFallback("/courses", {}, null),
       fetchWithFallback("/comments", {}, null),
       fetchWithFallback("/attachments", {}, null),
       fetchWithFallback("/users", {}, null),
+      fetchWithFallback("/notifications", {}, null),
     ]);
 
     if (backendUsers && backendUsers.length > 0) {
@@ -155,10 +178,18 @@ export default function App() {
       setUsers(mergedUsers);
       localStorage.setItem("stss_all_users", JSON.stringify(mergedUsers));
     } else {
-      // Backend kapalı: localStorage'daki son gerçek veriyi kullan
       const savedUsers = localStorage.getItem("stss_all_users");
-      if (savedUsers) setUsers(JSON.parse(savedUsers));
-      // MOCK_USERS kullanılmıyor — sahte veri gösterilmez
+      if (savedUsers) {
+        try {
+          const parsed = JSON.parse(savedUsers);
+          if (Array.isArray(parsed) && parsed.length > 0) setUsers(parsed);
+          else setUsers(DEFAULT_USERS);
+        } catch {
+          setUsers(DEFAULT_USERS);
+        }
+      } else {
+        setUsers(DEFAULT_USERS);
+      }
     }
 
     if (backendTasks && backendTasks.length > 0) {
@@ -222,6 +253,7 @@ export default function App() {
         commentId: c.commentId,
         taskId: c.taskId,
         userId: c.userId,
+        userFullName: c.userFullName,
         commentText: c.commentText,
         createdDate: c.createdDate ? c.createdDate.slice(0, 10) : "",
       }));
@@ -239,30 +271,63 @@ export default function App() {
     }
 
     if (backendAttachments && backendAttachments.length > 0) {
-      const backendLoaded = backendAttachments.map((a) => ({
-        attachmentId: a.attachmentId,
-        taskId: a.taskId,
-        userId: a.userId,
-        fileName: a.fileName,
-        filePath: a.filePath,
-        fileUrl: a.filePath,
-        uploadDate: a.uploadDate ? a.uploadDate.slice(0, 10) : "",
-      }));
-
-      // localStorage'da backend'de olmayan yerel dosyalar varsa (base64 vb.) birleştir
       const savedAttachments = localStorage.getItem("stss_attachments");
       const localAttachments = savedAttachments ? JSON.parse(savedAttachments) : [];
-      const backendIds = new Set(backendLoaded.map((a) => a.attachmentId));
+      
+      const localMap = {};
+      localAttachments.forEach((la) => {
+        const path = la.filePath || la.fileUrl;
+        if (path && path.startsWith("data:")) {
+          const key = `${la.taskId}_${la.userId}_${la.fileName}`;
+          localMap[key] = path;
+          if (la.attachmentId) localMap[la.attachmentId] = path;
+        }
+      });
+
+      const loadedAttachments = backendAttachments.map((a) => {
+        const key = `${a.taskId}_${a.userId}_${a.fileName}`;
+        const localDataUrl = localMap[a.attachmentId] || localMap[key];
+        
+        // KULLANICININ OLUŞTURDUĞU GERÇEK DOSYA VERİSİNİ HER ZAMAN KORU
+        const finalPath = localDataUrl || (a.filePath && a.filePath.startsWith("data:") ? a.filePath : `/uploads/${a.fileName}`);
+
+        return {
+          attachmentId: a.attachmentId,
+          taskId: a.taskId,
+          userId: a.userId,
+          fileName: a.fileName,
+          filePath: finalPath,
+          fileUrl: finalPath,
+          uploadDate: a.uploadDate ? a.uploadDate.slice(0, 10) : "",
+        };
+      });
+
+      const backendIds = new Set(loadedAttachments.map((a) => a.attachmentId));
       const onlyLocal = localAttachments.filter(
         (a) => !backendIds.has(a.attachmentId) && (a.filePath?.startsWith("data:") || a.fileUrl?.startsWith("data:"))
       );
-      const merged = [...backendLoaded, ...onlyLocal];
+      const merged = [...loadedAttachments, ...onlyLocal];
 
       setAttachments(merged);
       localStorage.setItem("stss_attachments", JSON.stringify(merged));
     } else {
       const saved = localStorage.getItem("stss_attachments");
       setAttachments(saved ? JSON.parse(saved) : INIT_ATTACHMENTS);
+    }
+
+    if (backendNotifications && backendNotifications.length > 0) {
+      const loadedNotifications = backendNotifications.map((n) => ({
+        notificationId: n.notificationId,
+        userId: n.userId,
+        message: n.message,
+        isRead: n.read,
+        createdDate: n.createdDate ? n.createdDate.slice(0, 10) : "",
+      }));
+      setNotifications(loadedNotifications);
+      localStorage.setItem("stss_notifications", JSON.stringify(loadedNotifications));
+    } else {
+      const saved = localStorage.getItem("stss_notifications");
+      setNotifications(saved ? JSON.parse(saved) : INIT_NOTIFICATIONS);
     }
 
     setDataLoaded(true);
@@ -299,6 +364,12 @@ export default function App() {
       if (overdueNotifs.length === 0) return prev;
       const updated = [...overdueNotifs, ...prev];
       localStorage.setItem("stss_notifications", JSON.stringify(updated));
+      
+      overdueNotifs.forEach(n => {
+        notificationApi.create({ message: n.message, userId: n.userId })
+          .catch(e => console.warn("Otomatik bildirim DB kaydı hatası:", e));
+      });
+
       return updated;
     });
   }, [dataLoaded, tasks, currentUser]);
@@ -313,7 +384,15 @@ export default function App() {
     setSelectedTaskId(null);
     setShowNewTask(false);
     localStorage.removeItem("stss_page");
+    sessionStorage.removeItem("stss_jwt_token");
+    sessionStorage.removeItem("stss_refresh_token");
   };
+
+  const isResetPasswordRoute = window.location.pathname === "/reset-password";
+
+  if (isResetPasswordRoute) {
+    return <ResetPasswordPage />;
+  }
 
   if (!currentUser) {
     return (
@@ -334,7 +413,12 @@ export default function App() {
 
   const isAdmin = currentUser.roleId === 1;
   const nextId = (arr, key) => (arr.length ? Math.max(...arr.map((x) => x[key])) + 1 : 1);
-  const unread = notifications.filter((n) => !n.isRead).length;
+  
+  const userNotifications = isAdmin 
+    ? notifications 
+    : notifications.filter((n) => n.userId === null || n.userId === currentUser.userId);
+    
+  const unread = userNotifications.filter((n) => !n.isRead && !(isAdmin && n.message.startsWith("📢 DUYURU:"))).length;
   const selectedTask = tasks.find((t) => t.taskId === selectedTaskId);
 
   // --- GÖREV İŞLEMLERİ ---
@@ -366,6 +450,11 @@ export default function App() {
   const handleAddComment = (taskId, text) => {
     if (!text || !text.trim()) return;
     const trimmed = text.trim();
+    const fullName = currentUser
+      ? (currentUser.firstName && currentUser.lastName
+          ? `${currentUser.firstName} ${currentUser.lastName}`
+          : currentUser.firstName || "Kullanıcı")
+      : "Kullanıcı";
 
     setComments((prev) => {
       const maxId = prev.reduce((max, c) => {
@@ -376,6 +465,7 @@ export default function App() {
         commentId: maxId + 1,
         taskId: Number(taskId),
         userId: currentUser.userId,
+        userFullName: fullName,
         commentText: trimmed,
         createdDate: todayPlus(0),
       };
@@ -411,7 +501,29 @@ export default function App() {
       return updated;
     });
 
-    attachmentApi.create({ fileName: fname, filePath, taskId: Number(taskId), userId: currentUser.userId })
+    // Backend API'ye sadece dosya dizini yolunu gönder, gerçek Base64 verisini tarayıcıda tut
+    const backendPath = filePath.startsWith("data:") ? `/uploads/${fname}` : filePath;
+
+    attachmentApi.create({ fileName: fname, filePath: backendPath, taskId: Number(taskId), userId: currentUser.userId })
+      .then((created) => {
+        if (created && created.attachmentId) {
+          setAttachments((prev) => {
+            const updated = prev.map((a) => {
+              if (a.fileName === fname && Number(a.taskId) === Number(taskId) && Number(a.userId) === Number(currentUser.userId)) {
+                return {
+                  ...a,
+                  attachmentId: created.attachmentId,
+                  filePath: a.filePath.startsWith("data:") ? a.filePath : (created.filePath || a.filePath),
+                  fileUrl: a.fileUrl.startsWith("data:") ? a.fileUrl : (created.filePath || a.fileUrl),
+                };
+              }
+              return a;
+            });
+            localStorage.setItem("stss_attachments", JSON.stringify(updated));
+            return updated;
+          });
+        }
+      })
       .catch((e) => console.warn("Dosya DB kaydı atlandı:", e));
 
     const registeredStudents = (users || []).filter((u) => u.roleId === 2);
@@ -495,8 +607,19 @@ export default function App() {
     setShowNewTask(false);
 
     const targetCourse = courses.find((c) => c.courseId === form.courseId);
-    const emailObj = await triggerTaskAssignmentEmail(newTaskObj, targetCourse, currentUser);
-    setEmailToast(emailObj);
+    const studentUsers = (users || []).filter((u) => u.roleId === 2);
+
+    let toastObj = null;
+    if (studentUsers.length > 0) {
+      for (const student of studentUsers) {
+        const resObj = await triggerTaskAssignmentEmail(newTaskObj, targetCourse, student);
+        if (!toastObj) toastObj = resObj;
+      }
+    } else {
+      toastObj = await triggerTaskAssignmentEmail(newTaskObj, targetCourse, currentUser);
+    }
+
+    if (toastObj && !isAdmin) setEmailToast(toastObj);
   };
 
   // --- DERS İŞLEMLERİ ---
@@ -529,6 +652,27 @@ export default function App() {
     }
   };
 
+  const handleEditCourse = async (courseId, newCourseName) => {
+    if (!newCourseName || !newCourseName.trim()) return;
+    const name = newCourseName.trim();
+
+    setCourses((prev) => {
+      const updated = prev.map(c => c.courseId === courseId ? { ...c, courseName: name } : c);
+      localStorage.setItem("stss_courses", JSON.stringify(updated));
+      return updated;
+    });
+
+    try {
+      // Find original course object for body structure
+      const course = courses.find(c => c.courseId === courseId);
+      if (course) {
+        await courseApi.update(courseId, { ...course, courseName: name });
+      }
+    } catch (e) {
+      console.warn("Ders DB güncelleme atlandı:", e);
+    }
+  };
+
   const handleDeleteCourse = async (courseId) => {
     const courseObj = courses.find((c) => c.courseId === courseId);
     const courseName = courseObj ? courseObj.courseName : "dersi";
@@ -556,19 +700,26 @@ export default function App() {
   // --- BİLDİRİM İŞLEMLERİ ---
 
   const handleSendNotification = (message, targetUserId = null) => {
-    const newNotif = {
-      notificationId: Date.now(),
-      userId: targetUserId,
-      message: `📢 DUYURU: ${message}`,
-      isRead: false,
-      createdDate: todayPlus(0),
+    const msgObj = {
+      message: `DUYURU: ${message}`,
+      userId: targetUserId ? Number(targetUserId) : null,
     };
+    
+    notificationApi.create(msgObj).then((res) => {
+      const newNotif = {
+        notificationId: res ? res.notificationId : Date.now(),
+        userId: res ? res.userId : targetUserId,
+        message: res ? res.message : msgObj.message,
+        isRead: false,
+        createdDate: todayPlus(0),
+      };
 
-    setNotifications((ns) => {
-      const updated = [newNotif, ...ns];
-      localStorage.setItem("stss_notifications", JSON.stringify(updated));
-      return updated;
-    });
+      setNotifications((ns) => {
+        const updated = [newNotif, ...ns];
+        localStorage.setItem("stss_notifications", JSON.stringify(updated));
+        return updated;
+      });
+    }).catch(e => console.warn("Bildirim gönderme hatası:", e));
 
     setEmailToast({
       id: Date.now(),
@@ -583,14 +734,21 @@ export default function App() {
       localStorage.setItem("stss_notifications", JSON.stringify(updated));
       return updated;
     });
+    notificationApi.markRead(id).catch(e => console.warn("Bildirim okundu işaretleme hatası", e));
   };
 
   const handleMarkAllRead = () => {
     setNotifications((ns) => {
-      const updated = ns.map((n) => ({ ...n, isRead: true }));
+      const updated = ns.map((n) => {
+        if (n.userId === null || n.userId === currentUser.userId) {
+          return { ...n, isRead: true };
+        }
+        return n;
+      });
       localStorage.setItem("stss_notifications", JSON.stringify(updated));
       return updated;
     });
+    notificationApi.markAllRead(currentUser.userId).catch(e => console.warn("Tüm bildirimleri okundu işaretleme hatası", e));
   };
 
   const pageTitles = {
@@ -639,7 +797,7 @@ export default function App() {
                 onSendNotification={handleSendNotification}
               />
             ) : (
-              <Dashboard currentUser={currentUser} tasks={tasks} courses={courses} setPage={setPage} />
+              <Dashboard currentUser={currentUser} tasks={tasks} courses={courses} attachments={attachments} setPage={setPage} />
             )
           )}
           {page === "gorevler" && (
@@ -668,11 +826,11 @@ export default function App() {
             />
           )}
           {page === "dersler" && (
-            <CoursesPage courses={courses} tasks={tasks} onAdd={handleAddCourse} onDelete={handleDeleteCourse} isAdmin={isAdmin} />
+            <CoursesPage courses={courses} tasks={tasks} onAdd={handleAddCourse} onDelete={handleDeleteCourse} onEdit={handleEditCourse} isAdmin={isAdmin} />
           )}
           {page === "bildirimler" && (
             <NotificationsPage
-              notifications={notifications}
+              notifications={userNotifications}
               onMarkRead={handleMarkRead}
               onMarkAllRead={handleMarkAllRead}
               isAdmin={isAdmin}

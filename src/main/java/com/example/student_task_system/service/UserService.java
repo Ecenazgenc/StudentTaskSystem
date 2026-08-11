@@ -61,6 +61,10 @@ public class UserService {
             throw new BadRequestException("Bu e-posta adresi zaten kullanımda: " + request.email());
         }
 
+        if (request.password() == null || request.password().isBlank()) {
+            throw new BadRequestException("Şifre boş olamaz");
+        }
+
         User user = new User();
         applyRequestToEntity(user, request);
         User saved = userRepository.save(user);
@@ -81,6 +85,16 @@ public class UserService {
             throw new ResourceNotFoundException("Kullanıcı bulunamadı: id=" + id);
         }
         userRepository.deleteById(id);
+    }
+
+    public User getEntityByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Kullanıcı bulunamadı: email=" + email));
+    }
+
+    public void updatePassword(User user, String rawPassword) {
+        user.setPassword(passwordEncoder.encode(rawPassword));
+        userRepository.save(user);
     }
 
     private void applyRequestToEntity(User user, UserDTO.Request request) {

@@ -2,7 +2,7 @@ const API_BASE = '/api';
 
 export async function fetchWithFallback(endpoint, options = {}, fallbackData = null) {
   try {
-    const token = localStorage.getItem('stss_jwt_token');
+    const token = sessionStorage.getItem('stss_jwt_token') || localStorage.getItem('stss_jwt_token');
     const headers = {
       'Content-Type': 'application/json',
       ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
@@ -13,9 +13,19 @@ export async function fetchWithFallback(endpoint, options = {}, fallbackData = n
       ...options,
       headers,
     });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    if (!response.ok) {
+      const errBody = await response.json().catch(() => null);
+      const errMsg = errBody?.message || `HTTP error! status: ${response.status}`;
+      const err = new Error(errMsg);
+      err.status = response.status;
+      err.data = errBody;
+      throw err;
+    }
     return await response.json();
   } catch (err) {
+    if (err.status) {
+      throw err;
+    }
     console.warn(`Backend connection to ${endpoint} failed, using local state:`, err.message);
     return fallbackData;
   }
@@ -24,6 +34,8 @@ export async function fetchWithFallback(endpoint, options = {}, fallbackData = n
 export const authApi = {
   login: (email, password, fallback) => fetchWithFallback('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) }, fallback),
   register: (user, fallback) => fetchWithFallback('/auth/register', { method: 'POST', body: JSON.stringify(user) }, fallback),
+  forgotPassword: (email, fallback) => fetchWithFallback('/auth/forgot-password', { method: 'POST', body: JSON.stringify({ email }) }, fallback),
+  resetPassword: (token, newPassword, fallback) => fetchWithFallback('/auth/reset-password', { method: 'POST', body: JSON.stringify({ token, newPassword }) }, fallback),
 };
 
 export const userApi = {
@@ -43,6 +55,7 @@ export const taskApi = {
 export const courseApi = {
   getAll: (fallback) => fetchWithFallback('/courses', {}, fallback),
   create: (course, fallback) => fetchWithFallback('/courses', { method: 'POST', body: JSON.stringify(course) }, fallback),
+  update: (id, course, fallback) => fetchWithFallback(`/courses/${id}`, { method: 'PUT', body: JSON.stringify(course) }, fallback),
   delete: (id, fallback) => fetchWithFallback(`/courses/${id}`, { method: 'DELETE' }, fallback),
 };
 
@@ -61,5 +74,8 @@ export const attachmentApi = {
 };
 
 export const notificationApi = {
+  getAll: (fallback) => fetchWithFallback('/notifications', {}, fallback),
+  create: (notification, fallback) => fetchWithFallback('/notifications', { method: 'POST', body: JSON.stringify(notification) }, fallback),
   markRead: (id, fallback) => fetchWithFallback(`/notifications/${id}/read`, { method: 'PUT' }, fallback),
+  markAllRead: (userId, fallback) => fetchWithFallback(`/notifications/read-all/${userId}`, { method: 'PUT' }, fallback),
 };
