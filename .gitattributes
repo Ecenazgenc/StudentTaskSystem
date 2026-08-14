@@ -1,12 +1,2 @@
-# ══════════════════════════════════════════════
-#  Ogrenci Gorev Takip Sistemi - .gitattributes
-# ══════════════════════════════════════════════
-
-# ── Line Endings ─────────────────────────────
-# Unix shell scripts → LF
-/backend/mvnw text eol=lf
-*.sh text eol=lf
-
-# Windows batch/cmd → CRLF
+/mvnw text eol=lf
 *.cmd text eol=crlf
-*.bat text eol=crlf
