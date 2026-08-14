@@ -39,3 +39,10 @@ export const INIT_NOTIFICATIONS = [
   { notificationId: 2, userId: 1, message: "\"Kalıtım konulu quiz\" için 2 gün kaldı.", isRead: false, createdDate: todayPlus(0) },
   { notificationId: 3, userId: 1, message: "\"CRUD ekranlarını tamamla\" görevi tamamlandı olarak işaretlendi.", isRead: true, createdDate: todayPlus(-3) },
 ];
+
+export const INIT_NOTES = [
+  { noteId: 1, title: "SQL JOIN türleri", content: "INNER JOIN: İki tabloda eşleşen kayıtlar\nLEFT JOIN: Sol tablodaki tüm kayıtlar\nRIGHT JOIN: Sağ tablodaki tüm kayıtlar\nFULL OUTER JOIN: Her iki tablodaki tüm kayıtlar", tag: "Ders Notu", color: "emerald", isPinned: false, createdDate: todayPlus(0), updatedDate: todayPlus(0), userId: 1, courseId: 1, taskId: null },
+  { noteId: 2, title: "Final sınavı hazırlık planı", content: "[ ] Normalizasyon konusunu tekrarla\n[ ] ER diyagramı çizim pratikleri\n[ ] SQL sorgu örneklerini çöz\n[x] Tablo oluşturma scriptlerini gözden geçir", tag: "Sınav Hazırlığı", color: "rose", isPinned: true, createdDate: todayPlus(-1), updatedDate: todayPlus(0), userId: 1, courseId: 1, taskId: null },
+  { noteId: 3, title: "Spring Boot katmanlı mimari notları", content: "Controller → Service → Repository → Entity\nDTO kullanarak veri transferi yap\nGlobal exception handling ekle", tag: "Ders Notu", color: "indigo", isPinned: false, createdDate: todayPlus(-2), updatedDate: todayPlus(-1), userId: 1, courseId: 3, taskId: null },
+  { noteId: 4, title: "Polimorfizm hatırlatma", content: "Override vs Overload farkı:\n- Override: Üst sınıf metodunu ezme (runtime)\n- Overload: Aynı isimde farklı parametreli metod (compile-time)", tag: "Ödev Notu", color: "amber", isPinned: false, createdDate: todayPlus(-3), updatedDate: todayPlus(-3), userId: 1, courseId: 2, taskId: null },
+];

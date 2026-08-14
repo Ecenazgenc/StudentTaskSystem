@@ -1,5 +1,5 @@
 import React from "react";
-import { Home, ClipboardList, BookOpen, Bell, GraduationCap, LogOut, ShieldCheck, CalendarDays, Sun, Moon } from "lucide-react";
+import { Home, ClipboardList, BookOpen, Bell, GraduationCap, LogOut, ShieldCheck, CalendarDays, Sun, Moon, StickyNote } from "lucide-react";
 
 export default function Sidebar({ currentUser, onLogout, page, setPage, unread, mobileOpen, setMobileOpen, onOpenProfile, isDarkMode, onToggleDarkMode }) {
   const isAdmin = currentUser?.roleId === 1;
@@ -11,6 +11,7 @@ export default function Sidebar({ currentUser, onLogout, page, setPage, unread, 
         { id: "takvim", label: "Takvim", icon: CalendarDays },
         { id: "dersler", label: "Tüm Dersler", icon: BookOpen },
         { id: "bildirimler", label: "Bildirimler", icon: Bell, badge: unread },
+        { id: "notlar", label: "Tüm Notlar", icon: StickyNote },
       ]
     : [
         { id: "panel", label: "Panel", icon: Home },
@@ -18,6 +19,7 @@ export default function Sidebar({ currentUser, onLogout, page, setPage, unread, 
         { id: "takvim", label: "Takvim", icon: CalendarDays },
         { id: "dersler", label: "Derslerim", icon: BookOpen },
         { id: "bildirimler", label: "Bildirimler", icon: Bell, badge: unread },
+        { id: "notlar", label: "Notlarım", icon: StickyNote },
       ];
 
   const firstLetter = currentUser?.firstName ? currentUser.firstName[0] : "U";

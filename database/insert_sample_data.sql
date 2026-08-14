@@ -138,3 +138,17 @@ VALUES
 );
 
 GO
+
+-- Notlar (Notes)
+INSERT INTO Notes (Title, Content, Tag, Color, IsPinned, CreatedDate, UpdatedDate, UserId, CourseId, TaskId)
+VALUES (N'SQL JOIN türleri', N'INNER JOIN: Ýki tabloda eþleþen kayýtlar\nLEFT JOIN: Sol tablodaki tüm kayýtlar\nRIGHT JOIN: Sað tablodaki tüm kayýtlar\nFULL OUTER JOIN: Her iki tablodaki tüm kayýtlar', N'Ders Notu', 'emerald', 0, GETDATE(), GETDATE(), 1, 1, NULL);
+
+INSERT INTO Notes (Title, Content, Tag, Color, IsPinned, CreatedDate, UpdatedDate, UserId, CourseId, TaskId)
+VALUES (N'Final sýnavý hazýrlýk planý', N'[ ] Normalizasyon konusunu tekrarla\n[ ] ER diyagramý çizim pratikleri\n[ ] SQL sorgu örneklerini çöz\n[x] Tablo oluþturma scriptlerini gözden geçir', N'Sýnav Hazýrlýðý', 'rose', 1, GETDATE(), GETDATE(), 1, 1, NULL);
+
+INSERT INTO Notes (Title, Content, Tag, Color, IsPinned, CreatedDate, UpdatedDate, UserId, CourseId, TaskId)
+VALUES (N'Spring Boot katmanlý mimari notlarý', N'Controller › Service › Repository › Entity\nDTO kullanarak veri transferi yap\nGlobal exception handling ekle', N'Ders Notu', 'indigo', 0, GETDATE(), GETDATE(), 1, 3, NULL);
+
+INSERT INTO Notes (Title, Content, Tag, Color, IsPinned, CreatedDate, UpdatedDate, UserId, CourseId, TaskId)
+VALUES (N'Polimorfizm hatýrlatma', N'Override vs Overload farký:\n- Override: Üst sýnýf metodunu ezme (runtime)\n- Overload: Ayný isimde farklý parametreli metod (compile-time)', N'Ödev Notu', 'amber', 0, GETDATE(), GETDATE(), 1, 2, NULL);
+GO

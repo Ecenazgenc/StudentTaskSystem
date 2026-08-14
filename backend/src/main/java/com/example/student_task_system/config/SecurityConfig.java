@@ -50,7 +50,7 @@ public class SecurityConfig {
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/**", "/users/**", "/tasks/**", "/courses/**", "/categories/**", "/comments/**", "/attachments/**", "/notifications/**", "/email/**", "/auth/**", "/h2-console/**").permitAll()
+                .requestMatchers("/api/**", "/users/**", "/tasks/**", "/courses/**", "/categories/**", "/comments/**", "/attachments/**", "/notifications/**", "/notes/**", "/email/**", "/auth/**", "/h2-console/**").permitAll()
                 .anyRequest().permitAll()
             )
             .addFilterBefore(rateLimitingFilter, UsernamePasswordAuthenticationFilter.class)

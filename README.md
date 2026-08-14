@@ -135,6 +135,16 @@ StudentTaskSystem/
 
 ---
 
+### ⚡ Tek Komutla Çalıştırma (Tavsiye Edilen)
+Artık backend ve frontend'i 2 ayrı terminal açmadan projenin kök dizininden tek bir komutla eşzamanlı olarak çalıştırabilirsiniz:
+
+```bash
+npm run dev
+```
+*(veya Windows'ta projedeki `dev.bat` dosyasına tıklayabilirsiniz).*
+
+---
+
 ### 2. Backend Çalıştırma
 1. Terminalde `backend` dizinine geçin:
    ```bash

@@ -54,6 +54,10 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
     private List<Notification> notifications;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
+    private List<Note> notes;
+
     public User(){}
     
 
@@ -84,4 +88,7 @@ public class User {
 
     public List<Notification> getNotifications() {return notifications;}
     public void setNotifications(List<Notification> notifications) {this.notifications = notifications;}
+
+    public List<Note> getNotes() {return notes;}
+    public void setNotes(List<Note> notes) {this.notes = notes;}
 }

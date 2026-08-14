@@ -129,3 +129,31 @@ CREATE TABLE Notifications (
     FOREIGN KEY (UserId)
     REFERENCES Users(UserId)
 );
+
+-- Notlar Tablosu
+CREATE TABLE Notes (
+    NoteId INT IDENTITY(1,1) PRIMARY KEY,
+    Title NVARCHAR(150) NOT NULL,
+    Content NVARCHAR(MAX),
+    Tag NVARCHAR(50),
+    Color VARCHAR(20) DEFAULT 'amber',
+    IsPinned BIT DEFAULT 0,
+    CreatedDate DATETIME DEFAULT GETDATE(),
+    UpdatedDate DATETIME DEFAULT GETDATE(),
+
+    UserId INT NOT NULL,
+    CourseId INT NULL,
+    TaskId INT NULL,
+
+    CONSTRAINT FK_Notes_Users
+    FOREIGN KEY (UserId)
+    REFERENCES Users(UserId),
+
+    CONSTRAINT FK_Notes_Courses
+    FOREIGN KEY (CourseId)
+    REFERENCES Courses(CourseId),
+
+    CONSTRAINT FK_Notes_Tasks
+    FOREIGN KEY (TaskId)
+    REFERENCES Tasks(TaskId)
+);

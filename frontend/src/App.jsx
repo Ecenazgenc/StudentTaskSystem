@@ -13,6 +13,7 @@ import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import CoursesPage from "./pages/CoursesPage";
 import NotificationsPage from "./pages/NotificationsPage";
+import NotesPage from "./pages/NotesPage";
 
 import ProfileModal from "./components/ProfileModal";
 import CalendarPage from "./pages/CalendarPage";
@@ -21,14 +22,15 @@ import { MOCK_USERS } from "./pages/LoginPage";
 import { todayPlus } from "./constants/theme";
 import { isOverdue } from "./constants/theme";
 import { triggerTaskAssignmentEmail } from "./services/emailService";
-import { authApi, userApi, taskApi, courseApi, commentApi, attachmentApi, notificationApi, fetchWithFallback } from "./services/api";
+import { authApi, userApi, taskApi, courseApi, commentApi, attachmentApi, notificationApi, noteApi, fetchWithFallback } from "./services/api";
 import {
   INIT_COURSES,
   CATEGORIES,
   INIT_TASKS,
   INIT_COMMENTS,
   INIT_ATTACHMENTS,
-  INIT_NOTIFICATIONS
+  INIT_NOTIFICATIONS,
+  INIT_NOTES
 } from "./data/initialData";
 
 export default function App() {
@@ -93,6 +95,10 @@ export default function App() {
   const [tasks, setTasks] = useState([]);
   const [comments, setComments] = useState([]);
   const [attachments, setAttachments] = useState([]);
+  const [notes, setNotes] = useState(() => {
+    const saved = localStorage.getItem("stss_notes");
+    return saved ? JSON.parse(saved) : INIT_NOTES;
+  });
   const DEFAULT_USERS = [
     { userId: 99, firstName: "Sistem", lastName: "Yöneticisi", email: "admin@ogr.edu.tr", roleId: 1, roleName: "Admin" },
     ...MOCK_USERS
@@ -114,6 +120,7 @@ export default function App() {
     const saved = localStorage.getItem("stss_notifications");
     return saved ? JSON.parse(saved) : INIT_NOTIFICATIONS;
   });
+
 
   const [selectedTaskId, setSelectedTaskId] = useState(null);
   const [showNewTask, setShowNewTask] = useState(false);
@@ -150,15 +157,15 @@ export default function App() {
     }
   };
 
-  // Veritabanından verileri çek, backend kapalıysa mock data kullan
   const loadDataFromBackend = useCallback(async () => {
-    const [backendTasks, backendCourses, backendComments, backendAttachments, backendUsers, backendNotifications] = await Promise.all([
+    const [backendTasks, backendCourses, backendComments, backendAttachments, backendUsers, backendNotifications, backendNotes] = await Promise.all([
       fetchWithFallback("/tasks", {}, null),
       fetchWithFallback("/courses", {}, null),
       fetchWithFallback("/comments", {}, null),
       fetchWithFallback("/attachments", {}, null),
       fetchWithFallback("/users", {}, null),
       fetchWithFallback("/notifications", {}, null),
+      fetchWithFallback("/notes", {}, null),
     ]);
 
     if (backendUsers && backendUsers.length > 0) {
@@ -170,7 +177,6 @@ export default function App() {
         roleName: u.roleName || (u.roleId === 1 ? "Admin" : "Öğrenci"),
       }));
 
-      // localStorage'da olup backend'de olmayan kullanıcıları birleştir (yeni kayıt olanlar)
       const backendUserIds = new Set(normalizedUsers.map((u) => u.userId));
       const onlyLocalUsers = localUsers.filter((u) => !backendUserIds.has(u.userId));
       const mergedUsers = [...normalizedUsers, ...onlyLocalUsers];
@@ -193,7 +199,6 @@ export default function App() {
     }
 
     if (backendTasks && backendTasks.length > 0) {
-      // localStorage'daki güncel statusları al (backend güncelleme başarısız olmuş olabilir)
       const savedTasks = localStorage.getItem("stss_tasks");
       const localTasks = savedTasks ? JSON.parse(savedTasks) : [];
       const localStatusMap = {};
@@ -204,14 +209,12 @@ export default function App() {
         title: t.title,
         description: t.description,
         dueDate: t.dueDate ? t.dueDate.slice(0, 10) : "",
-        // Eğer localStorage'da daha güncel bir status varsa onu kullan
         status: localStatusMap[t.taskId] || t.status,
         priority: t.priority,
         courseId: t.courseId,
         categoryId: t.categoryId,
       }));
 
-      // localStorage'da olup backend'de olmayan görevleri de ekle (yeni eklenenler backend'e kaydedilememiş olabilir)
       const backendIds = new Set(loadedTasks.map((t) => t.taskId));
       const onlyLocal = localTasks.filter((t) => !backendIds.has(t.taskId));
       const merged = [...loadedTasks, ...onlyLocal];
@@ -233,7 +236,6 @@ export default function App() {
         userId: c.userId,
       }));
 
-      // localStorage'da olup backend'de olmayan dersleri birleştir
       const backendCourseIds = new Set(loadedCourses.map((c) => c.courseId));
       const onlyLocalCourses = localCourses.filter((c) => !backendCourseIds.has(c.courseId));
       const mergedCourses = [...loadedCourses, ...onlyLocalCourses];
@@ -258,7 +260,6 @@ export default function App() {
         createdDate: c.createdDate ? c.createdDate.slice(0, 10) : "",
       }));
 
-      // localStorage'da olup backend'de olmayan yorumları birleştir
       const backendCommentIds = new Set(loadedComments.map((c) => c.commentId));
       const onlyLocalComments = localComments.filter((c) => !backendCommentIds.has(c.commentId));
       const mergedComments = [...loadedComments, ...onlyLocalComments];
@@ -288,7 +289,6 @@ export default function App() {
         const key = `${a.taskId}_${a.userId}_${a.fileName}`;
         const localDataUrl = localMap[a.attachmentId] || localMap[key];
         
-        // KULLANICININ OLUŞTURDUĞU GERÇEK DOSYA VERİSİNİ HER ZAMAN KORU
         const finalPath = localDataUrl || (a.filePath && a.filePath.startsWith("data:") ? a.filePath : `/uploads/${a.fileName}`);
 
         return {
@@ -330,6 +330,18 @@ export default function App() {
       setNotifications(saved ? JSON.parse(saved) : INIT_NOTIFICATIONS);
     }
 
+    if (backendNotes && backendNotes.length > 0) {
+      const loadedNotes = backendNotes.map(n => ({
+        ...n,
+        createdDate: n.createdDate ? n.createdDate.slice(0, 10) : "",
+      }));
+      setNotes(loadedNotes);
+      localStorage.setItem("stss_notes", JSON.stringify(loadedNotes));
+    } else {
+      const saved = localStorage.getItem("stss_notes");
+      setNotes(saved ? JSON.parse(saved) : INIT_NOTES);
+    }
+
     setDataLoaded(true);
   }, []);
 
@@ -343,7 +355,6 @@ export default function App() {
     }
   }, [currentUser, loadDataFromBackend]);
 
-  // Veri yüklendikten sonra gecikmiş görevler için bildirim üret
   useEffect(() => {
     if (!dataLoaded || !currentUser || currentUser.roleId === 1) return;
     setNotifications((prev) => {
@@ -420,8 +431,6 @@ export default function App() {
     
   const unread = userNotifications.filter((n) => !n.isRead && !(isAdmin && n.message.startsWith("📢 DUYURU:"))).length;
   const selectedTask = tasks.find((t) => t.taskId === selectedTaskId);
-
-  // --- GÖREV İŞLEMLERİ ---
 
   const handleStatusChange = async (taskId, status) => {
     setTasks((ts) => {
@@ -501,7 +510,6 @@ export default function App() {
       return updated;
     });
 
-    // Backend API'ye sadece dosya dizini yolunu gönder, gerçek Base64 verisini tarayıcıda tut
     const backendPath = filePath.startsWith("data:") ? `/uploads/${fname}` : filePath;
 
     attachmentApi.create({ fileName: fname, filePath: backendPath, taskId: Number(taskId), userId: currentUser.userId })
@@ -622,8 +630,6 @@ export default function App() {
     if (toastObj && !isAdmin) setEmailToast(toastObj);
   };
 
-  // --- DERS İŞLEMLERİ ---
-
   const handleAddCourse = async (courseName) => {
     if (!courseName || !courseName.trim()) return;
     const name = courseName.trim();
@@ -663,7 +669,6 @@ export default function App() {
     });
 
     try {
-      // Find original course object for body structure
       const course = courses.find(c => c.courseId === courseId);
       if (course) {
         await courseApi.update(courseId, { ...course, courseName: name });
@@ -696,8 +701,6 @@ export default function App() {
       console.warn("Ders DB silme hatası:", e);
     }
   };
-
-  // --- BİLDİRİM İŞLEMLERİ ---
 
   const handleSendNotification = (message, targetUserId = null) => {
     const msgObj = {
@@ -751,12 +754,84 @@ export default function App() {
     notificationApi.markAllRead(currentUser.userId).catch(e => console.warn("Tüm bildirimleri okundu işaretleme hatası", e));
   };
 
+  const handleAddNote = async (noteData) => {
+    const tempId = Date.now();
+    const newNote = {
+      noteId: tempId,
+      ...noteData,
+      createdDate: todayPlus(0),
+    };
+    setNotes(prev => {
+      const updated = [newNote, ...prev];
+      localStorage.setItem("stss_notes", JSON.stringify(updated));
+      return updated;
+    });
+
+    try {
+      const created = await noteApi.create(noteData);
+      if (created && created.noteId) {
+        setNotes(prev => {
+          const updated = prev.map(n => n.noteId === tempId ? { ...n, noteId: created.noteId } : n);
+          localStorage.setItem("stss_notes", JSON.stringify(updated));
+          return updated;
+        });
+      }
+    } catch (e) {
+      console.warn("Not ekleme hatası", e);
+    }
+  };
+
+  const handleUpdateNote = async (id, noteData) => {
+    setNotes(prev => {
+      const updated = prev.map(n => n.noteId === id ? { ...n, ...noteData } : n);
+      localStorage.setItem("stss_notes", JSON.stringify(updated));
+      return updated;
+    });
+    try {
+      await noteApi.update(id, noteData);
+    } catch (e) {
+      console.warn("Not güncelleme hatası", e);
+    }
+  };
+
+  const handleDeleteNote = async (id) => {
+    setNotes(prev => {
+      const updated = prev.filter(n => n.noteId !== id);
+      localStorage.setItem("stss_notes", JSON.stringify(updated));
+      return updated;
+    });
+    try {
+      await noteApi.delete(id);
+    } catch (e) {
+      console.warn("Not silme hatası", e);
+    }
+  };
+
+  const handleTogglePin = async (id) => {
+    setNotes(prev => {
+      const updated = prev.map(n => {
+        if (n.noteId === id) {
+          return { ...n, isPinned: !n.isPinned };
+        }
+        return n;
+      });
+      localStorage.setItem("stss_notes", JSON.stringify(updated));
+      return updated;
+    });
+    try {
+      await noteApi.togglePin(id);
+    } catch (e) {
+      console.warn("Not pinleme hatası", e);
+    }
+  };
+
   const pageTitles = {
     panel: isAdmin ? "Yönetim Paneli" : "Panel",
     gorevler: isAdmin ? "Tüm Görevler" : "Görevler",
     takvim: "Takvim",
     dersler: isAdmin ? "Tüm Dersler" : "Derslerim",
-    bildirimler: "Bildirimler"
+    bildirimler: "Bildirimler",
+    notlar: isAdmin ? "Tüm Notlar" : "Notlarım"
   };
 
   return (
@@ -836,6 +911,19 @@ export default function App() {
               isAdmin={isAdmin}
               users={users}
               onSendNotification={handleSendNotification}
+            />
+          )}
+          {page === "notlar" && (
+            <NotesPage
+              notes={isAdmin ? notes : notes.filter((n) => n.userId === currentUser?.userId)}
+              courses={courses}
+              tasks={tasks}
+              currentUser={currentUser}
+              isAdmin={isAdmin}
+              onAddNote={handleAddNote}
+              onUpdateNote={handleUpdateNote}
+              onDeleteNote={handleDeleteNote}
+              onTogglePin={handleTogglePin}
             />
           )}
         </div>

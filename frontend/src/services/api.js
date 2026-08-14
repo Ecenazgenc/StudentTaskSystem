@@ -79,3 +79,12 @@ export const notificationApi = {
   markRead: (id, fallback) => fetchWithFallback(`/notifications/${id}/read`, { method: 'PUT' }, fallback),
   markAllRead: (userId, fallback) => fetchWithFallback(`/notifications/read-all/${userId}`, { method: 'PUT' }, fallback),
 };
+
+export const noteApi = {
+  getAll: (fallback) => fetchWithFallback('/notes', {}, fallback),
+  getByUser: (userId, fallback) => fetchWithFallback(`/notes/user/${userId}`, {}, fallback),
+  create: (note, fallback) => fetchWithFallback('/notes', { method: 'POST', body: JSON.stringify(note) }, fallback),
+  update: (id, note, fallback) => fetchWithFallback(`/notes/${id}`, { method: 'PUT', body: JSON.stringify(note) }, fallback),
+  delete: (id, fallback) => fetchWithFallback(`/notes/${id}`, { method: 'DELETE' }, fallback),
+  togglePin: (id, fallback) => fetchWithFallback(`/notes/${id}/pin`, { method: 'PATCH' }, fallback),
+};

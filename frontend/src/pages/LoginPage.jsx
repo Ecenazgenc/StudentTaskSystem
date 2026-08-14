@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { GraduationCap, Lock, Mail, ShieldCheck, UserCheck, ArrowRight, Eye, EyeOff, Sparkles, UserPlus, User } from "lucide-react";
 import { triggerWelcomeEmail } from "../services/emailService";
-import { userApi } from "../services/api";
+import { userApi, authApi } from "../services/api";
 
 export const MOCK_USERS = [
   {
@@ -43,13 +43,46 @@ export default function LoginPage({ onLogin, onEmailSent }) {
     confirmPassword: "",
   });
 
-  const handleLoginSubmit = (e) => {
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSuccessMsg("");
 
     const inputEmail = email.trim().toLowerCase();
 
+    try {
+      // Try backend API first (real database)
+      const result = await authApi.login(inputEmail, password, null);
+
+      if (result && result.success && result.user) {
+        // Store JWT token
+        if (result.token) {
+          sessionStorage.setItem('stss_jwt_token', result.token);
+        }
+        if (result.refreshToken) {
+          sessionStorage.setItem('stss_refresh_token', result.refreshToken);
+        }
+        onLogin({
+          userId: result.user.userId,
+          firstName: result.user.firstName,
+          lastName: result.user.lastName,
+          email: result.user.email,
+          roleId: result.user.roleId,
+          roleName: result.user.roleName,
+        });
+        return;
+      }
+    } catch (err) {
+      // If backend returned an error (e.g. wrong password, user not found), show it
+      if (err.status) {
+        setError(err.message || "Giriş başarısız. Lütfen bilgilerinizi kontrol ediniz.");
+        return;
+      }
+      // If backend is unreachable, fall through to MOCK_USERS fallback
+      console.warn("Backend unreachable, falling back to local mock users:", err.message);
+    }
+
+    // Fallback: MOCK_USERS (offline / backend not running)
     // Admin hesabı kontrolü
     if (inputEmail === "admin@ogr.edu.tr") {
       if (password !== "admin") {
