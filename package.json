@@ -1,9 +1,14 @@
 {
-  "name": "student-task-system-root",
+  "name": "student-task-system",
   "version": "1.0.0",
-  "description": "Öğrenci Görev Takip Sistemi - Single Command Runner",
+  "description": "Öğrenci Görev Takip Sistemi - Backend (Spring Boot) & Frontend (React + Vite)",
   "scripts": {
     "dev": "concurrently -n \"BACKEND,FRONTEND\" -c \"cyan,magenta\" \"cd backend && mvnw.cmd spring-boot:run\" \"cd frontend && npm run dev\"",
+    "dev:backend": "cd backend && mvnw.cmd spring-boot:run",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "lint": "cd frontend && npm run lint",
+    "install:frontend": "cd frontend && npm install",
     "start": "npm run dev"
   },
   "devDependencies": {

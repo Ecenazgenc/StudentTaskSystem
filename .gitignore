@@ -1,10 +1,13 @@
+# ══════════════════════════════════════════════
+#  Ogrenci Gorev Takip Sistemi - .gitignore
+# ══════════════════════════════════════════════
+
+# ── Java / Spring Boot (Backend) ─────────────
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-
-### STS ###
 .apt_generated
 .classpath
 .factorypath
@@ -13,13 +16,34 @@ target/
 .springBeans
 .sts4-cache
 
-### IntelliJ IDEA ###
-.idea
+# ── Node / React / Vite (Frontend) ───────────
+node_modules/
+dist/
+dist-ssr/
+*.local
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+package-lock.json
+
+# ── IDE & Editor ─────────────────────────────
+.vscode/
+.idea/
 *.iws
 *.iml
 *.ipr
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
 
-### NetBeans ###
+# ── Build (NetBeans / Gradle) ────────────────
 /nbproject/private/
 /nbbuild/
 /dist/
@@ -28,9 +52,3 @@ target/
 build/
 !**/src/main/**/build/
 !**/src/test/**/build/
-
-### VS Code ###
-.vscode/
-
-### Node ###
-node_modules/
