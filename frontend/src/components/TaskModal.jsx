@@ -257,7 +257,7 @@ startxref
               <Calendar size={13} /> {fmtDate(task.dueDate)}
             </span>
             <span>·</span>
-            <span className="stss-mono text-[10px] px-2 py-0.5 rounded font-bold" style={{ color: (PRIORITY_STYLE[task.priority] || PRIORITY_STYLE.Orta).color, background: "#24262B0F" }}>
+            <span className="stss-mono text-[10px] px-2 py-0.5 rounded font-bold bg-[#24262B]/[0.06] dark:bg-white/10" style={{ color: (PRIORITY_STYLE[task.priority] || PRIORITY_STYLE.Orta).color }}>
               {task.priority} Öncelik
             </span>
             <span>·</span>
@@ -460,7 +460,17 @@ startxref
 
           {/* ÖDEVİ GÖNDER VE TESLİM ET TUŞU (Sadece Öğrenci ve Teslim Edilmemişse) */}
           {!isAdmin && (
-            !isSubmitted ? (
+            isSubmitted ? (
+              <div className="w-full mt-2 py-2.5 rounded-lg bg-[#E6F1EE] dark:bg-[#3E8E7E]/20 text-[#3E8E7E] dark:text-[#52B4A0] font-semibold text-xs flex items-center justify-center gap-1.5 border border-[#3E8E7E]/30">
+                <CheckCircle2 size={16} />
+                <span>Ödev Teslim Edildi</span>
+              </div>
+            ) : isExpired ? (
+              <div className="w-full mt-2 py-2.5 rounded-lg bg-[#FBEAE5] dark:bg-[#B8402C]/20 text-[#B8402C] dark:text-[#F8A092] font-semibold text-xs flex items-center justify-center gap-1.5 border border-[#B8402C]/30">
+                <Clock size={16} />
+                <span>Ödevin süresi dolmuştur, teslim edilemez</span>
+              </div>
+            ) : (
               <button
                 onClick={() => onStatusChange(task.taskId, "Tamamlandı")}
                 className="w-full mt-2 py-3 rounded-lg bg-[#3E8E7E] text-white font-semibold text-sm hover:bg-[#327366] transition-colors flex items-center justify-center gap-2 shadow-sm cursor-pointer"
@@ -468,11 +478,6 @@ startxref
                 <Check size={17} />
                 <span>Ödevi Gönder ve Teslim Et</span>
               </button>
-            ) : (
-              <div className="w-full mt-2 py-2.5 rounded-lg bg-[#E6F1EE] dark:bg-[#3E8E7E]/20 text-[#3E8E7E] dark:text-[#52B4A0] font-semibold text-xs flex items-center justify-center gap-1.5 border border-[#3E8E7E]/30">
-                <CheckCircle2 size={16} />
-                <span>Ödev Teslim Edildi</span>
-              </div>
             )
           )}
 

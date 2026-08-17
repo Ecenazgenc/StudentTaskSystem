@@ -135,7 +135,7 @@ export default function CalendarPage({ tasks, courses, onOpenTask, isAdmin, curr
                     {dayNum}
                   </span>
                   {dayTasks.length > 0 && (
-                    <span className="stss-mono text-[10px] font-bold text-[#3E8E7E] dark:text-[#52B4A0] bg-[#3E8E7E]/15 px-1.5 py-0.5 rounded">
+                    <span className="stss-mono text-[10px] font-bold text-[#3E8E7E] dark:text-[#52B4A0] bg-[#3E8E7E]/15 dark:bg-[#3E8E7E]/25 px-1.5 py-0.5 rounded">
                       {dayTasks.length} Görev
                     </span>
                   )}

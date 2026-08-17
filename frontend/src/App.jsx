@@ -417,7 +417,7 @@ export default function App() {
   if (!dataLoaded) {
     return (
       <div className="stss-root min-h-screen flex items-center justify-center">
-        <p className="stss-mono text-sm text-[#24262B]/50">Veriler yükleniyor...</p>
+        <p className="stss-mono text-sm text-[#24262B]/50 dark:text-white/50">Veriler yükleniyor...</p>
       </div>
     );
   }
@@ -852,7 +852,7 @@ export default function App() {
       />
 
       <main className="flex-1 min-w-0">
-        <div className="md:hidden flex items-center gap-3 px-4 py-3 border-b border-[#24262B]/10 bg-[#F5F0E4] dark:bg-[#181920] sticky top-0 z-20">
+        <div className="md:hidden flex items-center gap-3 px-4 py-3 border-b border-[#24262B]/10 dark:border-white/10 bg-[#F5F0E4] dark:bg-[#181920] sticky top-0 z-20">
           <button onClick={() => setMobileOpen(true)} className="p-1.5 rounded hover:bg-[#24262B]/8 dark:hover:bg-white/10">
             <MoreVertical size={18} />
           </button>

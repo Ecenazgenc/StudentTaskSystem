@@ -255,7 +255,7 @@ export default function AdminDashboard({ tasks, courses, users, setUsers, attach
                       <button
                         onClick={() => handleDeleteUser(u.userId)}
                         title="Kullanıcıyı Sil"
-                        className="p-1.5 text-[#B8402C] dark:text-red-400 hover:bg-[#B8402C]/10 rounded-lg transition-colors cursor-pointer"
+                        className="p-1.5 text-[#B8402C] dark:text-red-400 hover:bg-[#B8402C]/10 dark:hover:bg-red-400/10 rounded-lg transition-colors cursor-pointer"
                       >
                         <Trash2 size={15} />
                       </button>

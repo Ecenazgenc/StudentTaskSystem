@@ -62,7 +62,7 @@ export default function CoursesPage({ courses = [], tasks = [], onAdd, onDelete,
                     <button
                       type="button"
                       onClick={() => onDelete(c.courseId)}
-                      className="p-1.5 rounded hover:bg-[#24262B]/8 dark:hover:bg-white/10 shrink-0 text-[#B8402C] hover:text-red-500 transition-colors cursor-pointer"
+                      className="p-1.5 rounded hover:bg-[#24262B]/8 dark:hover:bg-white/10 shrink-0 text-[#B8402C] dark:text-red-400 hover:text-red-500 dark:hover:text-red-300 transition-colors cursor-pointer"
                       title="Dersi Sil"
                     >
                       <Trash2 size={14} />

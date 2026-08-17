@@ -1,4 +1,4 @@
-import { Circle, Clock, CheckCircle2, AlertTriangle } from "lucide-react";
+import { Circle, Clock, CheckCircle2, AlertTriangle, Lock } from "lucide-react";
 
 export const TAPE = [
   { bg: "#E2725B", tint: "#FBEAE5" }, // kiremit
@@ -14,12 +14,14 @@ export const PRIORITY_STYLE = {
   Düşük: { color: "#3E6B5C", label: "Düşük", dot: "#3E8E7E" },
 };
 
-export const STATUSES = ["Bekliyor", "Tamamlandı", "Gecikmiş"];
+export const STATUSES = ["Bekliyor", "Tamamlandı", "Gecikmiş", "Süresi Doldu", "Kapatıldı"];
 
 export const STATUS_ICON = {
   Bekliyor: Circle,
   Tamamlandı: CheckCircle2,
   Gecikmiş: AlertTriangle,
+  "Süresi Doldu": AlertTriangle,
+  "Kapatıldı": Lock,
 };
 
 // Teslim edilmemiş ve tarihi geçmiş mi?

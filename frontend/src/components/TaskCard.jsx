@@ -19,7 +19,7 @@ export default function TaskCard({ task, course, category, onOpen }) {
         <p className="stss-display font-semibold text-[15px] leading-snug pr-2">{task.title}</p>
         {urgent && <Pin size={14} color="#B8402C" className="mt-0.5 shrink-0" />}
       </div>
-      <p className="text-[12.5px] text-[#24262B]/65 leading-snug line-clamp-2 mb-3">{task.description}</p>
+      <p className="text-[12.5px] text-[#24262B]/65 dark:text-white/65 leading-snug line-clamp-2 mb-3">{task.description}</p>
       <div className="flex items-center flex-wrap gap-1.5 mb-3">
         <span
           className="stss-mono text-[10px] px-1.5 py-0.5 rounded"
@@ -27,7 +27,7 @@ export default function TaskCard({ task, course, category, onOpen }) {
         >
           {course?.courseName || "Ders"}
         </span>
-        <span className="stss-mono text-[10px] px-1.5 py-0.5 rounded bg-[#24262B]/6 text-[#24262B]/60">
+        <span className="stss-mono text-[10px] px-1.5 py-0.5 rounded bg-[#24262B]/6 dark:bg-white/10 text-[#24262B]/60 dark:text-white/60">
           {category?.categoryName || "Kategori"}
         </span>
       </div>
@@ -36,7 +36,7 @@ export default function TaskCard({ task, course, category, onOpen }) {
           <span className="w-1.5 h-1.5 rounded-full" style={{ background: pr.dot }} />
           {pr.label}
         </span>
-        <span className={`stss-mono text-[11px] ${urgent ? "text-[#B8402C] font-semibold" : "text-[#24262B]/55"}`}>
+        <span className={`stss-mono text-[11px] ${urgent ? "text-[#B8402C] dark:text-[#F8A092] font-semibold" : "text-[#24262B]/55 dark:text-white/55"}`}>
           <Calendar size={11} className="inline -mt-0.5 mr-1" />
           {fmtDate(task.dueDate)}
         </span>

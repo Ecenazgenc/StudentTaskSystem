@@ -29,7 +29,7 @@ export default function EmailToast({ email, onClose }) {
 
   return (
     <div className="fixed top-5 right-5 z-50 max-w-xs w-full">
-      <div className="stss-card rounded-xl p-4 bg-[#FFFDF8] border border-[#3E8E7E]/30 shadow-xl relative overflow-hidden">
+      <div className="stss-card rounded-xl p-4 bg-[#FFFDF8] dark:bg-[#1C1D24] border border-[#3E8E7E]/30 dark:border-[#3E8E7E]/40 shadow-xl relative overflow-hidden">
         <div className="h-1 bg-[#3E8E7E] absolute top-0 left-0 right-0" />
         <div className="flex items-center justify-between gap-3 pt-1">
           <div className="flex items-center gap-2.5">
@@ -37,17 +37,17 @@ export default function EmailToast({ email, onClose }) {
               {getIcon()}
             </div>
             <div>
-              <p className="text-sm font-semibold text-[#24262B]">
+              <p className="text-sm font-semibold text-[#24262B] dark:text-white">
                 {getTitle()}
               </p>
               {email.subject && (
-                <p className="text-xs text-[#24262B]/60 mt-0.5 truncate max-w-[180px]">{email.subject}</p>
+                <p className="text-xs text-[#24262B]/60 dark:text-white/60 mt-0.5 truncate max-w-[180px]">{email.subject}</p>
               )}
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded text-[#24262B]/40 hover:text-[#24262B] hover:bg-[#24262B]/5 shrink-0"
+            className="p-1 rounded text-[#24262B]/40 dark:text-white/40 hover:text-[#24262B] dark:hover:text-white hover:bg-[#24262B]/5 dark:hover:bg-white/10 shrink-0"
           >
             <X size={15} />
           </button>

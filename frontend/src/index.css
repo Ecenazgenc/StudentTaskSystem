@@ -126,3 +126,40 @@ body {
 .dark .stss-scroll::-webkit-scrollbar-thumb {
   background: rgba(255,255,255,0.2);
 }
+
+/* Dark mode: global scrollbar (page-level, not just .stss-scroll) */
+.dark ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #121316;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.15);
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.25);
+}
+
+/* Dark mode: html element */
+html.dark {
+  background-color: #121316;
+  color-scheme: dark;
+}
+
+/* Dark mode: text selection */
+.dark ::selection {
+  background: rgba(99, 102, 241, 0.4);
+  color: #E2E4E9;
+}
+
+/* Dark mode: placeholder text */
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: rgba(226, 228, 233, 0.4) !important;
+}

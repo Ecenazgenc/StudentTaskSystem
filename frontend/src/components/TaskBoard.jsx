@@ -85,7 +85,7 @@ export default function TaskBoard({ tasks, courses, categories, attachments, onO
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="stss-display text-[24px] font-semibold">{isAdmin ? "Tüm Görevler" : "Görevlerim"}</h1>
-          <p className="text-xs text-[#24262B]/55 mt-0.5">
+          <p className="text-xs text-[#24262B]/55 dark:text-white/55 mt-0.5">
             {isAdmin ? "Sistemdeki tüm ödev ve görevleri takip edin" : "Tarafınıza atanan tüm görevler ve son teslim tarihleri"}
           </p>
         </div>
@@ -99,7 +99,7 @@ export default function TaskBoard({ tasks, courses, categories, attachments, onO
           {isAdmin && (
             <button
               onClick={onNew}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md bg-[#24262B] text-[#F5F0E4] text-[13px] font-medium hover:bg-[#3a3d45] shadow-sm cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md bg-[#24262B] dark:bg-white text-[#F5F0E4] dark:text-[#121316] text-[13px] font-medium hover:bg-[#3a3d45] dark:hover:bg-gray-200 shadow-sm cursor-pointer"
             >
               <Plus size={15} /> Yeni Görev
             </button>
@@ -179,7 +179,8 @@ export default function TaskBoard({ tasks, courses, categories, attachments, onO
                     : isDoneGlobally || (currentUser && submittedStudentIds.has(currentUser.userId));
 
                   const overdue = !isDoneForUser && isOverdue(t);
-                  const displayStatus = isDoneForUser ? "Tamamlandı" : overdue ? "Gecikmiş" : "Bekliyor";
+                  const isClosed = !isDoneForUser && t.status === "Tamamlandı";
+                  const displayStatus = isDoneForUser ? "Tamamlandı" : isClosed ? "Kapatıldı" : overdue ? "Süresi Doldu" : "Bekliyor";
                   const isDone = isDoneForUser;
                   const StatusIcon = STATUS_ICON[displayStatus] || Clock;
 
@@ -188,7 +189,7 @@ export default function TaskBoard({ tasks, courses, categories, attachments, onO
                       key={t.taskId}
                       onClick={() => onOpen(t.taskId)}
                       className={`hover:bg-[#24262B]/5 dark:hover:bg-white/5 cursor-pointer transition-colors group ${
-                        overdue ? "bg-[#FFF0EE] dark:bg-[#B8402C]/20" : ""
+                        (overdue || isClosed) ? "bg-[#FFF0EE] dark:bg-[#B8402C]/20" : ""
                       }`}
                     >
                       <td className="py-4 px-3 font-semibold text-[#24262B] dark:text-white group-hover:text-[#3E8E7E] dark:group-hover:text-[#52B4A0] transition-colors">{t.title}</td>
@@ -206,7 +207,7 @@ export default function TaskBoard({ tasks, courses, categories, attachments, onO
                         </td>
                       )}
                       <td className="py-4 px-3">
-                        <span className="stss-mono text-[10px] px-2 py-1 rounded font-bold" style={{ color: (PRIORITY_STYLE[t.priority] || PRIORITY_STYLE.Orta).color, background: "#24262B0F" }}>
+                        <span className="stss-mono text-[10px] px-2 py-1 rounded font-bold bg-[#24262B]/[0.06] dark:bg-white/10" style={{ color: (PRIORITY_STYLE[t.priority] || PRIORITY_STYLE.Orta).color }}>
                           {t.priority}
                         </span>
                       </td>
@@ -217,7 +218,7 @@ export default function TaskBoard({ tasks, courses, categories, attachments, onO
                         <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-bold ${
                           isDone
                             ? 'bg-[#E6F1EE] dark:bg-[#3E8E7E]/30 text-[#3E8E7E] dark:text-[#A4E0D5]'
-                            : overdue
+                            : (overdue || isClosed)
                             ? 'bg-[#FBEAE5] dark:bg-[#B8402C]/30 text-[#B8402C] dark:text-[#F8A092]'
                             : 'bg-[#FFF3E0] dark:bg-[#E2725B]/30 text-[#E2725B] dark:text-[#FDC5B7]'
                         }`}>
