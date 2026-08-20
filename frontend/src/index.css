@@ -35,16 +35,44 @@ body {
 }
 
 .stss-card {
-  background: #FFFDF8;
-  border: 1px solid rgba(36,38,43,0.14);
+  background: rgba(255, 253, 248, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(36, 38, 43, 0.16);
   color: #111215;
-  box-shadow: 0 1px 3px rgba(36,38,43,0.08);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 4px 16px rgba(36, 38, 43, 0.06);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
 
 .stss-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(36,38,43,0.12);
+  box-shadow: 0 12px 28px rgba(36, 38, 43, 0.12);
+  background: rgba(255, 253, 248, 0.96);
+}
+
+/* Atmospheric Full Screen Background Photo */
+.stss-app-bg {
+  position: relative;
+  min-height: 100vh;
+  background-color: #F5F0E4;
+}
+
+.stss-app-bg::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: 
+    linear-gradient(to bottom, rgba(245, 240, 228, 0.74) 0%, rgba(245, 240, 228, 0.65) 50%, rgba(245, 240, 228, 0.78) 100%),
+    url('https://images.unsplash.com/photo-1516979187457-637abb4f9353?q=80&w=2070&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 /* Light mode form elements base styles */
@@ -102,19 +130,36 @@ textarea::placeholder {
   color: #E2E4E9;
 }
 
+.dark .stss-app-bg {
+  background-color: #121316;
+}
+
+.dark .stss-app-bg::before {
+  background-image: 
+    linear-gradient(to bottom, rgba(14, 15, 19, 0.78) 0%, rgba(18, 19, 24, 0.70) 50%, rgba(14, 15, 19, 0.82) 100%),
+    url('https://images.unsplash.com/photo-1507842229451-7f01dd8610ce?q=80&w=2070&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
 .dark .stss-paper {
   background-image: radial-gradient(rgba(226,228,233,0.04) 1px, transparent 1px);
 }
 
 .dark .stss-card {
-  background: #1C1D24;
-  border-color: rgba(255,255,255,0.08);
+  background: rgba(28, 29, 36, 0.86);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-color: rgba(255, 255, 255, 0.12);
   color: #E2E4E9;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
 }
 
 .dark .stss-card:hover {
-  box-shadow: 0 10px 24px rgba(0,0,0,0.5);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+  background: rgba(28, 29, 36, 0.95);
 }
 
 .dark input, .dark select, .dark textarea {

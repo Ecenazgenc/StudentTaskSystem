@@ -25,6 +25,9 @@ import jakarta.persistence.Table;
     
         @Column(name = "CourseName")
         private String courseName;
+
+        @Column(name = "ImageUrl", length = 2000)
+        private String imageUrl;
     
     
         @ManyToOne
@@ -47,6 +50,9 @@ import jakarta.persistence.Table;
         public String getCourseName() {return courseName;}
         public void setCourseName(String courseName) {this.courseName = courseName;}
 
+        public String getImageUrl() { return imageUrl; }
+        public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    
     
         public User getUser() {return user;}
         public void setUser(User user) {this.user = user;}
@@ -55,5 +61,3 @@ import jakarta.persistence.Table;
         public List<Task> getTasks() {return tasks;}
         public void setTasks(List<Task> tasks) { this.tasks = tasks;}
     }
-
-

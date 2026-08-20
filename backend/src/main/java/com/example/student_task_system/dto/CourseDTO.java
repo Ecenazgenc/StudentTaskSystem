@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
-public record CourseDTO(int courseId, String courseName, int userId, String userFullName) {
+public record CourseDTO(int courseId, String courseName, String imageUrl, int userId, String userFullName) {
 
     public static CourseDTO fromEntity(Course course) {
         int uid = 0;
@@ -14,7 +14,7 @@ public record CourseDTO(int courseId, String courseName, int userId, String user
             uid = course.getUser().getUserId();
             fullName = course.getUser().getFirstName() + " " + course.getUser().getLastName();
         }
-        return new CourseDTO(course.getCourseId(), course.getCourseName(), uid, fullName);
+        return new CourseDTO(course.getCourseId(), course.getCourseName(), course.getImageUrl(), uid, fullName);
     }
 
     public record Request(
@@ -22,7 +22,10 @@ public record CourseDTO(int courseId, String courseName, int userId, String user
             @Size(max = 100, message = "Ders adı en fazla 100 karakter olabilir")
             String courseName,
 
+            String imageUrl,
+
             @Positive(message = "Geçerli bir kullanıcı ID'si giriniz")
             int userId
     ) {}
 }
+

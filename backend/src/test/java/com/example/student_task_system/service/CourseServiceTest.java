@@ -82,7 +82,7 @@ class CourseServiceTest {
 
     @Test
     void saveCourse_ShouldReturnCreatedCourseDTO() {
-        CourseDTO.Request request = new CourseDTO.Request("Web Programlama", 1);
+        CourseDTO.Request request = new CourseDTO.Request("Web Programlama", "https://images.unsplash.com/photo-1517694712202-14dd9538aa97", 1);
 
         when(userRepository.findById(1)).thenReturn(Optional.of(user));
         when(courseRepository.save(any(Course.class))).thenReturn(course);

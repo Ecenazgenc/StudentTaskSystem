@@ -64,3 +64,82 @@ export const todayPlus = (d) => {
   t.setDate(t.getDate() + d);
   return t.toISOString().slice(0, 10);
 };
+
+export const COURSE_COVER_PRESETS = [
+  {
+    id: "software",
+    title: "Yazılım & Kodlama",
+    url: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=600&auto=format&fit=crop",
+  },
+  {
+    id: "database",
+    title: "Veritabanı & SQL",
+    url: "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?q=80&w=600&auto=format&fit=crop",
+  },
+  {
+    id: "ai",
+    title: "Yapay Zeka & Veri",
+    url: "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=600&auto=format&fit=crop",
+  },
+  {
+    id: "math",
+    title: "Matematik & Fizik",
+    url: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=600&auto=format&fit=crop",
+  },
+  {
+    id: "science",
+    title: "Kimya & Biyoloji / Lab",
+    url: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=600&auto=format&fit=crop",
+  },
+  {
+    id: "design",
+    title: "Tasarım & UI / UX",
+    url: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=600&auto=format&fit=crop",
+  },
+  {
+    id: "business",
+    title: "İşletme & Ekonomi",
+    url: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=600&auto=format&fit=crop",
+  },
+  {
+    id: "literature",
+    title: "Edebiyat & Diller",
+    url: "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?q=80&w=600&auto=format&fit=crop",
+  },
+  {
+    id: "library",
+    title: "Genel Akademi",
+    url: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?q=80&w=600&auto=format&fit=crop",
+  },
+];
+
+export const defaultCourseImage = (courseId, courseName = "") => {
+  const name = (courseName || "").toLowerCase();
+  if (name.includes("veri") || name.includes("database") || name.includes("sql")) {
+    return COURSE_COVER_PRESETS[1].url;
+  }
+  if (name.includes("yapay") || name.includes("ai") || name.includes("zeka") || name.includes("makine") || name.includes("robot")) {
+    return COURSE_COVER_PRESETS[2].url;
+  }
+  if (name.includes("matematik") || name.includes("fizik") || name.includes("math")) {
+    return COURSE_COVER_PRESETS[3].url;
+  }
+  if (name.includes("kimya") || name.includes("biyo") || name.includes("lab")) {
+    return COURSE_COVER_PRESETS[4].url;
+  }
+  if (name.includes("tasarım") || name.includes("grafik") || name.includes("ui") || name.includes("ux") || name.includes("sanat")) {
+    return COURSE_COVER_PRESETS[5].url;
+  }
+  if (name.includes("işletme") || name.includes("ekonomi") || name.includes("yönetim") || name.includes("finans")) {
+    return COURSE_COVER_PRESETS[6].url;
+  }
+  if (name.includes("edebiyat") || name.includes("tarih") || name.includes("dil") || name.includes("ingilizce")) {
+    return COURSE_COVER_PRESETS[7].url;
+  }
+  if (name.includes("web") || name.includes("kod") || name.includes("yazılım") || name.includes("algoritma") || name.includes("program") || name.includes("nesne")) {
+    return COURSE_COVER_PRESETS[0].url;
+  }
+  const id = Math.abs(Number(courseId) || 1);
+  return COURSE_COVER_PRESETS[id % COURSE_COVER_PRESETS.length].url;
+};
+

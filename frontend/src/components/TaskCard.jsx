@@ -1,12 +1,13 @@
 import React from "react";
 import { Pin, Calendar } from "lucide-react";
-import { tapeFor, fmtDate, daysUntil, PRIORITY_STYLE } from "../constants/theme";
+import { tapeFor, fmtDate, daysUntil, PRIORITY_STYLE, defaultCourseImage } from "../constants/theme";
 
 export default function TaskCard({ task, course, category, onOpen }) {
   const tape = tapeFor(task.courseId);
   const dleft = daysUntil(task.dueDate);
   const urgent = task.status !== "Tamamlandı" && dleft <= 1;
   const pr = PRIORITY_STYLE[task.priority] || PRIORITY_STYLE.Orta;
+  const courseImg = course?.imageUrl || (course ? defaultCourseImage(course.courseId, course.courseName) : null);
 
   return (
     <button
@@ -23,10 +24,13 @@ export default function TaskCard({ task, course, category, onOpen }) {
       )}
       <div className="flex items-center flex-wrap gap-1.5 mb-3">
         <span
-          className="stss-mono text-[10px] px-2 py-0.5 rounded font-extrabold"
+          className="stss-mono text-[10px] px-2 py-0.5 rounded-md font-extrabold inline-flex items-center gap-1.5"
           style={{ background: tape.tint, color: tape.bg }}
         >
-          {course?.courseName || "Ders"}
+          {courseImg && (
+            <img src={courseImg} alt="" className="w-3.5 h-3.5 rounded object-cover" />
+          )}
+          <span>{course?.courseName || "Ders"}</span>
         </span>
         <span className="stss-mono text-[10px] px-2 py-0.5 rounded bg-[#24262B]/8 dark:bg-white/10 text-[#111215] dark:text-white font-extrabold">
           {category?.categoryName || "Kategori"}

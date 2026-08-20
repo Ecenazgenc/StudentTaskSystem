@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { Bell, Send } from "lucide-react";
+import { Bell, Send, CheckCheck } from "lucide-react";
 import { fmtDate } from "../constants/theme";
 import SendNotificationModal from "../components/SendNotificationModal";
 
-export default function NotificationsPage({ notifications, onMarkRead, onMarkAllRead, onMarkAll, isAdmin, users = [], onSendNotification }) {
+export default function NotificationsPage({ notifications = [], onMarkRead, onMarkAllRead, onMarkAll, isAdmin, users = [], onSendNotification }) {
   const [showModal, setShowModal] = useState(false);
   const markAllFn = onMarkAllRead || onMarkAll;
+  const hasUnread = notifications.some((n) => !n.isRead);
 
   return (
     <div>
@@ -35,9 +36,14 @@ export default function NotificationsPage({ notifications, onMarkRead, onMarkAll
               <Bell size={15} /> 📢 Duyuru / Bildirim Gönder
             </button>
           )}
-          {markAllFn && (
-            <button onClick={markAllFn} className="text-[12.5px] text-[#111215] dark:text-white/80 hover:text-[#3E8E7E] dark:hover:text-[#52B4A0] underline font-bold cursor-pointer">
-              Tümünü okundu işaretle
+          {hasUnread && markAllFn && (
+            <button
+              onClick={markAllFn}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#3E8E7E]/15 text-[#1E564B] dark:text-[#A4E0D5] hover:bg-[#3E8E7E] hover:text-white dark:hover:bg-[#3E8E7E] dark:hover:text-white text-xs font-bold transition-all cursor-pointer border border-[#3E8E7E]/30 shadow-xs"
+              title="Tüm okunmamış bildirimleri okundu olarak işaretle"
+            >
+              <CheckCheck size={15} />
+              <span>Tümünü Okundu İşaretle</span>
             </button>
           )}
         </div>

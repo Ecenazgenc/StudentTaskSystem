@@ -61,6 +61,7 @@ public class CourseService {
 
     private void applyRequestToEntity(Course course, CourseDTO.Request request) {
         course.setCourseName(request.courseName());
+        course.setImageUrl(request.imageUrl());
 
         User user = userRepository.findById(request.userId())
                 .orElseThrow(() -> new BadRequestException("Geçersiz kullanıcı: id=" + request.userId()));

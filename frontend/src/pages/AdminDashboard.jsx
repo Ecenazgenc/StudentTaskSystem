@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Users, BookOpen, Trash2, CheckCircle2, Search, RefreshCw, BarChart2, ClipboardList } from "lucide-react";
+import { Users, BookOpen, Trash2, CheckCircle2, Search, RefreshCw, BarChart2, ClipboardList, Bell } from "lucide-react";
 import { userApi } from "../services/api";
 
 export default function AdminDashboard({ tasks, courses, users, setUsers, attachments, onRefresh }) {
@@ -52,11 +52,37 @@ export default function AdminDashboard({ tasks, courses, users, setUsers, attach
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-[#FFFDF8] dark:bg-[#1C1D24] p-5 rounded-xl border-2 border-[#24262B]/15 dark:border-white/15 shadow-xs">
-        <div>
-          <h1 className="stss-display text-2xl font-extrabold text-[#111215] dark:text-white">Yönetim Paneli</h1>
-          <p className="text-xs text-[#111215] dark:text-white/80 font-bold mt-0.5">Sistem genel durumunu ve istatistiklerini takip edin</p>
+      {/* Header Banner with Atmospheric Image */}
+      <div className="relative overflow-hidden rounded-2xl border-2 border-[#24262B]/15 dark:border-white/15 p-6 sm:p-7 shadow-md bg-[#16171D] text-white">
+        <div 
+          className="absolute inset-0 bg-cover bg-center opacity-25 mix-blend-luminosity scale-105 transition-transform duration-700"
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=1200&auto=format&fit=crop')" }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#121316]/95 via-[#1A1C24]/85 to-[#E2725B]/30" />
+
+        <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-[11px] font-semibold text-[#F5F0E4] mb-2.5">
+              <span className="w-2 h-2 rounded-full bg-[#E2725B] animate-pulse" />
+              <span>Yönetici Kontrol Merkezi</span>
+            </div>
+            <h1 className="stss-display text-2xl sm:text-3xl font-extrabold text-white mb-1.5 leading-tight">
+              Sistem Yönetim Paneli 🎓
+            </h1>
+            <p className="text-xs sm:text-sm text-white/80 font-medium leading-relaxed">
+              Öğrenci teslimatlarını, dersleri, notlandırmaları ve sistem istatistiklerini canlı olarak takip edin.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3 shrink-0">
+            <button
+              onClick={() => setShowNotificationModal(true)}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#E2725B] hover:bg-[#cf5f48] text-white text-xs font-bold transition-all shadow-md cursor-pointer hover:scale-[1.02]"
+            >
+              <Bell size={15} />
+              <span>Duyuru Gönder</span>
+            </button>
+          </div>
         </div>
       </div>
 

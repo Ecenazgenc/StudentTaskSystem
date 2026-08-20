@@ -1,10 +1,10 @@
 import { todayPlus } from "../constants/theme";
 
 export const INIT_COURSES = [
-  { courseId: 1, courseName: "Veritabanı Yönetim Sistemleri", userId: 1 },
-  { courseId: 2, courseName: "Nesneye Yönelik Programlama", userId: 1 },
-  { courseId: 3, courseName: "Web Programlama", userId: 1 },
-  { courseId: 4, courseName: "Yapay Zekaya Giriş", userId: 1 },
+  { courseId: 1, courseName: "Veritabanı Yönetim Sistemleri", imageUrl: "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?q=80&w=600&auto=format&fit=crop", userId: 1 },
+  { courseId: 2, courseName: "Nesneye Yönelik Programlama", imageUrl: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=600&auto=format&fit=crop", userId: 1 },
+  { courseId: 3, courseName: "Web Programlama", imageUrl: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=600&auto=format&fit=crop", userId: 1 },
+  { courseId: 4, courseName: "Yapay Zekaya Giriş", imageUrl: "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=600&auto=format&fit=crop", userId: 1 },
 ];
 
 export const CATEGORIES = [

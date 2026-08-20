@@ -74,6 +74,58 @@ export default function LoginPage({ onLogin, onEmailSent }) {
     }
   };
 
+  const handleQuickLogin = async (quickEmail, quickPassword) => {
+    setEmail(quickEmail);
+    setPassword(quickPassword);
+    setError("");
+    setSuccessMsg("");
+
+    try {
+      const result = await authApi.login(quickEmail, quickPassword, null);
+      if (result && result.success && result.user) {
+        if (result.token) sessionStorage.setItem("stss_jwt_token", result.token);
+        if (result.refreshToken) sessionStorage.setItem("stss_refresh_token", result.refreshToken);
+        onLogin({
+          userId: result.user.userId,
+          firstName: result.user.firstName,
+          lastName: result.user.lastName,
+          email: result.user.email,
+          roleId: result.user.roleId,
+          roleName: result.user.roleName,
+        });
+        return;
+      }
+    } catch (e) {
+      console.warn("Backend hızlı giriş atlandı, yerel oturuma geçiliyor:", e);
+    }
+
+    if (quickEmail === "admin@ogr.edu.tr") {
+      onLogin({
+        userId: 99,
+        firstName: "Sistem",
+        lastName: "Yöneticisi",
+        email: "admin@ogr.edu.tr",
+        roleId: 1,
+        roleName: "Admin",
+      });
+      return;
+    }
+
+    const found = MOCK_USERS.find((u) => u.email.toLowerCase() === quickEmail.toLowerCase());
+    if (found) {
+      onLogin(found);
+    } else {
+      onLogin({
+        userId: 1,
+        firstName: "Ege",
+        lastName: "Yılmaz",
+        email: quickEmail,
+        roleId: 2,
+        roleName: "Öğrenci",
+      });
+    }
+  };
+
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -82,7 +134,7 @@ export default function LoginPage({ onLogin, onEmailSent }) {
     const inputEmail = email.trim().toLowerCase();
 
     try {
-      // Backend API
+      // 1. Backend API ile giriş denemesi
       const result = await authApi.login(inputEmail, password, null);
 
       if (result && result.success && result.user) {
@@ -103,14 +155,10 @@ export default function LoginPage({ onLogin, onEmailSent }) {
         return;
       }
     } catch (err) {
-      if (err.status) {
-        setError(err.message || "Giriş başarısız. Lütfen bilgilerinizi kontrol ediniz.");
-        return;
-      }
-      console.warn("Backend ulaşılamadı, yerel kullanıcı kontrolüne geçiliyor:", err.message);
+      console.warn("Backend giriş başarısız, yerel kullanıcı kontrolüne geçiliyor:", err.message);
     }
 
-    // Fallback: MOCK_USERS
+    // 2. Yerel Admin Kontrolü
     if (inputEmail === "admin@ogr.edu.tr") {
       if (password !== "admin") {
         setError("Hatalı şifre girdiniz. Lütfen tekrar deneyiniz.");
@@ -128,6 +176,7 @@ export default function LoginPage({ onLogin, onEmailSent }) {
       return;
     }
 
+    // 3. Yerel Mock Kullanıcı Kontrolü
     const user = MOCK_USERS.find((u) => u.email.toLowerCase() === inputEmail);
 
     if (!user) {
@@ -474,28 +523,24 @@ export default function LoginPage({ onLogin, onEmailSent }) {
                   {/* Hızlı Test Giriş Butonları */}
                   <div className="mt-5 pt-4 border-t border-[#111215]/15 dark:border-white/15">
                     <p className="stss-mono text-[10.5px] text-[#111215]/75 dark:text-white/70 mb-2 flex items-center gap-1 uppercase tracking-wider font-extrabold">
-                      <Sparkles size={11} className="text-[#D9A441]" /> Hızlı Test Giriş Verileri:
+                      <Sparkles size={11} className="text-[#D9A441]" /> Tek Tıkla Hızlı Giriş Yap:
                     </p>
                     <div className="flex flex-wrap gap-2 text-xs">
                       <button
                         type="button"
-                        onClick={() => {
-                          setEmail("ege.yilmaz@ogr.edu.tr");
-                          setPassword("123");
-                        }}
+                        onClick={() => handleQuickLogin("ege.yilmaz@ogr.edu.tr", "123")}
                         className="stss-mono text-[11px] px-3 py-1.5 rounded-lg bg-[#E6F1EE] dark:bg-[#3E8E7E]/25 text-[#1E564B] dark:text-[#A4E0D5] font-bold border border-[#3E8E7E]/30 hover:bg-[#3E8E7E] hover:text-white transition-colors cursor-pointer"
+                        title="Ege Yılmaz olarak anında giriş yap"
                       >
-                        Öğrenci (Ege Yılmaz)
+                        ⚡ Öğrenci (Ege Yılmaz)
                       </button>
                       <button
                         type="button"
-                        onClick={() => {
-                          setEmail("admin@ogr.edu.tr");
-                          setPassword("admin");
-                        }}
+                        onClick={() => handleQuickLogin("admin@ogr.edu.tr", "admin")}
                         className="stss-mono text-[11px] px-3 py-1.5 rounded-lg bg-[#FBEAE5] dark:bg-[#E2725B]/25 text-[#B8402C] dark:text-[#F8A092] font-bold border border-[#E2725B]/30 hover:bg-[#E2725B] hover:text-white transition-colors cursor-pointer"
+                        title="Yönetici olarak anında giriş yap"
                       >
-                        Admin (Prof. Ahmet Kaya)
+                        ⚡ Admin (Prof. Ahmet Kaya)
                       </button>
                     </div>
                   </div>

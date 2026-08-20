@@ -19,8 +19,7 @@ import ProfileModal from "./components/ProfileModal";
 import CalendarPage from "./pages/CalendarPage";
 import { MOCK_USERS } from "./pages/LoginPage";
 
-import { todayPlus } from "./constants/theme";
-import { isOverdue } from "./constants/theme";
+import { todayPlus, isOverdue, defaultCourseImage } from "./constants/theme";
 import { triggerTaskAssignmentEmail } from "./services/emailService";
 import { authApi, userApi, taskApi, courseApi, commentApi, attachmentApi, notificationApi, noteApi, fetchWithFallback } from "./services/api";
 import {
@@ -77,21 +76,72 @@ export default function App() {
 
   const toggleDarkMode = () => setIsDarkMode((prev) => !prev);
 
+  const VALID_PAGES = ["panel", "gorevler", "takvim", "dersler", "bildirimler", "notlar"];
   const [page, setPageState] = useState(() => {
-    return localStorage.getItem("stss_page") || "panel";
+    const saved = localStorage.getItem("stss_page");
+    return saved && VALID_PAGES.includes(saved) ? saved : "panel";
   });
   const setPage = (p) => {
-    setPageState(p);
-    localStorage.setItem("stss_page", p);
+    const valid = VALID_PAGES.includes(p) ? p : "panel";
+    setPageState(valid);
+    localStorage.setItem("stss_page", valid);
   };
   const [mobileOpen, setMobileOpen] = useState(false);
   const [emailToast, setEmailToast] = useState(null);
-  const [dataLoaded, setDataLoaded] = useState(false);
+  const [dataLoaded, setDataLoaded] = useState(true);
 
-  const [courses, setCourses] = useState([]);
-  const [tasks, setTasks] = useState([]);
-  const [comments, setComments] = useState([]);
-  const [attachments, setAttachments] = useState([]);
+  const [courses, setCourses] = useState(() => {
+    const saved = localStorage.getItem("stss_courses");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch (e) {
+        console.error("Course parse error", e);
+      }
+    }
+    return INIT_COURSES;
+  });
+
+  const [tasks, setTasks] = useState(() => {
+    const saved = localStorage.getItem("stss_tasks");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch (e) {
+        console.error("Task parse error", e);
+      }
+    }
+    return INIT_TASKS;
+  });
+
+  const [comments, setComments] = useState(() => {
+    const saved = localStorage.getItem("stss_comments");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch (e) {
+        console.error("Comment parse error", e);
+      }
+    }
+    return INIT_COMMENTS;
+  });
+
+  const [attachments, setAttachments] = useState(() => {
+    const saved = localStorage.getItem("stss_attachments");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch (e) {
+        console.error("Attachment parse error", e);
+      }
+    }
+    return INIT_ATTACHMENTS;
+  });
+
   const [notes, setNotes] = useState(() => {
     const saved = localStorage.getItem("stss_notes");
     return saved ? JSON.parse(saved) : INIT_NOTES;
@@ -155,203 +205,209 @@ export default function App() {
   };
 
   const loadDataFromBackend = useCallback(async () => {
-    const [backendTasks, backendCourses, backendComments, backendAttachments, backendUsers, backendNotifications, backendNotes] = await Promise.all([
-      fetchWithFallback("/tasks", {}, null),
-      fetchWithFallback("/courses", {}, null),
-      fetchWithFallback("/comments", {}, null),
-      fetchWithFallback("/attachments", {}, null),
-      fetchWithFallback("/users", {}, null),
-      fetchWithFallback("/notifications", {}, null),
-      fetchWithFallback("/notes", {}, null),
-    ]);
+    try {
+      const [backendTasks, backendCourses, backendComments, backendAttachments, backendUsers, backendNotifications, backendNotes] = await Promise.all([
+        fetchWithFallback("/tasks", {}, null),
+        fetchWithFallback("/courses", {}, null),
+        fetchWithFallback("/comments", {}, null),
+        fetchWithFallback("/attachments", {}, null),
+        fetchWithFallback("/users", {}, null),
+        fetchWithFallback("/notifications", {}, null),
+        fetchWithFallback("/notes", {}, null),
+      ]);
 
-    if (backendUsers && backendUsers.length > 0) {
-      const savedUsers = localStorage.getItem("stss_all_users");
-      const localUsers = savedUsers ? JSON.parse(savedUsers) : [];
+      if (backendUsers && backendUsers.length > 0) {
+        const savedUsers = localStorage.getItem("stss_all_users");
+        const localUsers = savedUsers ? JSON.parse(savedUsers) : [];
 
-      const normalizedUsers = backendUsers.map((u) => ({
-        ...u,
-        roleName: u.roleName || (u.roleId === 1 ? "Admin" : "Öğrenci"),
-      }));
+        const normalizedUsers = backendUsers.map((u) => ({
+          ...u,
+          roleName: u.roleName || (u.roleId === 1 ? "Admin" : "Öğrenci"),
+        }));
 
-      const backendUserIds = new Set(normalizedUsers.map((u) => u.userId));
-      const onlyLocalUsers = localUsers.filter((u) => !backendUserIds.has(u.userId));
-      const mergedUsers = [...normalizedUsers, ...onlyLocalUsers];
+        const backendUserIds = new Set(normalizedUsers.map((u) => u.userId));
+        const onlyLocalUsers = localUsers.filter((u) => !backendUserIds.has(u.userId));
+        const mergedUsers = [...normalizedUsers, ...onlyLocalUsers];
 
-      setUsers(mergedUsers);
-      localStorage.setItem("stss_all_users", JSON.stringify(mergedUsers));
-    } else {
-      const savedUsers = localStorage.getItem("stss_all_users");
-      if (savedUsers) {
-        try {
-          const parsed = JSON.parse(savedUsers);
-          if (Array.isArray(parsed) && parsed.length > 0) setUsers(parsed);
-          else setUsers(DEFAULT_USERS);
-        } catch {
+        setUsers(mergedUsers);
+        localStorage.setItem("stss_all_users", JSON.stringify(mergedUsers));
+      } else {
+        const savedUsers = localStorage.getItem("stss_all_users");
+        if (savedUsers) {
+          try {
+            const parsed = JSON.parse(savedUsers);
+            if (Array.isArray(parsed) && parsed.length > 0) setUsers(parsed);
+            else setUsers(DEFAULT_USERS);
+          } catch {
+            setUsers(DEFAULT_USERS);
+          }
+        } else {
           setUsers(DEFAULT_USERS);
         }
-      } else {
-        setUsers(DEFAULT_USERS);
       }
-    }
 
-    if (backendTasks && backendTasks.length > 0) {
-      const savedTasks = localStorage.getItem("stss_tasks");
-      const localTasks = savedTasks ? JSON.parse(savedTasks) : [];
-      const localStatusMap = {};
-      localTasks.forEach((t) => { localStatusMap[t.taskId] = t.status; });
+      if (backendTasks && backendTasks.length > 0) {
+        const savedTasks = localStorage.getItem("stss_tasks");
+        const localTasks = savedTasks ? JSON.parse(savedTasks) : [];
+        const localStatusMap = {};
+        localTasks.forEach((t) => { localStatusMap[t.taskId] = t.status; });
 
-      const loadedTasks = backendTasks.map((t) => ({
-        taskId: t.taskId,
-        title: t.title,
-        description: t.description,
-        dueDate: t.dueDate ? t.dueDate.slice(0, 10) : "",
-        status: localStatusMap[t.taskId] || t.status,
-        priority: t.priority,
-        courseId: t.courseId,
-        categoryId: t.categoryId,
-      }));
+        const loadedTasks = backendTasks.map((t) => ({
+          taskId: t.taskId,
+          title: t.title,
+          description: t.description,
+          dueDate: t.dueDate ? t.dueDate.slice(0, 10) : "",
+          status: localStatusMap[t.taskId] || t.status,
+          priority: t.priority,
+          courseId: t.courseId,
+          categoryId: t.categoryId,
+        }));
 
-      const backendIds = new Set(loadedTasks.map((t) => t.taskId));
-      const onlyLocal = localTasks.filter((t) => !backendIds.has(t.taskId));
-      const merged = [...loadedTasks, ...onlyLocal];
+        const backendIds = new Set(loadedTasks.map((t) => t.taskId));
+        const onlyLocal = localTasks.filter((t) => !backendIds.has(t.taskId));
+        const merged = [...loadedTasks, ...onlyLocal];
 
-      setTasks(merged);
-      localStorage.setItem("stss_tasks", JSON.stringify(merged));
-    } else {
-      const savedTasks = localStorage.getItem("stss_tasks");
-      setTasks(savedTasks ? JSON.parse(savedTasks) : INIT_TASKS);
-    }
+        setTasks(merged);
+        localStorage.setItem("stss_tasks", JSON.stringify(merged));
+      } else {
+        const savedTasks = localStorage.getItem("stss_tasks");
+        setTasks(savedTasks ? JSON.parse(savedTasks) : INIT_TASKS);
+      }
 
-    if (backendCourses && backendCourses.length > 0) {
-      const savedCourses = localStorage.getItem("stss_courses");
-      const localCourses = savedCourses ? JSON.parse(savedCourses) : [];
+      if (backendCourses && backendCourses.length > 0) {
+        const savedCourses = localStorage.getItem("stss_courses");
+        const localCourses = savedCourses ? JSON.parse(savedCourses) : [];
 
-      const loadedCourses = backendCourses.map((c) => ({
-        courseId: c.courseId,
-        courseName: c.courseName,
-        userId: c.userId,
-      }));
+        const loadedCourses = backendCourses.map((c) => ({
+          courseId: c.courseId,
+          courseName: c.courseName,
+          imageUrl: c.imageUrl || defaultCourseImage(c.courseId, c.courseName),
+          userId: c.userId,
+        }));
 
-      const backendCourseIds = new Set(loadedCourses.map((c) => c.courseId));
-      const onlyLocalCourses = localCourses.filter((c) => !backendCourseIds.has(c.courseId));
-      const mergedCourses = [...loadedCourses, ...onlyLocalCourses];
+        const backendCourseIds = new Set(loadedCourses.map((c) => c.courseId));
+        const onlyLocalCourses = localCourses.filter((c) => !backendCourseIds.has(c.courseId));
+        const mergedCourses = [...loadedCourses, ...onlyLocalCourses].map((c) => ({
+          ...c,
+          imageUrl: c.imageUrl || defaultCourseImage(c.courseId, c.courseName),
+        }));
 
-      setCourses(mergedCourses);
-      localStorage.setItem("stss_courses", JSON.stringify(mergedCourses));
-    } else {
-      const savedCourses = localStorage.getItem("stss_courses");
-      setCourses(savedCourses ? JSON.parse(savedCourses) : INIT_COURSES);
-    }
-
-    if (backendComments && backendComments.length > 0) {
-      const savedComments = localStorage.getItem("stss_comments");
-      const localComments = savedComments ? JSON.parse(savedComments) : [];
-
-      const loadedComments = backendComments.map((c) => ({
-        commentId: c.commentId,
-        taskId: c.taskId,
-        userId: c.userId,
-        userFullName: c.userFullName,
-        commentText: c.commentText,
-        createdDate: c.createdDate ? c.createdDate.slice(0, 10) : "",
-      }));
-
-      const backendCommentIds = new Set(loadedComments.map((c) => c.commentId));
-      const onlyLocalComments = localComments.filter((c) => !backendCommentIds.has(c.commentId));
-      const mergedComments = [...loadedComments, ...onlyLocalComments];
-
-      setComments(mergedComments);
-      localStorage.setItem("stss_comments", JSON.stringify(mergedComments));
-    } else {
-      const saved = localStorage.getItem("stss_comments");
-      setComments(saved ? JSON.parse(saved) : INIT_COMMENTS);
-    }
-
-    if (backendAttachments && backendAttachments.length > 0) {
-      const savedAttachments = localStorage.getItem("stss_attachments");
-      const localAttachments = savedAttachments ? JSON.parse(savedAttachments) : [];
-      
-      const localMap = {};
-      localAttachments.forEach((la) => {
-        const path = la.filePath || la.fileUrl;
-        if (path && path.startsWith("data:")) {
-          const key = `${la.taskId}_${la.userId}_${la.fileName}`;
-          localMap[key] = path;
-          if (la.attachmentId) localMap[la.attachmentId] = path;
+        setCourses(mergedCourses);
+        localStorage.setItem("stss_courses", JSON.stringify(mergedCourses));
+      } else {
+        const savedCourses = localStorage.getItem("stss_courses");
+        if (savedCourses) {
+          try {
+            const parsed = JSON.parse(savedCourses).map((c) => ({
+              ...c,
+              imageUrl: c.imageUrl || defaultCourseImage(c.courseId, c.courseName),
+            }));
+            setCourses(parsed);
+          } catch {
+            setCourses(INIT_COURSES);
+          }
+        } else {
+          setCourses(INIT_COURSES);
         }
-      });
+      }
 
-      const loadedAttachments = backendAttachments.map((a) => {
-        const key = `${a.taskId}_${a.userId}_${a.fileName}`;
-        const localDataUrl = localMap[a.attachmentId] || localMap[key];
-        
-        const finalPath = localDataUrl || (a.filePath && a.filePath.startsWith("data:") ? a.filePath : `/uploads/${a.fileName}`);
+      if (backendComments && backendComments.length > 0) {
+        const savedComments = localStorage.getItem("stss_comments");
+        const localComments = savedComments ? JSON.parse(savedComments) : [];
 
-        return {
+        const loadedComments = backendComments.map((cm) => ({
+          commentId: cm.commentId,
+          taskId: cm.taskId,
+          userId: cm.userId,
+          commentText: cm.commentText,
+          createdDate: cm.createdDate ? cm.createdDate.slice(0, 10) : "",
+        }));
+
+        const backendCommentIds = new Set(loadedComments.map((cm) => cm.commentId));
+        const onlyLocalComments = localComments.filter((cm) => !backendCommentIds.has(cm.commentId));
+        const mergedComments = [...loadedComments, ...onlyLocalComments];
+
+        setComments(mergedComments);
+        localStorage.setItem("stss_comments", JSON.stringify(mergedComments));
+      } else {
+        const savedComments = localStorage.getItem("stss_comments");
+        setComments(savedComments ? JSON.parse(savedComments) : INIT_COMMENTS);
+      }
+
+      if (backendAttachments && backendAttachments.length > 0) {
+        const savedAttachments = localStorage.getItem("stss_attachments");
+        const localAttachments = savedAttachments ? JSON.parse(savedAttachments) : [];
+
+        const loadedAttachments = backendAttachments.map((a) => ({
           attachmentId: a.attachmentId,
           taskId: a.taskId,
           userId: a.userId,
           fileName: a.fileName,
-          filePath: finalPath,
-          fileUrl: finalPath,
+          filePath: a.filePath,
+          fileSize: a.fileSize,
           uploadDate: a.uploadDate ? a.uploadDate.slice(0, 10) : "",
-        };
-      });
+        }));
 
-      const backendIds = new Set(loadedAttachments.map((a) => a.attachmentId));
-      const onlyLocal = localAttachments.filter(
-        (a) => !backendIds.has(a.attachmentId) && (a.filePath?.startsWith("data:") || a.fileUrl?.startsWith("data:"))
-      );
-      const merged = [...loadedAttachments, ...onlyLocal];
+        const backendAttachmentIds = new Set(loadedAttachments.map((a) => a.attachmentId));
+        const onlyLocalAttachments = localAttachments.filter((a) => !backendAttachmentIds.has(a.attachmentId));
+        const mergedAttachments = [...loadedAttachments, ...onlyLocalAttachments];
 
-      setAttachments(merged);
-      localStorage.setItem("stss_attachments", JSON.stringify(merged));
-    } else {
-      const saved = localStorage.getItem("stss_attachments");
-      setAttachments(saved ? JSON.parse(saved) : INIT_ATTACHMENTS);
-    }
+        setAttachments(mergedAttachments);
+        localStorage.setItem("stss_attachments", JSON.stringify(mergedAttachments));
+      } else {
+        const savedAttachments = localStorage.getItem("stss_attachments");
+        setAttachments(savedAttachments ? JSON.parse(savedAttachments) : INIT_ATTACHMENTS);
+      }
 
-    if (backendNotifications && backendNotifications.length > 0) {
-      const loadedNotifications = backendNotifications.map((n) => ({
-        notificationId: n.notificationId,
-        userId: n.userId,
-        message: (n.message || "").replace(/^(\?\?|\?|)+\s*/, "").replace(/^📢\s*/, ""),
-        isRead: n.read,
-        createdDate: n.createdDate ? n.createdDate.slice(0, 10) : "",
-      }));
-      setNotifications(loadedNotifications);
-      localStorage.setItem("stss_notifications", JSON.stringify(loadedNotifications));
-    } else {
-      const saved = localStorage.getItem("stss_notifications");
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved).map(n => ({
-            ...n,
-            message: (n.message || "").replace(/^(\?\?|\?|)+\s*/, "").replace(/^📢\s*/, ""),
-          }));
-          setNotifications(parsed);
-        } catch {
+      if (backendNotifications && backendNotifications.length > 0) {
+        const saved = localStorage.getItem("stss_notifications");
+        const local = saved ? JSON.parse(saved) : [];
+        const localMap = {};
+        local.forEach((n) => { localMap[n.notificationId] = n.isRead; });
+
+        const loaded = backendNotifications.map((n) => ({
+          notificationId: n.notificationId,
+          userId: n.userId,
+          message: (n.message || "").replace(/^(\?\?|\?|)+\s*/, "").replace(/^📢\s*/, ""),
+          isRead: localMap[n.notificationId] !== undefined ? localMap[n.notificationId] : n.isRead,
+          createdDate: n.createdDate ? n.createdDate.slice(0, 10) : "",
+        }));
+
+        setNotifications(loaded);
+        localStorage.setItem("stss_notifications", JSON.stringify(loaded));
+      } else {
+        const saved = localStorage.getItem("stss_notifications");
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved).map((n) => ({
+              ...n,
+              message: (n.message || "").replace(/^(\?\?|\?|)+\s*/, "").replace(/^📢\s*/, ""),
+            }));
+            setNotifications(parsed);
+          } catch {
+            setNotifications(INIT_NOTIFICATIONS);
+          }
+        } else {
           setNotifications(INIT_NOTIFICATIONS);
         }
-      } else {
-        setNotifications(INIT_NOTIFICATIONS);
       }
-    }
 
-    if (backendNotes && backendNotes.length > 0) {
-      const loadedNotes = backendNotes.map(n => ({
-        ...n,
-        createdDate: n.createdDate ? n.createdDate.slice(0, 10) : "",
-      }));
-      setNotes(loadedNotes);
-      localStorage.setItem("stss_notes", JSON.stringify(loadedNotes));
-    } else {
-      const saved = localStorage.getItem("stss_notes");
-      setNotes(saved ? JSON.parse(saved) : INIT_NOTES);
+      if (backendNotes && backendNotes.length > 0) {
+        const loadedNotes = backendNotes.map(n => ({
+          ...n,
+          createdDate: n.createdDate ? n.createdDate.slice(0, 10) : "",
+        }));
+        setNotes(loadedNotes);
+        localStorage.setItem("stss_notes", JSON.stringify(loadedNotes));
+      } else {
+        const saved = localStorage.getItem("stss_notes");
+        setNotes(saved ? JSON.parse(saved) : INIT_NOTES);
+      }
+    } catch (err) {
+      console.warn("Backend veri yükleme uyarısı:", err);
+    } finally {
+      setDataLoaded(true);
     }
-
-    setDataLoaded(true);
   }, []);
 
   useEffect(() => {
@@ -360,12 +416,11 @@ export default function App() {
       loadDataFromBackend();
     } else {
       localStorage.removeItem("stss_user");
-      setDataLoaded(false);
     }
   }, [currentUser, loadDataFromBackend]);
 
   useEffect(() => {
-    if (!dataLoaded || !currentUser || currentUser.roleId === 1) return;
+    if (!currentUser || currentUser.roleId === 1) return;
     setNotifications((prev) => {
       const existingMessages = new Set(prev.map((n) => n.message));
       const overdueNotifs = tasks
@@ -392,11 +447,13 @@ export default function App() {
 
       return updated;
     });
-  }, [dataLoaded, tasks, currentUser]);
+  }, [tasks, currentUser]);
 
   const handleLogin = (user) => {
+    setDataLoaded(true);
     setCurrentUser(user);
-    if (!localStorage.getItem("stss_page")) setPage("panel");
+    const saved = localStorage.getItem("stss_page");
+    setPage(saved && VALID_PAGES.includes(saved) ? saved : "panel");
   };
 
   const handleLogout = () => {
@@ -423,20 +480,13 @@ export default function App() {
     );
   }
 
-  if (!dataLoaded) {
-    return (
-      <div className="stss-root min-h-screen flex items-center justify-center">
-        <p className="stss-mono text-sm text-[#24262B]/50 dark:text-white/50">Veriler yükleniyor...</p>
-      </div>
-    );
-  }
-
   const isAdmin = currentUser.roleId === 1;
   const nextId = (arr, key) => (arr.length ? Math.max(...arr.map((x) => x[key])) + 1 : 1);
   
+  const currentUid = currentUser?.userId != null ? Number(currentUser.userId) : null;
   const userNotifications = isAdmin 
     ? notifications 
-    : notifications.filter((n) => n.userId === null || n.userId === currentUser.userId);
+    : notifications.filter((n) => n.userId === null || n.userId === undefined || Number(n.userId) === currentUid);
     
   const unread = userNotifications.filter((n) => !n.isRead && !(isAdmin && (n.message || "").includes("DUYURU:"))).length;
   const selectedTask = tasks.find((t) => t.taskId === selectedTaskId);
@@ -639,13 +689,25 @@ export default function App() {
     if (toastObj && !isAdmin) setEmailToast(toastObj);
   };
 
-  const handleAddCourse = async (courseName) => {
-    if (!courseName || !courseName.trim()) return;
-    const name = courseName.trim();
+  const handleAddCourse = async (courseData, maybeImageUrl = "") => {
+    let name = "";
+    let img = "";
+    if (typeof courseData === "object" && courseData !== null) {
+      name = (courseData.courseName || "").trim();
+      img = (courseData.imageUrl || "").trim();
+    } else {
+      name = (courseData || "").trim();
+      img = (maybeImageUrl || "").trim();
+    }
+    if (!name) return;
+    if (!img) {
+      img = defaultCourseImage(Date.now(), name);
+    }
+
     const targetUserId = currentUser?.userId || 1;
     const tempId = Date.now();
 
-    const newCourse = { courseId: tempId, courseName: name, userId: targetUserId };
+    const newCourse = { courseId: tempId, courseName: name, imageUrl: img, userId: targetUserId };
 
     setCourses((prev) => {
       const updated = [...prev, newCourse];
@@ -654,10 +716,14 @@ export default function App() {
     });
 
     try {
-      const created = await courseApi.create({ courseName: name, userId: targetUserId > 0 ? targetUserId : 1 });
+      const created = await courseApi.create({
+        courseName: name,
+        imageUrl: img,
+        userId: targetUserId > 0 ? targetUserId : 1,
+      });
       if (created?.courseId) {
         setCourses((prev) => {
-          const updated = prev.map((c) => (c.courseId === tempId ? { ...c, courseId: created.courseId } : c));
+          const updated = prev.map((c) => (c.courseId === tempId ? { ...c, courseId: created.courseId, imageUrl: created.imageUrl || img } : c));
           localStorage.setItem("stss_courses", JSON.stringify(updated));
           return updated;
         });
@@ -667,23 +733,34 @@ export default function App() {
     }
   };
 
-  const handleEditCourse = async (courseId, newCourseName) => {
-    if (!newCourseName || !newCourseName.trim()) return;
-    const name = newCourseName.trim();
+  const handleEditCourse = async (courseId, newCourseName, maybeImageUrl = "") => {
+    let name = "";
+    let img = "";
+    if (typeof newCourseName === "object" && newCourseName !== null) {
+      name = (newCourseName.courseName || "").trim();
+      img = (newCourseName.imageUrl || "").trim();
+    } else {
+      name = (newCourseName || "").trim();
+      img = (maybeImageUrl || "").trim();
+    }
+    if (!name) return;
 
     setCourses((prev) => {
-      const updated = prev.map(c => c.courseId === courseId ? { ...c, courseName: name } : c);
+      const updated = prev.map((c) => (c.courseId === courseId ? { ...c, courseName: name, imageUrl: img || c.imageUrl } : c));
       localStorage.setItem("stss_courses", JSON.stringify(updated));
       return updated;
     });
 
     try {
-      const course = courses.find(c => c.courseId === courseId);
-      if (course) {
-        await courseApi.update(courseId, { ...course, courseName: name });
-      }
+      const current = courses.find((c) => c.courseId === courseId);
+      const finalImg = img || current?.imageUrl || defaultCourseImage(courseId, name);
+      await courseApi.update(courseId, {
+        courseName: name,
+        imageUrl: finalImg,
+        userId: current?.userId || currentUser?.userId || 1,
+      });
     } catch (e) {
-      console.warn("Ders DB güncelleme atlandı:", e);
+      console.warn("Ders DB güncelleme hatası:", e);
     }
   };
 
@@ -803,7 +880,7 @@ export default function App() {
 
   const handleMarkRead = (id) => {
     setNotifications((ns) => {
-      const updated = ns.map((n) => (n.notificationId === id ? { ...n, isRead: true } : n));
+      const updated = ns.map((n) => (Number(n.notificationId) === Number(id) ? { ...n, isRead: true } : n));
       localStorage.setItem("stss_notifications", JSON.stringify(updated));
       return updated;
     });
@@ -811,9 +888,12 @@ export default function App() {
   };
 
   const handleMarkAllRead = () => {
+    const currentUserId = currentUser?.userId != null ? Number(currentUser.userId) : null;
+
     setNotifications((ns) => {
       const updated = ns.map((n) => {
-        if (n.userId === null || n.userId === currentUser.userId) {
+        const notifUserId = n.userId != null ? Number(n.userId) : null;
+        if (isAdmin || notifUserId === null || notifUserId === currentUserId) {
           return { ...n, isRead: true };
         }
         return n;
@@ -821,7 +901,10 @@ export default function App() {
       localStorage.setItem("stss_notifications", JSON.stringify(updated));
       return updated;
     });
-    notificationApi.markAllRead(currentUser.userId).catch(e => console.warn("Tüm bildirimleri okundu işaretleme hatası", e));
+
+    if (currentUserId) {
+      notificationApi.markAllRead(currentUserId).catch(e => console.warn("Tüm bildirimleri okundu işaretleme hatası", e));
+    }
   };
 
   const handleAddNote = async (noteData) => {
@@ -905,7 +988,7 @@ export default function App() {
   };
 
   return (
-    <div className="stss-root min-h-screen flex relative">
+    <div className="stss-root stss-app-bg min-h-screen flex relative">
       <EmailToast email={emailToast} onClose={() => setEmailToast(null)} />
 
       <Sidebar
@@ -921,8 +1004,8 @@ export default function App() {
         onToggleDarkMode={toggleDarkMode}
       />
 
-      <main className="flex-1 min-w-0">
-        <div className="md:hidden flex items-center gap-3 px-4 py-3 border-b border-[#24262B]/10 dark:border-white/10 bg-[#F5F0E4] dark:bg-[#181920] sticky top-0 z-20">
+      <main className="flex-1 min-w-0 relative z-10">
+        <div className="md:hidden flex items-center gap-3 px-4 py-3 border-b border-[#24262B]/10 dark:border-white/10 bg-[#F5F0E4]/90 dark:bg-[#181920]/90 backdrop-blur-md sticky top-0 z-20">
           <button onClick={() => setMobileOpen(true)} className="p-1.5 rounded hover:bg-[#24262B]/8 dark:hover:bg-white/10">
             <MoreVertical size={18} />
           </button>
@@ -1000,13 +1083,6 @@ export default function App() {
       </main>
 
       {/* MODALS */}
-      {showProfile && (
-        <ProfileModal
-          user={currentUser}
-          onClose={() => setShowProfile(false)}
-          onSave={handleUpdateUser}
-        />
-      )}
 
       {selectedTask && (
         <TaskModal
