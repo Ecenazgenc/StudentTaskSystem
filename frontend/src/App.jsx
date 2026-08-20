@@ -34,10 +34,7 @@ import {
 } from "./data/initialData";
 
 export default function App() {
-  const [currentUser, setCurrentUser] = useState(() => {
-    const saved = localStorage.getItem("stss_user");
-    return saved ? JSON.parse(saved) : null;
-  });
+  const [currentUser, setCurrentUser] = useState(null);
 
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const saved = localStorage.getItem("stss_theme");
