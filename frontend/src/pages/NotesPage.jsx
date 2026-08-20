@@ -5,19 +5,19 @@ const COLORS = ['amber', 'emerald', 'indigo', 'rose', 'slate'];
 const TAGS = ["Ders Notu", "Sınav Hazırlığı", "Ödev Notu", "Fikir", "Checklist"];
 
 const colorClasses = {
-  amber: "border-l-amber-400 bg-amber-50/60 dark:bg-amber-900/15",
-  emerald: "border-l-emerald-400 bg-emerald-50/60 dark:bg-emerald-900/15",
-  indigo: "border-l-indigo-400 bg-indigo-50/60 dark:bg-indigo-900/15",
-  rose: "border-l-rose-400 bg-rose-50/60 dark:bg-rose-900/15",
-  slate: "border-l-slate-400 bg-slate-50/60 dark:bg-slate-700/15",
+  amber: "border-l-amber-500 bg-amber-50/90 dark:bg-amber-900/15 border-amber-300/70 dark:border-white/10",
+  emerald: "border-l-emerald-500 bg-emerald-50/90 dark:bg-emerald-900/15 border-emerald-300/70 dark:border-white/10",
+  indigo: "border-l-indigo-500 bg-indigo-50/90 dark:bg-indigo-900/15 border-indigo-300/70 dark:border-white/10",
+  rose: "border-l-rose-500 bg-rose-50/90 dark:bg-rose-900/15 border-rose-300/70 dark:border-white/10",
+  slate: "border-l-slate-500 bg-slate-50/90 dark:bg-slate-700/15 border-slate-300/70 dark:border-white/10",
 };
 
 const badgeColors = {
-  amber: "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300",
-  emerald: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300",
-  indigo: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/40 dark:text-indigo-300",
-  rose: "bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-300",
-  slate: "bg-slate-100 text-slate-800 dark:bg-slate-800/40 dark:text-slate-300",
+  amber: "bg-amber-200/80 text-amber-950 dark:bg-amber-900/40 dark:text-amber-300 font-extrabold",
+  emerald: "bg-emerald-200/80 text-emerald-950 dark:bg-emerald-900/40 dark:text-emerald-300 font-extrabold",
+  indigo: "bg-indigo-200/80 text-indigo-950 dark:bg-indigo-900/40 dark:text-indigo-300 font-extrabold",
+  rose: "bg-rose-200/80 text-rose-950 dark:bg-rose-900/40 dark:text-rose-300 font-extrabold",
+  slate: "bg-slate-200/80 text-slate-950 dark:bg-slate-800/40 dark:text-slate-300 font-extrabold",
 };
 
 export default function NotesPage({ 
@@ -84,7 +84,6 @@ export default function NotesPage({
 
   const handleCopy = (note) => {
     navigator.clipboard.writeText(`${note.title}\n\n${note.content}`);
-    // Optionally add a toast here
   };
 
   const handleDelete = (id) => {
@@ -105,8 +104,8 @@ export default function NotesPage({
 
   const filteredNotes = useMemo(() => {
     return (notes || []).filter(note => {
-      if (isAdmin) return true; // Admin sees all or maybe filter logic applies to admin too? Let's apply filters anyway.
-      return true; // We assume notes passed are already filtered by user if not admin.
+      if (isAdmin) return true;
+      return true;
     }).filter(note => {
       const matchSearch = note.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           note.content.toLowerCase().includes(searchQuery.toLowerCase());
@@ -123,7 +122,7 @@ export default function NotesPage({
     const course = courses.find(c => c.courseId === note.courseId);
     
     return (
-      <div key={note.noteId} className={`stss-card rounded-xl border-2 border-[#24262B]/10 dark:border-white/10 p-4 shadow-xs hover:shadow-md transition-all border-l-4 group relative flex flex-col h-full ${colorClasses[note.color]}`}>
+      <div key={note.noteId} className={`stss-card rounded-xl border-2 p-4.5 shadow-sm hover:shadow-md transition-all border-l-[5px] group relative flex flex-col h-full ${colorClasses[note.color]}`}>
         {note.isPinned && (
           <div className="absolute -top-3 -right-2 bg-[#E2725B] text-white p-1.5 rounded-full shadow-md z-10">
             <Pin size={12} className="fill-current" />
@@ -131,27 +130,27 @@ export default function NotesPage({
         )}
         
         <div className="flex justify-between items-start mb-2">
-          <h3 className="font-bold text-[#24262B] dark:text-white text-lg pr-8">{note.title}</h3>
+          <h3 className="font-bold text-[#111215] dark:text-white text-base sm:text-lg pr-8 leading-snug">{note.title}</h3>
           
-          <div className="absolute top-3 right-3 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white/80 dark:bg-[#1C1D24]/80 p-1 rounded-lg backdrop-blur-sm border border-[#24262B]/10 dark:border-white/10">
-            <button onClick={() => onTogglePin(note.noteId)} className="p-1.5 text-[#24262B]/60 hover:text-[#24262B] dark:text-white/60 dark:hover:text-white cursor-pointer transition-colors" title={note.isPinned ? "Sabitlemeyi Kaldır" : "Sabitle"}>
+          <div className="absolute top-3 right-3 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 dark:bg-[#1C1D24]/90 p-1 rounded-lg backdrop-blur-sm border border-[#24262B]/15 dark:border-white/10 shadow-xs">
+            <button onClick={() => onTogglePin(note.noteId)} className="p-1.5 text-[#111215]/70 hover:text-[#111215] dark:text-white/60 dark:hover:text-white cursor-pointer transition-colors" title={note.isPinned ? "Sabitlemeyi Kaldır" : "Sabitle"}>
               {note.isPinned ? <PinOff size={14} /> : <Pin size={14} />}
             </button>
-            <button onClick={() => handleCopy(note)} className="p-1.5 text-[#24262B]/60 hover:text-[#3E8E7E] dark:text-white/60 dark:hover:text-[#3E8E7E] cursor-pointer transition-colors" title="Kopyala">
+            <button onClick={() => handleCopy(note)} className="p-1.5 text-[#111215]/70 hover:text-[#3E8E7E] dark:text-white/60 dark:hover:text-[#3E8E7E] cursor-pointer transition-colors" title="Kopyala">
               <Copy size={14} />
             </button>
-            <button onClick={() => handleEditNote(note)} className="p-1.5 text-[#24262B]/60 hover:text-indigo-500 dark:text-white/60 dark:hover:text-indigo-400 cursor-pointer transition-colors" title="Düzenle">
+            <button onClick={() => handleEditNote(note)} className="p-1.5 text-[#111215]/70 hover:text-indigo-600 dark:text-white/60 dark:hover:text-indigo-400 cursor-pointer transition-colors" title="Düzenle">
               <Edit3 size={14} />
             </button>
-            <button onClick={() => handleDelete(note.noteId)} className="p-1.5 text-[#24262B]/60 hover:text-[#B8402C] dark:text-white/60 dark:hover:text-red-400 cursor-pointer transition-colors" title="Sil">
+            <button onClick={() => handleDelete(note.noteId)} className="p-1.5 text-[#111215]/70 hover:text-[#B8402C] dark:text-white/60 dark:hover:text-red-400 cursor-pointer transition-colors" title="Sil">
               <Trash2 size={14} />
             </button>
           </div>
         </div>
         
         <div className="mb-3">
-          <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${badgeColors[note.color]}`}>
-            <TagIcon size={10} />
+          <span className={`inline-flex items-center gap-1 text-[10.5px] px-2.5 py-0.5 rounded-full ${badgeColors[note.color]}`}>
+            <TagIcon size={11} />
             {note.tag}
           </span>
         </div>
@@ -167,30 +166,30 @@ export default function NotesPage({
                 <div key={idx} className="flex items-start gap-2 my-1.5">
                   <button 
                     onClick={(e) => { e.stopPropagation(); toggleChecklist(note, idx); }}
-                    className="mt-0.5 text-[#24262B]/50 hover:text-[#3E8E7E] dark:text-white/50 dark:hover:text-[#3E8E7E] cursor-pointer"
+                    className="mt-0.5 text-[#111215]/60 hover:text-[#3E8E7E] dark:text-white/60 dark:hover:text-[#3E8E7E] cursor-pointer"
                   >
                     {isChecked ? <CheckSquare size={16} /> : <Square size={16} />}
                   </button>
-                  <span className={`text-sm ${isChecked ? 'line-through text-[#24262B]/40 dark:text-white/40' : 'text-[#24262B]/80 dark:text-white/80'}`}>
+                  <span className={`text-[13px] ${isChecked ? 'line-through text-[#111215]/40 dark:text-white/40' : 'text-[#111215] dark:text-white/90 font-medium'}`}>
                     {text}
                   </span>
                 </div>
               );
             }
-            return <p key={idx} className="text-sm text-[#24262B]/80 dark:text-white/80 whitespace-pre-wrap mb-1">{line}</p>;
+            return <p key={idx} className="text-[13px] text-[#111215]/90 dark:text-white/85 whitespace-pre-wrap mb-1 leading-relaxed font-normal">{line}</p>;
           })}
         </div>
         
-        <div className="flex items-center justify-between mt-auto pt-3 border-t border-[#24262B]/5 dark:border-white/5 text-[11px] text-[#24262B]/50 dark:text-white/50">
+        <div className="flex items-center justify-between mt-auto pt-3 border-t border-[#24262B]/10 dark:border-white/10 text-[11px] text-[#111215]/75 dark:text-white/60 font-semibold">
           <div className="flex items-center gap-1 truncate">
             {course && (
               <>
-                <BookOpen size={12} />
-                <span className="truncate max-w-[120px]">{course.courseName}</span>
+                <BookOpen size={12} className="text-[#3E8E7E]" />
+                <span className="truncate max-w-[140px] text-[#111215] dark:text-white font-bold">{course.courseName}</span>
               </>
             )}
           </div>
-          <span>{new Date(note.createdDate).toLocaleDateString("tr-TR")}</span>
+          <span className="stss-mono">{new Date(note.createdDate).toLocaleDateString("tr-TR")}</span>
         </div>
       </div>
     );
@@ -200,18 +199,18 @@ export default function NotesPage({
     <div className="space-y-6 max-w-[1200px] mx-auto pb-8">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <h1 className="stss-display text-[24px] font-bold text-[#24262B] dark:text-white flex items-center gap-2">
+          <h1 className="stss-display text-[24px] font-bold text-[#111215] dark:text-white flex items-center gap-2">
             <StickyNote size={24} className="text-[#E2725B]" />
             Notlarım
           </h1>
-          <p className="text-xs text-[#24262B]/70 dark:text-white/60 mt-0.5 font-medium">
+          <p className="text-xs text-[#111215]/75 dark:text-white/65 mt-0.5 font-medium">
             Derslerinize ve görevlerinize özel hızlı notlar alın, yapılacak listeleri oluşturun
           </p>
         </div>
         {!isFormOpen && (
           <button
             onClick={() => setIsFormOpen(true)}
-            className="flex items-center gap-2 px-4 py-2.5 bg-[#24262B] dark:bg-white text-[#F5F0E4] dark:text-[#121316] rounded-xl font-medium text-sm hover:opacity-90 transition-opacity cursor-pointer shrink-0 shadow-sm"
+            className="flex items-center gap-2 px-4 py-2.5 bg-[#24262B] dark:bg-white text-[#F5F0E4] dark:text-[#121316] rounded-xl font-bold text-sm hover:opacity-90 transition-opacity cursor-pointer shrink-0 shadow-sm"
           >
             <Plus size={18} />
             Yeni Not
@@ -221,20 +220,20 @@ export default function NotesPage({
 
       <div className="flex flex-col md:flex-row gap-3 bg-white dark:bg-[#1C1D24] p-3 rounded-xl border-2 border-[#24262B]/15 dark:border-white/20 shadow-xs">
         <div className="relative flex-1">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#24262B]/40 dark:text-white/40" />
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#111215]/60 dark:text-white/40" />
           <input
             type="text"
             placeholder="Notlarda ara..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 bg-[#F5F0E4]/50 dark:bg-[#121316]/50 border border-[#24262B]/10 dark:border-white/10 rounded-lg text-sm text-[#24262B] dark:text-white focus:outline-none focus:border-[#3E8E7E] dark:focus:border-[#3E8E7E]"
+            className="w-full pl-9 pr-4 py-2.5 bg-[#F5F0E4]/60 dark:bg-[#121316]/50 border-2 border-[#24262B]/15 dark:border-white/10 rounded-lg text-sm text-[#111215] dark:text-white font-medium focus:outline-none focus:border-[#3E8E7E] dark:focus:border-[#3E8E7E]"
           />
         </div>
         <div className="flex gap-3">
           <select
             value={selectedCourse}
             onChange={(e) => setSelectedCourse(e.target.value)}
-            className="px-3 py-2 bg-[#F5F0E4]/50 dark:bg-[#121316]/50 border border-[#24262B]/10 dark:border-white/10 rounded-lg text-sm text-[#24262B] dark:text-white focus:outline-none focus:border-[#3E8E7E] dark:focus:border-[#3E8E7E]"
+            className="px-3 py-2.5 bg-[#F5F0E4]/60 dark:bg-[#121316]/50 border-2 border-[#24262B]/15 dark:border-white/10 rounded-lg text-sm text-[#111215] dark:text-white font-semibold focus:outline-none focus:border-[#3E8E7E] dark:focus:border-[#3E8E7E]"
           >
             <option value="all">Tüm Dersler</option>
             {courses.map(c => (
@@ -244,7 +243,7 @@ export default function NotesPage({
           <select
             value={selectedTag}
             onChange={(e) => setSelectedTag(e.target.value)}
-            className="px-3 py-2 bg-[#F5F0E4]/50 dark:bg-[#121316]/50 border border-[#24262B]/10 dark:border-white/10 rounded-lg text-sm text-[#24262B] dark:text-white focus:outline-none focus:border-[#3E8E7E] dark:focus:border-[#3E8E7E]"
+            className="px-3 py-2.5 bg-[#F5F0E4]/60 dark:bg-[#121316]/50 border-2 border-[#24262B]/15 dark:border-white/10 rounded-lg text-sm text-[#111215] dark:text-white font-semibold focus:outline-none focus:border-[#3E8E7E] dark:focus:border-[#3E8E7E]"
           >
             <option value="all">Tüm Etiketler</option>
             {TAGS.map(t => (
@@ -255,13 +254,13 @@ export default function NotesPage({
       </div>
 
       {isFormOpen && (
-        <div className={`stss-card rounded-xl border-2 border-[#24262B]/15 dark:border-white/20 p-5 shadow-md bg-white dark:bg-[#1C1D24] border-l-4 border-l-${formColor}-400`}>
+        <div className={`stss-card rounded-xl border-2 border-[#24262B]/20 dark:border-white/20 p-6 shadow-lg bg-white dark:bg-[#1C1D24] border-l-4 border-l-${formColor}-500`}>
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-bold text-[#24262B] dark:text-white flex items-center gap-2">
+            <h2 className="text-lg font-bold text-[#111215] dark:text-white flex items-center gap-2">
               {editingNoteId ? <Edit3 size={18} className="text-[#3E8E7E]" /> : <Plus size={18} className="text-[#3E8E7E]" />}
               {editingNoteId ? 'Notu Düzenle' : 'Yeni Not Ekle'}
             </h2>
-            <button onClick={resetForm} className="p-1 text-[#24262B]/50 hover:text-[#B8402C] dark:text-white/50 cursor-pointer">
+            <button onClick={resetForm} className="p-1.5 text-[#111215]/60 hover:text-[#B8402C] dark:text-white/60 cursor-pointer rounded-lg hover:bg-[#24262B]/5">
               <X size={20} />
             </button>
           </div>
@@ -272,34 +271,34 @@ export default function NotesPage({
               placeholder="Not Başlığı"
               value={formTitle}
               onChange={(e) => setFormTitle(e.target.value)}
-              className="w-full px-4 py-2 bg-transparent border-b-2 border-[#24262B]/10 dark:border-white/10 focus:border-[#3E8E7E] dark:focus:border-[#3E8E7E] outline-none text-lg font-bold text-[#24262B] dark:text-white placeholder-[#24262B]/30 dark:placeholder-white/30"
+              className="w-full px-3 py-2 bg-transparent border-b-2 border-[#24262B]/20 dark:border-white/20 focus:border-[#3E8E7E] dark:focus:border-[#3E8E7E] outline-none text-lg font-bold text-[#111215] dark:text-white placeholder-[#111215]/40 dark:placeholder-white/40"
             />
             
             <textarea
               placeholder="Not içeriğinizi yazın... Checklist için [ ] kullanın"
               value={formContent}
               onChange={(e) => setFormContent(e.target.value)}
-              className="w-full px-4 py-3 bg-[#F5F0E4]/30 dark:bg-[#121316]/30 border border-[#24262B]/10 dark:border-white/10 rounded-xl focus:border-[#3E8E7E] dark:focus:border-[#3E8E7E] outline-none min-h-[150px] resize-y text-sm text-[#24262B] dark:text-white placeholder-[#24262B]/40 dark:placeholder-white/40 stss-scroll"
+              className="w-full px-4 py-3 bg-[#F5F0E4]/40 dark:bg-[#121316]/40 border-2 border-[#24262B]/15 dark:border-white/15 rounded-xl focus:border-[#3E8E7E] dark:focus:border-[#3E8E7E] outline-none min-h-[150px] resize-y text-sm text-[#111215] dark:text-white font-medium placeholder-[#111215]/50 dark:placeholder-white/40 stss-scroll"
             />
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-[11px] font-bold text-[#24262B]/60 dark:text-white/60 mb-1.5 uppercase tracking-wider">Etiket</label>
+                <label className="block text-[11px] font-extrabold text-[#111215] dark:text-white/80 mb-1.5 uppercase tracking-wider">Etiket</label>
                 <select
                   value={formTag}
                   onChange={(e) => setFormTag(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#F5F0E4]/50 dark:bg-[#121316]/50 border border-[#24262B]/10 dark:border-white/10 rounded-lg text-sm text-[#24262B] dark:text-white outline-none"
+                  className="w-full px-3 py-2.5 bg-white dark:bg-[#121316]/50 border-2 border-[#24262B]/15 dark:border-white/15 rounded-lg text-sm text-[#111215] dark:text-white font-semibold outline-none"
                 >
                   {TAGS.map(t => <option key={t} value={t}>{t}</option>)}
                 </select>
               </div>
               
               <div>
-                <label className="block text-[11px] font-bold text-[#24262B]/60 dark:text-white/60 mb-1.5 uppercase tracking-wider">İlgili Ders (Opsiyonel)</label>
+                <label className="block text-[11px] font-extrabold text-[#111215] dark:text-white/80 mb-1.5 uppercase tracking-wider">İlgili Ders (Opsiyonel)</label>
                 <select
                   value={formCourseId}
                   onChange={(e) => setFormCourseId(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#F5F0E4]/50 dark:bg-[#121316]/50 border border-[#24262B]/10 dark:border-white/10 rounded-lg text-sm text-[#24262B] dark:text-white outline-none"
+                  className="w-full px-3 py-2.5 bg-white dark:bg-[#121316]/50 border-2 border-[#24262B]/15 dark:border-white/15 rounded-lg text-sm text-[#111215] dark:text-white font-semibold outline-none"
                 >
                   <option value="">Seçiniz...</option>
                   {courses.map(c => <option key={c.courseId} value={c.courseId}>{c.courseName}</option>)}
@@ -307,7 +306,7 @@ export default function NotesPage({
               </div>
               
               <div>
-                <label className="block text-[11px] font-bold text-[#24262B]/60 dark:text-white/60 mb-1.5 uppercase tracking-wider">Renk</label>
+                <label className="block text-[11px] font-extrabold text-[#111215] dark:text-white/80 mb-1.5 uppercase tracking-wider">Renk</label>
                 <div className="flex items-center gap-3 pt-1">
                   {COLORS.map(color => (
                     <button
@@ -330,17 +329,17 @@ export default function NotesPage({
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 pt-4 border-t border-[#24262B]/10 dark:border-white/10">
+            <div className="flex justify-end gap-3 pt-4 border-t border-[#24262B]/15 dark:border-white/10">
               <button
                 onClick={resetForm}
-                className="px-4 py-2 rounded-lg font-medium text-sm text-[#24262B]/70 dark:text-white/70 hover:bg-[#24262B]/5 dark:hover:bg-white/5 transition-colors cursor-pointer"
+                className="px-4 py-2 rounded-lg font-bold text-sm text-[#111215]/80 dark:text-white/70 hover:bg-[#24262B]/10 dark:hover:bg-white/5 transition-colors cursor-pointer"
               >
                 İptal
               </button>
               <button
                 onClick={handleSave}
                 disabled={!formTitle.trim() || !formContent.trim()}
-                className="px-5 py-2 bg-[#3E8E7E] text-white rounded-lg font-medium text-sm hover:bg-[#2E7A6B] transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-sm"
+                className="px-5 py-2 bg-[#3E8E7E] text-white rounded-lg font-bold text-sm hover:bg-[#2E7A6B] transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-sm"
               >
                 <Check size={16} />
                 Kaydet
@@ -352,8 +351,8 @@ export default function NotesPage({
 
       {pinnedNotes.length > 0 && (
         <div>
-          <h2 className="text-sm font-bold text-[#24262B]/60 dark:text-white/60 mb-3 uppercase tracking-wider flex items-center gap-1.5">
-            <Pin size={14} /> Sabitlenmiş
+          <h2 className="text-xs font-extrabold text-[#111215] dark:text-white/70 mb-3 uppercase tracking-wider flex items-center gap-1.5">
+            <Pin size={14} className="text-[#E2725B]" /> Sabitlenmiş
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {pinnedNotes.map(renderNoteCard)}
@@ -363,8 +362,8 @@ export default function NotesPage({
 
       <div>
         {pinnedNotes.length > 0 && unpinnedNotes.length > 0 && (
-          <h2 className="text-sm font-bold text-[#24262B]/60 dark:text-white/60 mb-3 mt-8 uppercase tracking-wider flex items-center gap-1.5">
-            <StickyNote size={14} /> Diğer Notlar
+          <h2 className="text-xs font-extrabold text-[#111215] dark:text-white/70 mb-3 mt-8 uppercase tracking-wider flex items-center gap-1.5">
+            <StickyNote size={14} className="text-[#3E8E7E]" /> Diğer Notlar
           </h2>
         )}
         
@@ -374,10 +373,10 @@ export default function NotesPage({
           </div>
         ) : (
           pinnedNotes.length === 0 && (
-            <div className="text-center py-16 bg-white/50 dark:bg-[#1C1D24]/50 rounded-2xl border-2 border-dashed border-[#24262B]/10 dark:border-white/10">
-              <StickyNote size={48} className="mx-auto text-[#24262B]/15 dark:text-white/15 mb-3" />
-              <p className="text-sm text-[#24262B]/40 dark:text-white/30 font-medium">Henüz not eklenmemiş</p>
-              <p className="text-xs text-[#24262B]/25 dark:text-white/20 mt-1">Yeni bir not ekleyerek başlayın</p>
+            <div className="text-center py-16 bg-white/70 dark:bg-[#1C1D24]/50 rounded-2xl border-2 border-dashed border-[#24262B]/20 dark:border-white/10">
+              <StickyNote size={48} className="mx-auto text-[#111215]/25 dark:text-white/15 mb-3" />
+              <p className="text-sm text-[#111215]/75 dark:text-white/50 font-bold">Henüz not eklenmemiş</p>
+              <p className="text-xs text-[#111215]/55 dark:text-white/40 mt-1 font-medium">Yeni bir not ekleyerek başlayın</p>
             </div>
           )
         )}

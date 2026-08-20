@@ -32,20 +32,22 @@ export default function Sidebar({ currentUser, onLogout, page, setPage, unread, 
       )}
       <aside
         className={`fixed md:static z-40 top-0 left-0 h-full md:h-auto w-64 md:w-56 shrink-0 flex flex-col
-          border-r border-[#24262B]/10 bg-[#EFE8D6] dark:bg-[#181920] dark:border-white/10 transition-transform duration-200
+          border-r border-[#24262B]/15 bg-[#EFE8D6] dark:bg-[#181920] dark:border-white/10 transition-transform duration-200
           ${mobileOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
       >
         <div className="flex items-center justify-between px-5 py-6">
-          <div className="flex items-center gap-2">
-            <GraduationCap size={26} strokeWidth={1.75} className="text-[#24262B] dark:text-white" />
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-[#24262B] dark:bg-white text-[#F5F0E4] dark:text-[#121316] flex items-center justify-center shadow-xs shrink-0">
+              <GraduationCap size={20} strokeWidth={2} />
+            </div>
             <div>
-              <p className="stss-display text-[17px] leading-tight font-semibold text-[#24262B] dark:text-white">Görev Defteri</p>
-              <p className="stss-mono text-[10px] text-[#24262B]/55 dark:text-white/50">ÖĞRENCİ GÖREV TAKİP</p>
+              <p className="stss-display text-[17px] leading-tight font-bold text-[#111215] dark:text-white">Görev Defteri</p>
+              <p className="stss-mono text-[9.5px] font-bold text-[#111215]/70 dark:text-white/60 tracking-wider">ÖĞRENCİ GÖREV TAKİP</p>
             </div>
           </div>
         </div>
 
-        <nav className="flex-1 px-3 space-y-1 overflow-y-auto stss-scroll">
+        <nav className="flex-1 px-3 space-y-1.5 overflow-y-auto stss-scroll">
           {items.map((it) => {
             const Icon = it.icon;
             const active = page === it.id;
@@ -53,13 +55,15 @@ export default function Sidebar({ currentUser, onLogout, page, setPage, unread, 
               <button
                 key={it.id}
                 onClick={() => { setPage(it.id); setMobileOpen(false); }}
-                className={`stss-tab w-full flex items-center gap-3 rounded-md px-3 py-2.5 text-[14px] font-medium transition-colors
-                  ${active ? "bg-[#24262B] text-[#F5F0E4] dark:bg-white dark:text-[#121316]" : "text-[#24262B]/75 dark:text-white/70 hover:bg-[#24262B]/8 dark:hover:bg-white/10"}`}
+                className={`stss-tab w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-[13.5px] font-bold transition-colors cursor-pointer
+                  ${active 
+                    ? "bg-[#24262B] text-[#F5F0E4] dark:bg-white dark:text-[#121316] shadow-xs" 
+                    : "text-[#111215]/85 dark:text-white/80 hover:bg-[#24262B]/10 dark:hover:bg-white/10"}`}
               >
-                <Icon size={17} strokeWidth={1.75} />
+                <Icon size={18} strokeWidth={2} />
                 <span className="flex-1 text-left">{it.label}</span>
                 {!!it.badge && (
-                  <span className="stss-mono text-[10px] bg-[#E2725B] text-white rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
+                  <span className="stss-mono text-[10.5px] font-extrabold bg-[#E2725B] text-white rounded-full min-w-[20px] h-[20px] flex items-center justify-center px-1 shadow-xs">
                     {it.badge}
                   </span>
                 )}
@@ -68,24 +72,24 @@ export default function Sidebar({ currentUser, onLogout, page, setPage, unread, 
           })}
         </nav>
 
-        <div className="px-4 py-4 border-t border-[#24262B]/10 dark:border-white/10 space-y-2.5">
+        <div className="px-4 py-4 border-t border-[#24262B]/15 dark:border-white/10 space-y-2.5 bg-[#EAE2CE]/50 dark:bg-[#14151B]/50">
           <div className="flex items-center justify-between gap-2">
             <button
               onClick={onOpenProfile}
-              className="flex-1 flex items-center gap-2.5 p-1.5 rounded-lg hover:bg-[#24262B]/8 dark:hover:bg-white/10 transition-colors text-left group cursor-pointer"
+              className="flex-1 flex items-center gap-2.5 p-1.5 rounded-lg hover:bg-[#24262B]/10 dark:hover:bg-white/10 transition-colors text-left group cursor-pointer"
               title="Profili Düzenle"
             >
-              <div className={`w-8 h-8 rounded-full text-[#F5F0E4] flex items-center justify-center stss-display font-semibold text-xs shrink-0 ${
+              <div className={`w-8 h-8 rounded-full text-[#F5F0E4] flex items-center justify-center stss-display font-bold text-xs shrink-0 shadow-xs ${
                 isAdmin ? "bg-[#E2725B]" : "bg-[#24262B] dark:bg-[#3E8E7E]"
               }`}>
                 {firstLetter}{lastLetter}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-[12.5px] font-semibold truncate text-[#24262B] dark:text-white group-hover:text-[#3E8E7E]">
+                <p className="text-[12.5px] font-bold truncate text-[#111215] dark:text-white group-hover:text-[#3E8E7E]">
                   {currentUser?.firstName} {currentUser?.lastName}
                 </p>
-                <span className={`stss-mono text-[9px] px-1.5 py-0.2 rounded font-semibold ${
-                  isAdmin ? "bg-[#E2725B]/20 text-[#E2725B]" : "bg-[#3E8E7E]/20 text-[#3E8E7E]"
+                <span className={`stss-mono text-[9.5px] px-1.5 py-0.5 rounded font-extrabold inline-block ${
+                  isAdmin ? "bg-[#E2725B]/20 text-[#B8402C] dark:text-[#F8A092]" : "bg-[#3E8E7E]/20 text-[#1E564B] dark:text-[#A4E0D5]"
                 }`}>
                   {isAdmin ? "Yönetici" : "Öğrenci"}
                 </span>
@@ -94,23 +98,23 @@ export default function Sidebar({ currentUser, onLogout, page, setPage, unread, 
 
             <button
               onClick={onToggleDarkMode}
-              className="p-2 rounded-lg border border-[#24262B]/15 dark:border-white/20 text-[#24262B]/75 dark:text-white/80 hover:bg-[#24262B]/10 dark:hover:bg-white/10 transition-colors cursor-pointer shrink-0"
+              className="p-2 rounded-lg border border-[#24262B]/20 dark:border-white/20 text-[#111215] dark:text-white hover:bg-[#24262B]/10 dark:hover:bg-white/10 transition-colors cursor-pointer shrink-0"
               title={isDarkMode ? "Aydınlık Mod" : "Koyu Mod (Dark)"}
             >
-              {isDarkMode ? <Sun size={15} className="text-amber-400" /> : <Moon size={15} />}
+              {isDarkMode ? <Sun size={16} className="text-amber-400" /> : <Moon size={16} />}
             </button>
           </div>
 
           <div className="flex items-center gap-2 pt-1">
             <button
               onClick={onOpenProfile}
-              className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 rounded-md text-xs font-medium text-[#24262B]/80 dark:text-white/80 hover:bg-[#24262B]/8 dark:hover:bg-white/10 border border-[#24262B]/20 dark:border-white/20 transition-colors"
+              className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 rounded-md text-xs font-bold text-[#111215] dark:text-white hover:bg-[#24262B]/10 dark:hover:bg-white/10 border border-[#24262B]/25 dark:border-white/20 transition-colors cursor-pointer"
             >
               Profilim
             </button>
             <button
               onClick={onLogout}
-              className="flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md text-xs font-medium text-[#B8402C] dark:text-red-400 hover:bg-[#B8402C]/10 border border-[#B8402C]/20 transition-colors shrink-0"
+              className="flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md text-xs font-bold text-[#902A1A] dark:text-red-400 hover:bg-[#B8402C]/15 border border-[#B8402C]/30 transition-colors shrink-0 cursor-pointer"
               title="Çıkış Yap"
             >
               <LogOut size={14} />

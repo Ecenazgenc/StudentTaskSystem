@@ -239,52 +239,52 @@ startxref
         <div className="h-2 w-full" style={{ background: tape.bg }} />
         <div className="p-6">
           <div className="flex items-start justify-between mb-1">
-            <span className="stss-mono text-[10px] px-1.5 py-0.5 rounded font-bold" style={{ background: tape.tint, color: tape.bg }}>
+            <span className="stss-mono text-[10.5px] px-2 py-0.5 rounded font-extrabold" style={{ background: tape.tint, color: tape.bg }}>
               {course?.courseName || "Ders"}
             </span>
-            <button onClick={onClose} className="p-1 rounded text-[#24262B]/40 dark:text-white/40 hover:text-[#24262B] dark:hover:text-white hover:bg-[#24262B]/5 dark:hover:bg-white/10 cursor-pointer">
-              <X size={16} />
+            <button onClick={onClose} className="p-1.5 rounded-lg text-[#111215]/60 dark:text-white/40 hover:text-[#111215] dark:hover:text-white hover:bg-[#24262B]/10 dark:hover:bg-white/10 cursor-pointer">
+              <X size={18} />
             </button>
           </div>
-          <h2 className="stss-display text-[20px] font-bold mb-2 text-[#24262B] dark:text-white">{task.title}</h2>
+          <h2 className="stss-display text-[22px] font-bold mb-2 text-[#111215] dark:text-white">{task.title}</h2>
           
-          <div className="flex flex-wrap items-center gap-2 text-[12px] text-[#24262B]/65 dark:text-white/65 mb-5">
-            <span className="inline-flex items-center gap-1 font-medium">
-              <Tag size={13} /> {category?.categoryName || "Kategori"}
+          <div className="flex flex-wrap items-center gap-2 text-[12.5px] text-[#111215]/85 dark:text-white/75 mb-5 font-semibold">
+            <span className="inline-flex items-center gap-1 font-bold">
+              <Tag size={13} className="text-[#3E8E7E]" /> {category?.categoryName || "Kategori"}
             </span>
             <span>·</span>
-            <span className="inline-flex items-center gap-1 font-medium">
-              <Calendar size={13} /> {fmtDate(task.dueDate)}
+            <span className="inline-flex items-center gap-1 font-bold">
+              <Calendar size={13} className="text-[#E2725B]" /> {fmtDate(task.dueDate)}
             </span>
             <span>·</span>
-            <span className="stss-mono text-[10px] px-2 py-0.5 rounded font-bold bg-[#24262B]/[0.06] dark:bg-white/10" style={{ color: (PRIORITY_STYLE[task.priority] || PRIORITY_STYLE.Orta).color }}>
+            <span className="stss-mono text-[10.5px] px-2 py-0.5 rounded font-extrabold bg-[#24262B]/[0.08] dark:bg-white/10" style={{ color: (PRIORITY_STYLE[task.priority] || PRIORITY_STYLE.Orta).color }}>
               {task.priority} Öncelik
             </span>
             <span>·</span>
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded font-bold text-[11px]" style={{ background: statusColor.bg, color: statusColor.text }}>
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded font-bold text-[11px]" style={{ background: statusColor.bg, color: statusColor.text }}>
               <StatusIcon size={12} /> {isSubmitted ? "Tamamlandı" : (task.dueDate && daysUntil(task.dueDate) < 0) ? "Süresi Bitti" : isExpired ? "Kapatıldı" : task.status}
             </span>
           </div>
 
           {task.description && (
-            <div className="mb-5 p-3.5 rounded-lg bg-[#24262B]/4 dark:bg-white/5 border border-[#24262B]/10 dark:border-white/10 text-[13px] leading-relaxed text-[#24262B]/85 dark:text-white/85">
+            <div className="mb-5 p-4 rounded-xl bg-[#F5F0E4]/60 dark:bg-white/5 border border-[#24262B]/15 dark:border-white/10 text-[13.5px] leading-relaxed text-[#111215] dark:text-white font-normal">
               {task.description}
             </div>
           )}
 
           {/* GÖREV NOTU & GERİ BİLDİRİM BANNER (ÖĞRENCİ İÇİN) */}
           {!isAdmin && currentStudentGrade && (
-            <div className="mb-5 p-3.5 rounded-xl border border-[#D9A441]/40 bg-[#FFF3E0] dark:bg-[#D9A441]/15 text-[#24262B] dark:text-white">
-              <div className="flex items-center justify-between mb-1">
-                <span className="flex items-center gap-1.5 text-xs font-bold text-[#D9A441]">
-                  <Award size={16} /> Öğretmen Değerlendirmesi
+            <div className="mb-5 p-4 rounded-xl border-2 border-[#D9A441]/50 bg-[#FFF3E0] dark:bg-[#D9A441]/15 text-[#111215] dark:text-white shadow-xs">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="flex items-center gap-1.5 text-xs font-extrabold text-[#9A6E18] dark:text-[#F3C262]">
+                  <Award size={17} /> Öğretmen Değerlendirmesi
                 </span>
-                <span className="stss-mono text-xs font-extrabold bg-[#D9A441] text-white px-2.5 py-0.5 rounded">
+                <span className="stss-mono text-xs font-extrabold bg-[#D9A441] text-white px-2.5 py-0.5 rounded shadow-xs">
                   {currentStudentGrade.grade} / 100
                 </span>
               </div>
               {currentStudentGrade.feedback && (
-                <p className="text-xs italic text-[#24262B]/80 dark:text-white/85 mt-1">
+                <p className="text-xs italic text-[#111215]/90 dark:text-white/90 mt-1 font-medium">
                   "{currentStudentGrade.feedback}"
                 </p>
               )}
@@ -293,11 +293,11 @@ startxref
 
           {/* NOTLANDIRMA ALANI (ADMIN İÇİN) */}
           {isAdmin && (
-            <div className="mb-5 p-3.5 rounded-xl border border-[#24262B]/15 dark:border-white/15 bg-white dark:bg-[#22242F] space-y-2.5 shadow-xs">
-              <p className="stss-mono text-[10.5px] text-[#24262B]/70 dark:text-white/70 font-bold flex items-center gap-1.5">
-                <Star size={13} className="text-[#D9A441]" /> ÖDEV NOTLANDIRMA & GERİ BİLDİRİM
+            <div className="mb-5 p-4 rounded-xl border-2 border-[#24262B]/15 dark:border-white/15 bg-white dark:bg-[#22242F] space-y-3 shadow-xs">
+              <p className="stss-mono text-[11px] text-[#111215] dark:text-white font-extrabold flex items-center gap-1.5">
+                <Star size={14} className="text-[#D9A441]" /> ÖDEV NOTLANDIRMA & GERİ BİLDİRİM
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 <select
                   value={selectedStudentForGrading}
                   onChange={(e) => {
@@ -312,7 +312,7 @@ startxref
                       setInputFeedback("");
                     }
                   }}
-                  className="px-2.5 py-1.5 rounded border border-[#24262B]/15 dark:border-white/15 text-xs bg-white dark:bg-[#1A1B22] text-[#24262B] dark:text-white"
+                  className="px-3 py-2 rounded-lg border-2 border-[#24262B]/15 dark:border-white/15 text-xs bg-white dark:bg-[#1A1B22] text-[#111215] dark:text-white font-semibold"
                 >
                   <option value="">Öğrenci Seçiniz...</option>
                   {registeredStudents.map((s) => (
@@ -328,18 +328,18 @@ startxref
                   placeholder="Not (0-100)..."
                   value={inputGrade}
                   onChange={(e) => setInputGrade(e.target.value)}
-                  className="px-2.5 py-1.5 rounded border border-[#24262B]/15 dark:border-white/15 text-xs bg-white dark:bg-[#1A1B22] text-[#24262B] dark:text-white"
+                  className="px-3 py-2 rounded-lg border-2 border-[#24262B]/15 dark:border-white/15 text-xs bg-white dark:bg-[#1A1B22] text-[#111215] dark:text-white font-semibold"
                 />
               </div>
               <textarea
                 placeholder="Öğrenciye iletilecek değerlendirme notu..."
                 value={inputFeedback}
                 onChange={(e) => setInputFeedback(e.target.value)}
-                className="w-full px-2.5 py-1.5 rounded border border-[#24262B]/15 dark:border-white/15 text-xs bg-white dark:bg-[#1A1B22] text-[#24262B] dark:text-white h-16 resize-none"
+                className="w-full px-3 py-2 rounded-lg border-2 border-[#24262B]/15 dark:border-white/15 text-xs bg-white dark:bg-[#1A1B22] text-[#111215] dark:text-white h-16 resize-none font-medium"
               />
               <button
                 onClick={() => handleSaveGrade(selectedStudentForGrading)}
-                className="w-full py-1.5 rounded bg-[#D9A441] hover:bg-[#c49237] text-white text-xs font-bold transition-colors cursor-pointer shadow-xs"
+                className="w-full py-2 rounded-lg bg-[#D9A441] hover:bg-[#c49237] text-white text-xs font-bold transition-colors cursor-pointer shadow-xs"
               >
                 Notu ve Geri Bildirimi Kaydet
               </button>
@@ -348,39 +348,39 @@ startxref
 
           {/* EKLER (DOSYALAR) ALANI */}
           <div className="mb-5">
-            <p className="stss-mono text-[10.5px] text-[#24262B]/60 dark:text-white/60 mb-2 flex items-center gap-1.5 font-bold"><Paperclip size={12} /> EKLER VE YÜKLENEN DOSYALAR</p>
+            <p className="stss-mono text-[11px] text-[#111215] dark:text-white mb-2 flex items-center gap-1.5 font-extrabold"><Paperclip size={13} /> EKLER VE YÜKLENEN DOSYALAR</p>
             <div className="space-y-2">
               {(isAdmin ? attachments : attachments.filter(a => a.userId === currentUser.userId)).map((a) => (
-                <div key={a.attachmentId} className="flex flex-col p-2.5 rounded-md bg-[#24262B]/5 dark:bg-white/5 border border-[#24262B]/10 dark:border-white/10">
+                <div key={a.attachmentId} className="flex flex-col p-3 rounded-lg bg-white dark:bg-white/5 border-2 border-[#24262B]/10 dark:border-white/10 shadow-xs">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 truncate">
-                      <FileText size={15} className="text-[#3E8E7E] shrink-0" />
+                      <FileText size={16} className="text-[#3E8E7E] shrink-0" />
                       <button 
                         onClick={() => downloadAttachmentFile(a)}
-                        className="text-[12.5px] font-medium text-[#24262B] dark:text-white hover:text-[#3E8E7E] dark:hover:text-[#52B4A0] hover:underline truncate text-left flex items-center gap-1 cursor-pointer"
+                        className="text-[13px] font-bold text-[#111215] dark:text-white hover:text-[#3E8E7E] dark:hover:text-[#52B4A0] hover:underline truncate text-left flex items-center gap-1 cursor-pointer"
                         title="İndirmek için tıklayın"
                       >
                         {a.fileName}
-                        <Download size={12} className="text-[#3E8E7E] shrink-0 ml-1" />
+                        <Download size={13} className="text-[#3E8E7E] shrink-0 ml-1" />
                       </button>
                     </div>
                     {isAdmin && (
                       <button
                         type="button"
                         onClick={() => onDeleteAttachment(a.attachmentId)}
-                        className="p-1 rounded text-[#B8402C]/80 hover:text-[#B8402C] hover:bg-[#B8402C]/10 transition-colors shrink-0 ml-2 cursor-pointer"
+                        className="p-1 rounded text-[#B8402C] hover:bg-[#B8402C]/10 transition-colors shrink-0 ml-2 cursor-pointer font-bold"
                         title="Dosyayı Sil"
                       >
-                        <Trash2 size={13} />
+                        <Trash2 size={14} />
                       </button>
                     )}
                   </div>
-                  <span className="stss-mono text-[10px] text-[#24262B]/50 dark:text-white/50 mt-1 pl-6">
+                  <span className="stss-mono text-[10.5px] text-[#111215]/70 dark:text-white/50 mt-1 pl-6 font-semibold">
                     {getUserName(a.userId)} · {fmtDate(a.uploadDate)}
                   </span>
                 </div>
               ))}
-              {(isAdmin ? attachments : attachments.filter(a => a.userId === currentUser.userId)).length === 0 && <p className="text-[12px] text-[#24262B]/40 dark:text-white/40 italic">Henüz dosya eklenmedi.</p>}
+              {(isAdmin ? attachments : attachments.filter(a => a.userId === currentUser.userId)).length === 0 && <p className="text-[12.5px] text-[#111215]/60 dark:text-white/40 italic font-medium">Henüz dosya eklenmedi.</p>}
             </div>
 
             {/* Dosya Yükleme Butonu */}
@@ -396,11 +396,11 @@ startxref
                 />
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="mt-2.5 w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 border-dashed border-[#3E8E7E]/40 bg-[#3E8E7E]/5 dark:bg-[#3E8E7E]/15 text-[#3E8E7E] dark:text-[#52B4A0] hover:bg-[#3E8E7E]/10 hover:border-[#3E8E7E]/60 transition-all cursor-pointer font-medium"
+                  className="mt-2.5 w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 border-dashed border-[#3E8E7E]/50 bg-[#3E8E7E]/10 dark:bg-[#3E8E7E]/15 text-[#1E564B] dark:text-[#A4E0D5] hover:bg-[#3E8E7E]/15 hover:border-[#3E8E7E]/70 transition-all cursor-pointer font-bold"
                 >
                   <Upload size={16} />
                   <span className="text-[13px]">Ödev Dosyası Ekle</span>
-                  <span className="text-[11px] opacity-70">(PDF, Word, vs.)</span>
+                  <span className="text-[11px] opacity-80">(PDF, Word, vs.)</span>
                 </button>
               </>
             )}
@@ -408,35 +408,35 @@ startxref
 
           {/* YORUM ALANI */}
           <div className="mb-5">
-            <p className="stss-mono text-[10.5px] text-[#24262B]/60 dark:text-white/60 mb-2 flex items-center gap-1.5 font-bold"><MessageSquare size={12} /> YORUMLAR ({comments.length})</p>
+            <p className="stss-mono text-[11px] text-[#111215] dark:text-white mb-2 flex items-center gap-1.5 font-extrabold"><MessageSquare size={13} /> YORUMLAR ({comments.length})</p>
             <div className="space-y-2.5 mb-3">
               {comments.map((c) => {
                 const info = getUserInfo(c.userId, c.userFullName);
                 return (
                   <div
                     key={c.commentId}
-                    className={`p-3 rounded-lg border transition-all ${
+                    className={`p-3.5 rounded-lg border-2 transition-all ${
                       info.isAdmin
-                        ? "bg-[#FBEAE5]/50 dark:bg-[#E2725B]/15 border-[#E2725B]/30"
-                        : "bg-[#24262B]/5 dark:bg-white/5 border-[#24262B]/10 dark:border-white/10"
+                        ? "bg-[#FBEAE5] dark:bg-[#E2725B]/15 border-[#E2725B]/40"
+                        : "bg-white dark:bg-white/5 border-[#24262B]/10 dark:border-white/10 shadow-xs"
                     }`}
                   >
                     <div className="flex items-center justify-between gap-2 mb-1">
                       <div className="flex items-center gap-1.5">
-                        <span className="text-[12.5px] font-bold text-[#24262B] dark:text-white">{info.name}</span>
+                        <span className="text-[12.5px] font-bold text-[#111215] dark:text-white">{info.name}</span>
                         {info.isAdmin && (
-                          <span className="stss-mono text-[9.5px] bg-[#E2725B] text-white px-1.5 py-0.2 rounded font-bold shadow-xs">
+                          <span className="stss-mono text-[9.5px] bg-[#E2725B] text-white px-1.5 py-0.2 rounded font-extrabold shadow-xs">
                             Yönetici (Admin)
                           </span>
                         )}
                       </div>
-                      <span className="stss-mono text-[10px] text-[#24262B]/50 dark:text-white/50">{fmtDate(c.createdDate)}</span>
+                      <span className="stss-mono text-[10.5px] text-[#111215]/65 dark:text-white/50 font-semibold">{fmtDate(c.createdDate)}</span>
                     </div>
-                    <p className="text-[12.5px] leading-snug text-[#24262B]/90 dark:text-white/90">{c.commentText}</p>
+                    <p className="text-[13px] leading-snug text-[#111215] dark:text-white/90 font-normal">{c.commentText}</p>
                   </div>
                 );
               })}
-              {comments.length === 0 && <p className="text-[12px] text-[#24262B]/40 dark:text-white/40 italic">Henüz yorum yok.</p>}
+              {comments.length === 0 && <p className="text-[12.5px] text-[#111215]/60 dark:text-white/40 italic font-medium">Henüz yorum yok.</p>}
             </div>
 
             {((!isSubmitted && !isExpired) || isAdmin) && (
@@ -446,7 +446,7 @@ startxref
                   onChange={(e) => setDraft(e.target.value)}
                   onKeyDown={(e) => { if (e.key === "Enter" && draft.trim()) { onAddComment(task.taskId, draft.trim()); setDraft(""); } }}
                   placeholder={isAdmin ? "Yönetici olarak not veya yanıt yaz..." : "Bir not veya yorum yaz..."}
-                  className="flex-1 px-3 py-2 rounded-md border border-[#24262B]/15 dark:border-white/15 text-[12.5px] bg-white dark:bg-[#1A1B22] text-[#24262B] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#24262B]/20"
+                  className="flex-1 px-3.5 py-2.5 rounded-lg border-2 border-[#24262B]/20 dark:border-white/15 text-[13px] bg-white dark:bg-[#1A1B22] text-[#111215] dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-[#3E8E7E]"
                 />
                 <button
                   onClick={() => { if (draft.trim()) { onAddComment(task.taskId, draft.trim()); setDraft(""); } }}

@@ -316,7 +316,7 @@ export default function App() {
       const loadedNotifications = backendNotifications.map((n) => ({
         notificationId: n.notificationId,
         userId: n.userId,
-        message: n.message,
+        message: (n.message || "").replace(/^(\?\?|\?|)+\s*/, "").replace(/^📢\s*/, ""),
         isRead: n.read,
         createdDate: n.createdDate ? n.createdDate.slice(0, 10) : "",
       }));
@@ -324,7 +324,19 @@ export default function App() {
       localStorage.setItem("stss_notifications", JSON.stringify(loadedNotifications));
     } else {
       const saved = localStorage.getItem("stss_notifications");
-      setNotifications(saved ? JSON.parse(saved) : INIT_NOTIFICATIONS);
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved).map(n => ({
+            ...n,
+            message: (n.message || "").replace(/^(\?\?|\?|)+\s*/, "").replace(/^📢\s*/, ""),
+          }));
+          setNotifications(parsed);
+        } catch {
+          setNotifications(INIT_NOTIFICATIONS);
+        }
+      } else {
+        setNotifications(INIT_NOTIFICATIONS);
+      }
     }
 
     if (backendNotes && backendNotes.length > 0) {
@@ -426,7 +438,7 @@ export default function App() {
     ? notifications 
     : notifications.filter((n) => n.userId === null || n.userId === currentUser.userId);
     
-  const unread = userNotifications.filter((n) => !n.isRead && !(isAdmin && n.message.startsWith("📢 DUYURU:"))).length;
+  const unread = userNotifications.filter((n) => !n.isRead && !(isAdmin && (n.message || "").includes("DUYURU:"))).length;
   const selectedTask = tasks.find((t) => t.taskId === selectedTaskId);
 
   const handleStatusChange = async (taskId, status) => {
@@ -699,27 +711,88 @@ export default function App() {
     }
   };
 
-  const handleSendNotification = (message, targetUserId = null) => {
+  const handleSendNotification = async (message, targetUserId = null) => {
+    const cleanText = (message || "").trim().replace(/^(\?\?|\?|)+\s*/, "").replace(/^📢\s*/, "");
+    const formattedMessage = cleanText.startsWith("DUYURU:") ? cleanText : `DUYURU: ${cleanText}`;
+
     const msgObj = {
-      message: `DUYURU: ${message}`,
+      message: formattedMessage,
       userId: targetUserId ? Number(targetUserId) : null,
     };
     
-    notificationApi.create(msgObj).then((res) => {
-      const newNotif = {
-        notificationId: res ? res.notificationId : Date.now(),
-        userId: res ? res.userId : targetUserId,
-        message: res ? res.message : msgObj.message,
-        isRead: false,
-        createdDate: todayPlus(0),
-      };
+    try {
+      const res = await notificationApi.create(msgObj);
+      let newNotifs = [];
+
+      if (Array.isArray(res) && res.length > 0) {
+        newNotifs = res.map(r => ({
+          notificationId: r.notificationId,
+          userId: r.userId,
+          message: r.message,
+          isRead: false,
+          createdDate: todayPlus(0),
+        }));
+      } else if (res && res.notificationId) {
+        newNotifs = [{
+          notificationId: res.notificationId,
+          userId: res.userId,
+          message: res.message,
+          isRead: false,
+          createdDate: todayPlus(0),
+        }];
+      } else {
+        // Yerel fallback
+        const targetIdNum = targetUserId ? Number(targetUserId) : null;
+        if (targetIdNum) {
+          newNotifs = [{
+            notificationId: Date.now(),
+            userId: targetIdNum,
+            message: formattedMessage,
+            isRead: false,
+            createdDate: todayPlus(0),
+          }];
+        } else {
+          const studentList = (users || []).filter(u => u.roleId === 2);
+          if (studentList.length > 0) {
+            newNotifs = studentList.map((s, idx) => ({
+              notificationId: Date.now() + idx,
+              userId: s.userId,
+              message: formattedMessage,
+              isRead: false,
+              createdDate: todayPlus(0),
+            }));
+          } else {
+            newNotifs = [{
+              notificationId: Date.now(),
+              userId: null,
+              message: formattedMessage,
+              isRead: false,
+              createdDate: todayPlus(0),
+            }];
+          }
+        }
+      }
 
       setNotifications((ns) => {
-        const updated = [newNotif, ...ns];
+        const updated = [...newNotifs, ...ns];
         localStorage.setItem("stss_notifications", JSON.stringify(updated));
         return updated;
       });
-    }).catch(e => console.warn("Bildirim gönderme hatası:", e));
+    } catch (e) {
+      console.warn("Bildirim gönderme hatası:", e);
+      const studentList = (users || []).filter(u => u.roleId === 2);
+      const fallbackNotifs = targetUserId 
+        ? [{ notificationId: Date.now(), userId: Number(targetUserId), message: formattedMessage, isRead: false, createdDate: todayPlus(0) }]
+        : (studentList.length > 0 
+            ? studentList.map((s, idx) => ({ notificationId: Date.now() + idx, userId: s.userId, message: formattedMessage, isRead: false, createdDate: todayPlus(0) }))
+            : [{ notificationId: Date.now(), userId: null, message: formattedMessage, isRead: false, createdDate: todayPlus(0) }]);
+
+      setNotifications((ns) => {
+        const updated = [...fallbackNotifs, ...ns];
+        localStorage.setItem("stss_notifications", JSON.stringify(updated));
+        return updated;
+      });
+    }
 
     setEmailToast({
       id: Date.now(),

@@ -84,22 +84,22 @@ export default function TaskBoard({ tasks, courses, categories, attachments, onO
     <div>
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="stss-display text-[24px] font-semibold">{isAdmin ? "Tüm Görevler" : "Görevlerim"}</h1>
-          <p className="text-xs text-[#24262B]/55 dark:text-white/55 mt-0.5">
+          <h1 className="stss-display text-[24px] font-bold text-[#111215] dark:text-white">{isAdmin ? "Tüm Görevler" : "Görevlerim"}</h1>
+          <p className="text-xs text-[#111215]/75 dark:text-white/65 mt-0.5 font-medium">
             {isAdmin ? "Sistemdeki tüm ödev ve görevleri takip edin" : "Tarafınıza atanan tüm görevler ve son teslim tarihleri"}
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={handleExportPDF} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-md bg-[#E2725B] text-white text-xs font-semibold hover:bg-[#cf5f48]">
+          <button onClick={handleExportPDF} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#E2725B] text-white text-xs font-bold hover:bg-[#cf5f48] shadow-xs cursor-pointer">
             <FileText size={14} /> PDF
           </button>
-          <button onClick={handleExportCSV} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-md bg-[#3E8E7E] text-white text-xs font-semibold hover:bg-[#327366]">
+          <button onClick={handleExportCSV} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#3E8E7E] text-white text-xs font-bold hover:bg-[#327366] shadow-xs cursor-pointer">
             <FileSpreadsheet size={14} /> Excel
           </button>
           {isAdmin && (
             <button
               onClick={onNew}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md bg-[#24262B] dark:bg-white text-[#F5F0E4] dark:text-[#121316] text-[13px] font-medium hover:bg-[#3a3d45] dark:hover:bg-gray-200 shadow-sm cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#24262B] dark:bg-white text-[#F5F0E4] dark:text-[#121316] text-[13px] font-bold hover:bg-[#3a3d45] dark:hover:bg-gray-200 shadow-xs cursor-pointer"
             >
               <Plus size={15} /> Yeni Görev
             </button>
@@ -110,13 +110,13 @@ export default function TaskBoard({ tasks, courses, categories, attachments, onO
       <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
         <div className="flex items-center gap-2 flex-1 min-w-[200px] max-w-xs">
           <div className="relative w-full">
-            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#24262B]/40 dark:text-white/40" />
+            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#111215]/60 dark:text-white/50" />
             <input
               type="text"
               value={filters.search}
               onChange={(e) => setFilters({ ...filters, search: e.target.value })}
               placeholder="Görev ara..."
-              className="w-full pl-9 pr-3 py-2 rounded-md bg-white dark:bg-[#1A1B22] border border-[#24262B]/15 dark:border-white/15 text-[13px] text-[#24262B] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#24262B]/20"
+              className="w-full pl-9 pr-3 py-2 rounded-lg bg-white dark:bg-[#1A1B22] border-2 border-[#24262B]/20 dark:border-white/20 text-[13px] text-[#111215] dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-[#3E8E7E]"
             />
           </div>
         </div>
@@ -124,7 +124,7 @@ export default function TaskBoard({ tasks, courses, categories, attachments, onO
           <select
             value={filters.course}
             onChange={(e) => setFilters({ ...filters, course: e.target.value === "all" ? "all" : Number(e.target.value) })}
-            className="px-3 py-2 rounded-md bg-white dark:bg-[#1A1B22] border border-[#24262B]/15 dark:border-white/15 text-[12.5px] text-[#24262B] dark:text-white focus:outline-none"
+            className="px-3 py-2 rounded-lg bg-white dark:bg-[#1A1B22] border-2 border-[#24262B]/20 dark:border-white/20 text-[12.5px] text-[#111215] dark:text-white font-semibold focus:outline-none"
           >
             <option value="all">Tüm Dersler</option>
             {courses.map((c) => (
@@ -134,7 +134,7 @@ export default function TaskBoard({ tasks, courses, categories, attachments, onO
           <select
             value={filters.category}
             onChange={(e) => setFilters({ ...filters, category: e.target.value === "all" ? "all" : Number(e.target.value) })}
-            className="px-3 py-2 rounded-md bg-white dark:bg-[#1A1B22] border border-[#24262B]/15 dark:border-white/15 text-[12.5px] text-[#24262B] dark:text-white focus:outline-none"
+            className="px-3 py-2 rounded-lg bg-white dark:bg-[#1A1B22] border-2 border-[#24262B]/20 dark:border-white/20 text-[12.5px] text-[#111215] dark:text-white font-semibold focus:outline-none"
           >
             <option value="all">Tüm Kategoriler</option>
             {categories.map((c) => (
@@ -144,23 +144,23 @@ export default function TaskBoard({ tasks, courses, categories, attachments, onO
         </div>
       </div>
 
-      <div className="stss-card rounded-lg overflow-hidden bg-[#FFFDF8] dark:bg-[#1C1D24] border border-[#24262B]/10 dark:border-white/10 shadow-sm">
+      <div className="stss-card rounded-xl overflow-hidden bg-[#FFFDF8] dark:bg-[#1C1D24] border-2 border-[#24262B]/15 dark:border-white/15 shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-[13px]">
             <thead>
-              <tr className="border-b border-[#24262B]/10 dark:border-white/10 text-[#24262B]/60 dark:text-white/60 bg-[#24262B]/5 dark:bg-white/5 stss-mono uppercase font-bold">
-                <th className="py-3 px-3">Görev Adı</th>
-                <th className="py-3 px-3">Ders</th>
-                {isAdmin && <th className="py-3 px-3">Teslim Edenler</th>}
-                <th className="py-3 px-3">Öncelik</th>
-                <th className="py-3 px-3">Bitiş Tarihi</th>
-                <th className="py-3 px-3">Durum</th>
+              <tr className="border-b-2 border-[#24262B]/15 dark:border-white/15 text-[#111215] dark:text-white bg-[#24262B]/8 dark:bg-white/8 stss-mono uppercase font-extrabold text-[11.5px]">
+                <th className="py-3 px-3.5">Görev Adı</th>
+                <th className="py-3 px-3.5">Ders</th>
+                {isAdmin && <th className="py-3 px-3.5">Teslim Edenler</th>}
+                <th className="py-3 px-3.5">Öncelik</th>
+                <th className="py-3 px-3.5">Bitiş Tarihi</th>
+                <th className="py-3 px-3.5">Durum</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#24262B]/8 dark:divide-white/10">
+            <tbody className="divide-y divide-[#24262B]/10 dark:divide-white/10">
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={isAdmin ? 6 : 5} className="py-8 text-center text-[#24262B]/50 dark:text-white/50 italic">
+                  <td colSpan={isAdmin ? 6 : 5} className="py-8 text-center text-[#111215]/60 dark:text-white/50 italic font-semibold">
                     Arama kriterlerine uygun görev bulunamadı.
                   </td>
                 </tr>
@@ -192,35 +192,35 @@ export default function TaskBoard({ tasks, courses, categories, attachments, onO
                         (overdue || isClosed) ? "bg-[#FFF0EE] dark:bg-[#B8402C]/20" : ""
                       }`}
                     >
-                      <td className="py-4 px-3 font-semibold text-[#24262B] dark:text-white group-hover:text-[#3E8E7E] dark:group-hover:text-[#52B4A0] transition-colors">{t.title}</td>
-                      <td className="py-4 px-3 text-[#24262B]/75 dark:text-white/75">{c?.courseName || "Bilinmiyor"}</td>
+                      <td className="py-3.5 px-3.5 font-bold text-[#111215] dark:text-white group-hover:text-[#3E8E7E] dark:group-hover:text-[#52B4A0] transition-colors">{t.title}</td>
+                      <td className="py-3.5 px-3.5 text-[#111215]/85 dark:text-white/80 font-semibold">{c?.courseName || "Bilinmiyor"}</td>
                       {isAdmin && (
-                        <td className="py-4 px-3 text-[#24262B]/80 dark:text-white/80 text-[12px]">
-                          <span className={`font-semibold ${allStudentsSubmitted ? "text-[#3E8E7E] dark:text-[#52B4A0]" : "text-[#24262B]/80 dark:text-white/80"}`}>
+                        <td className="py-3.5 px-3.5 text-[#111215] dark:text-white/80 text-[12px]">
+                          <span className={`font-bold ${allStudentsSubmitted ? "text-[#1E564B] dark:text-[#52B4A0]" : "text-[#111215] dark:text-white/80"}`}>
                             {submittedStudentsCount} / {studentCount} Öğrenci
                           </span>
                           {allStudentsSubmitted && (
-                            <span className="ml-1.5 text-[10px] bg-[#E6F1EE] dark:bg-[#3E8E7E]/30 text-[#3E8E7E] dark:text-[#A4E0D5] px-1.5 py-0.5 rounded font-bold">
+                            <span className="ml-1.5 text-[10px] bg-[#CDE7E1] dark:bg-[#3E8E7E]/30 text-[#1E564B] dark:text-[#A4E0D5] px-1.5 py-0.5 rounded font-extrabold">
                               Tamamlandı
                             </span>
                           )}
                         </td>
                       )}
-                      <td className="py-4 px-3">
-                        <span className="stss-mono text-[10px] px-2 py-1 rounded font-bold bg-[#24262B]/[0.06] dark:bg-white/10" style={{ color: (PRIORITY_STYLE[t.priority] || PRIORITY_STYLE.Orta).color }}>
+                      <td className="py-3.5 px-3.5">
+                        <span className="stss-mono text-[10px] px-2 py-0.8 rounded font-extrabold bg-[#24262B]/[0.08] dark:bg-white/10" style={{ color: (PRIORITY_STYLE[t.priority] || PRIORITY_STYLE.Orta).color }}>
                           {t.priority}
                         </span>
                       </td>
-                      <td className="py-4 px-3 stss-mono text-[#24262B]/70 dark:text-white/70 font-medium">
+                      <td className="py-3.5 px-3.5 stss-mono text-[#111215]/85 dark:text-white/70 font-semibold">
                         {formatDate(t.dueDate)}
                       </td>
-                      <td className="py-4 px-3">
+                      <td className="py-3.5 px-3.5">
                         <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-bold ${
                           isDone
-                            ? 'bg-[#E6F1EE] dark:bg-[#3E8E7E]/30 text-[#3E8E7E] dark:text-[#A4E0D5]'
+                            ? 'bg-[#CDE7E1] dark:bg-[#3E8E7E]/30 text-[#1E564B] dark:text-[#A4E0D5]'
                             : (overdue || isClosed)
-                            ? 'bg-[#FBEAE5] dark:bg-[#B8402C]/30 text-[#B8402C] dark:text-[#F8A092]'
-                            : 'bg-[#FFF3E0] dark:bg-[#E2725B]/30 text-[#E2725B] dark:text-[#FDC5B7]'
+                            ? 'bg-[#FBEAE5] dark:bg-[#B8402C]/30 text-[#902A1A] dark:text-[#F8A092]'
+                            : 'bg-[#FFF3E0] dark:bg-[#E2725B]/30 text-[#9A4613] dark:text-[#FDC5B7]'
                         }`}>
                           <StatusIcon size={13} />
                           {displayStatus}

@@ -595,16 +595,16 @@ export default function LoginPage({ onLogin, onEmailSent }) {
       </section>
 
       {/* ══════════════ 2. BÖLÜM: SİSTEMİN TÜM ÖZELLİKLERİ ══════════════ */}
-      <section id="ozellikler" className="py-20 px-4 sm:px-6 bg-[#EBE4D5]/60 dark:bg-[#181920]/80 border-t border-[#24262B]/10 dark:border-white/10">
+      <section id="ozellikler" className="py-20 px-4 sm:px-6 bg-[#EBE4D5]/70 dark:bg-[#181920]/80 border-t-2 border-[#24262B]/10 dark:border-white/10">
         <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <span className="stss-mono text-xs uppercase tracking-widest font-extrabold text-[#3E8E7E] block mb-2">
+            <span className="stss-mono text-xs uppercase tracking-widest font-extrabold text-[#1E564B] dark:text-[#3E8E7E] block mb-2">
               Kapsamlı Modüller
             </span>
-            <h2 className="stss-display text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-[#111215] dark:text-white">
+            <h2 className="stss-display text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-[#111215] dark:text-white">
               Ödev Takip Sisteminin Öne Çıkan Yetenekleri
             </h2>
-            <p className="text-xs sm:text-sm text-[#111215]/70 dark:text-white/70 mt-3 leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#111215]/80 dark:text-white/70 mt-3 leading-relaxed font-medium">
               Öğrencilerin dönem boyunca karşılaştığı ödev yığılmasını önlemek, çalışma disiplini kazandırmak ve zamanı verimli kullanmak için tasarlandı.
             </p>
           </div>
@@ -613,14 +613,14 @@ export default function LoginPage({ onLogin, onEmailSent }) {
             {FEATURES.map((feat, index) => (
               <div
                 key={index}
-                className="stss-card rounded-xl p-5 bg-[#FFFDF8] dark:bg-[#1C1D24] border border-[#24262B]/10 dark:border-white/10 hover:border-[#3E8E7E]/50 transition-all hover:-translate-y-1 shadow-sm flex flex-col justify-between"
+                className="stss-card rounded-2xl p-5 bg-[#FFFDF8] dark:bg-[#1C1D24] border-2 border-[#24262B]/12 dark:border-white/10 hover:border-[#3E8E7E]/60 transition-all hover:-translate-y-1 shadow-sm flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <div className="w-10 h-10 rounded-lg bg-[#3E8E7E]/15 text-[#1E564B] dark:text-[#A4E0D5] flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-xl bg-[#3E8E7E]/15 text-[#1E564B] dark:text-[#A4E0D5] flex items-center justify-center">
                       <feat.icon size={20} />
                     </div>
-                    <span className="stss-mono text-[10px] px-2 py-0.5 rounded bg-[#24262B]/5 dark:bg-white/10 text-[#111215]/70 dark:text-white/70 font-bold uppercase">
+                    <span className="stss-mono text-[10px] px-2.5 py-0.5 rounded-md bg-[#24262B]/8 dark:bg-white/10 text-[#111215] dark:text-white/80 font-extrabold uppercase">
                       {feat.badge}
                     </span>
                   </div>
@@ -629,7 +629,7 @@ export default function LoginPage({ onLogin, onEmailSent }) {
                     {feat.title}
                   </h3>
 
-                  <p className="text-xs text-[#111215]/70 dark:text-white/70 leading-relaxed">
+                  <p className="text-xs text-[#111215]/80 dark:text-white/70 leading-relaxed font-normal">
                     {feat.desc}
                   </p>
                 </div>
@@ -640,16 +640,16 @@ export default function LoginPage({ onLogin, onEmailSent }) {
       </section>
 
       {/* ══════════════ 3. BÖLÜM: NASIL ÇALIŞIR? ══════════════ */}
-      <section id="nasil-calisir" className="py-20 px-4 sm:px-6 border-t border-[#24262B]/10 dark:border-white/10">
+      <section id="nasil-calisir" className="py-20 px-4 sm:px-6 border-t-2 border-[#24262B]/10 dark:border-white/10 bg-[#F5F0E4] dark:bg-[#121316]">
         <div className="max-w-5xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <span className="stss-mono text-xs uppercase tracking-widest font-extrabold text-[#E2725B] block mb-2">
+            <span className="stss-mono text-xs uppercase tracking-widest font-extrabold text-[#B8402C] dark:text-[#E2725B] block mb-2">
               Kolay Kullanım
             </span>
-            <h2 className="stss-display text-2xl sm:text-3xl font-bold tracking-tight text-[#111215] dark:text-white">
+            <h2 className="stss-display text-2xl sm:text-3xl font-extrabold tracking-tight text-[#111215] dark:text-white">
               3 Adımda Ödevlerinizi Düzene Sokun
             </h2>
-            <p className="text-xs sm:text-sm text-[#111215]/70 dark:text-white/70 mt-2">
+            <p className="text-xs sm:text-sm text-[#111215]/80 dark:text-white/70 mt-2 font-medium">
               Karmaşık listeler yerine anlaşılır ve kullanımı kolay sistem akışı.
             </p>
           </div>
@@ -658,7 +658,7 @@ export default function LoginPage({ onLogin, onEmailSent }) {
             {STEPS.map((step, idx) => (
               <div
                 key={idx}
-                className="relative p-6 rounded-2xl bg-[#FFFDF8] dark:bg-[#1C1D24] border-2 border-[#24262B]/10 dark:border-white/10 text-center flex flex-col items-center"
+                className="relative p-6 rounded-2xl bg-[#FFFDF8] dark:bg-[#1C1D24] border-2 border-[#24262B]/15 dark:border-white/10 text-center flex flex-col items-center shadow-xs"
               >
                 <div className="w-12 h-12 rounded-2xl bg-[#24262B] dark:bg-white text-white dark:text-[#121316] font-black stss-display text-xl flex items-center justify-center mb-4 shadow-md">
                   {step.number}
@@ -666,7 +666,7 @@ export default function LoginPage({ onLogin, onEmailSent }) {
                 <h3 className="font-bold text-base text-[#111215] dark:text-white mb-2">
                   {step.title}
                 </h3>
-                <p className="text-xs text-[#111215]/70 dark:text-white/70 leading-relaxed">
+                <p className="text-xs text-[#111215]/80 dark:text-white/70 leading-relaxed font-normal">
                   {step.desc}
                 </p>
               </div>
@@ -681,7 +681,7 @@ export default function LoginPage({ onLogin, onEmailSent }) {
           <h2 className="stss-display text-2xl sm:text-3xl font-bold tracking-tight">
             Ödevlerinizi Ertelemeyi Bırakın, Hemen Kontrolü Ele Alın
           </h2>
-          <p className="text-xs sm:text-sm text-white/75 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xs sm:text-sm text-white/80 max-w-2xl mx-auto leading-relaxed">
             Ders programınıza ve teslim tarihlerinize tam hakimiyet sağlayın. İster tek tek ödevlerinizi takip edin, ister dönem boyu performansınızı analiz edin.
           </p>
 
@@ -699,14 +699,14 @@ export default function LoginPage({ onLogin, onEmailSent }) {
       </section>
 
       {/* ══════════════ ALT BİLGİ (FOOTER) ══════════════ */}
-      <footer className="py-8 px-4 sm:px-6 border-t border-[#24262B]/10 dark:border-white/10 text-center">
+      <footer className="py-8 px-4 sm:px-6 border-t-2 border-[#24262B]/10 dark:border-white/10 text-center bg-[#EAE2CE]/40 dark:bg-[#14151B]/40">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <GraduationCap size={18} className="text-[#3E8E7E]" />
-            <span className="font-bold text-xs">Görev Defteri — Ödev & Görev Takip Sistemi</span>
+            <span className="font-bold text-xs text-[#111215] dark:text-white">Görev Defteri — Ödev & Görev Takip Sistemi</span>
           </div>
 
-          <p className="stss-mono text-[11px] text-[#111215]/50 dark:text-white/50">
+          <p className="stss-mono text-[11px] text-[#111215]/70 dark:text-white/60 font-semibold">
             © 2026 Tüm Hakları Saklıdır. Öğrenci Başarı ve Görev Yönetim Platformu.
           </p>
         </div>
