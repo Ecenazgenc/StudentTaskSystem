@@ -42,7 +42,7 @@ export default function Sidebar({ currentUser, onLogout, page, setPage, unread, 
             </div>
             <div>
               <p className="stss-display text-[17px] leading-tight font-bold text-[#111215] dark:text-white">Görev Defteri</p>
-              <p className="stss-mono text-[9.5px] font-bold text-[#111215]/70 dark:text-white/60 tracking-wider">ÖĞRENCİ GÖREV TAKİP</p>
+              <p className="stss-mono text-[9.5px] font-bold text-[#111215]/85 dark:text-white/60 tracking-wider">ÖĞRENCİ GÖREV TAKİP</p>
             </div>
           </div>
         </div>

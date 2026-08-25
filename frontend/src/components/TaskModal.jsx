@@ -229,17 +229,17 @@ startxref
     ? { bg: "#E6F1EE", text: "#3E8E7E", icon: CheckCircle2 }
     : isExpired
     ? { bg: "#FBEAE5", text: "#B8402C", icon: Clock }
-    : { bg: "#FFF3E0", text: "#E2725B", icon: Clock };
+    : { bg: "#FFF3E0", text: "#9A4613", icon: Clock };
   
   const StatusIcon = statusColor.icon;
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 dark:bg-black/75 px-0 sm:px-4">
-      <div className="stss-card relative w-full sm:max-w-lg max-h-[92vh] overflow-y-auto stss-scroll rounded-t-xl sm:rounded-lg bg-[#FFFDF8] dark:bg-[#1C1D24] dark:border-white/15 text-[#24262B] dark:text-white">
+      <div className="stss-card relative w-full sm:max-w-lg max-h-[92vh] overflow-y-auto stss-scroll rounded-t-xl sm:rounded-lg bg-[#FFFDF8] dark:bg-[#1C1D24] border-2 border-[#24262B]/15 dark:border-white/15 text-[#24262B] dark:text-white">
         <div className="h-2 w-full" style={{ background: tape.bg }} />
         <div className="p-6">
           <div className="flex items-start justify-between mb-1">
-            <span className="stss-mono text-[10.5px] px-2 py-0.5 rounded font-extrabold" style={{ background: tape.tint, color: tape.bg }}>
+            <span className="stss-mono text-[10.5px] px-2 py-0.5 rounded font-extrabold" style={{ background: tape.tint, color: tape.text || tape.bg }}>
               {course?.courseName || "Ders"}
             </span>
             <button onClick={onClose} className="p-1.5 rounded-lg text-[#111215]/60 dark:text-white/40 hover:text-[#111215] dark:hover:text-white hover:bg-[#24262B]/10 dark:hover:bg-white/10 cursor-pointer">
@@ -279,7 +279,7 @@ startxref
                 <span className="flex items-center gap-1.5 text-xs font-extrabold text-[#9A6E18] dark:text-[#F3C262]">
                   <Award size={17} /> Öğretmen Değerlendirmesi
                 </span>
-                <span className="stss-mono text-xs font-extrabold bg-[#D9A441] text-white px-2.5 py-0.5 rounded shadow-xs">
+                <span className="stss-mono text-xs font-extrabold bg-[#9A6E18] text-white px-2.5 py-0.5 rounded shadow-xs">
                   {currentStudentGrade.grade} / 100
                 </span>
               </div>
@@ -339,7 +339,7 @@ startxref
               />
               <button
                 onClick={() => handleSaveGrade(selectedStudentForGrading)}
-                className="w-full py-2 rounded-lg bg-[#D9A441] hover:bg-[#c49237] text-white text-xs font-bold transition-colors cursor-pointer shadow-xs"
+                className="w-full py-2 rounded-lg bg-[#9A6E18] hover:bg-[#7D5512] text-white text-xs font-bold transition-colors cursor-pointer shadow-xs"
               >
                 Notu ve Geri Bildirimi Kaydet
               </button>
@@ -491,7 +491,7 @@ startxref
                   <Lock size={14} /> Görevi Sonlandır
                 </button>
               ) : (
-                <div className="inline-flex items-center gap-1.5 text-[12.5px] text-[#24262B]/50 dark:text-white/50 font-semibold">
+                <div className="inline-flex items-center gap-1.5 text-[12.5px] text-[#24262B]/75 dark:text-white/60 font-semibold">
                   <Lock size={14} /> Görev Sonlandırıldı
                 </div>
               )}

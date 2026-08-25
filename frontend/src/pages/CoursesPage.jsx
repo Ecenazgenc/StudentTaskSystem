@@ -43,7 +43,7 @@ export default function CoursesPage({ courses = [], tasks = [], onAdd, onDelete,
             <BookOpen size={24} className="text-[#3E8E7E]" />
             {isAdmin ? "Tüm Dersler & Müfredat" : "Derslerim"}
           </h1>
-          <p className="text-xs text-[#111215]/75 dark:text-white/70 mt-0.5 font-semibold">
+          <p className="text-xs text-[#111215]/85 dark:text-white/70 mt-0.5 font-semibold">
             Derslerinizi ve ders kapak fotoğraflarını yönetin
           </p>
         </div>
@@ -61,7 +61,7 @@ export default function CoursesPage({ courses = [], tasks = [], onAdd, onDelete,
 
       {courses.length === 0 ? (
         <div className="stss-card rounded-2xl p-10 text-center bg-[#FFFDF8] dark:bg-[#1C1D24] border-2 border-[#111215]/15 dark:border-white/15">
-          <p className="text-sm text-[#111215]/70 dark:text-white/70 italic font-semibold">Henüz eklenmiş ders bulunmamaktadır.</p>
+          <p className="text-sm text-[#111215]/80 dark:text-white/70 italic font-semibold">Henüz eklenmiş ders bulunmamaktadır.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">

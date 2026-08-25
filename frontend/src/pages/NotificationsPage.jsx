@@ -84,11 +84,11 @@ export default function NotificationsPage({ notifications = [], onMarkRead, onMa
                     </span>
                   )}
                   {isGrading && (
-                    <span className="stss-mono text-[10px] bg-[#D9A441] text-white px-2 py-0.5 rounded font-extrabold shadow-xs">
+                    <span className="stss-mono text-[10px] bg-[#9A6E18] text-white px-2 py-0.5 rounded font-extrabold shadow-xs">
                       NOTLANDIRMA
                     </span>
                   )}
-                  <p className="stss-mono text-[11px] text-[#111215]/65 dark:text-white/60 font-semibold">{fmtDate(n.createdDate)}</p>
+                  <p className="stss-mono text-[11px] text-[#111215]/80 dark:text-white/60 font-semibold">{fmtDate(n.createdDate)}</p>
                 </div>
                 <p className={`text-[13.5px] leading-relaxed ${n.isRead ? "text-[#111215]/80 dark:text-white/75 font-normal" : "text-[#111215] dark:text-white font-bold"}`}>
                   {cleanedMsg}

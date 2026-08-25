@@ -25,7 +25,7 @@ export default function TaskCard({ task, course, category, onOpen }) {
       <div className="flex items-center flex-wrap gap-1.5 mb-3">
         <span
           className="stss-mono text-[10px] px-2 py-0.5 rounded-md font-extrabold inline-flex items-center gap-1.5"
-          style={{ background: tape.tint, color: tape.bg }}
+          style={{ background: tape.tint, color: tape.text || tape.bg }}
         >
           {courseImg && (
             <img src={courseImg} alt="" className="w-3.5 h-3.5 rounded object-cover" />

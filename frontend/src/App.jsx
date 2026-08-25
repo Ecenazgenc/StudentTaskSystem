@@ -1006,10 +1006,10 @@ export default function App() {
 
       <main className="flex-1 min-w-0 relative z-10">
         <div className="md:hidden flex items-center gap-3 px-4 py-3 border-b border-[#24262B]/10 dark:border-white/10 bg-[#F5F0E4]/90 dark:bg-[#181920]/90 backdrop-blur-md sticky top-0 z-20">
-          <button onClick={() => setMobileOpen(true)} className="p-1.5 rounded hover:bg-[#24262B]/8 dark:hover:bg-white/10">
+          <button onClick={() => setMobileOpen(true)} className="p-1.5 rounded text-[#111215] dark:text-white hover:bg-[#24262B]/8 dark:hover:bg-white/10">
             <MoreVertical size={18} />
           </button>
-          <p className="stss-display font-semibold text-[15px]">{pageTitles[page]}</p>
+          <p className="stss-display font-semibold text-[15px] text-[#111215] dark:text-white">{pageTitles[page]}</p>
         </div>
 
         <div className="px-5 sm:px-8 py-8 max-w-6xl mx-auto">

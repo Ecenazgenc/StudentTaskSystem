@@ -64,7 +64,7 @@ export default function Dashboard({ currentUser, tasks, courses, setPage }) {
         {[
           { label: "Toplam Görev", value: total, icon: ClipboardList, color: "text-[#111215] dark:text-white" },
           { label: "Tamamlandı", value: `${done} (%${pct})`, icon: CheckCircle2, color: "text-[#3E8E7E] dark:text-[#52B4A0]" },
-          { label: "Yakında Teslim", value: dueSoon.length, icon: AlertTriangle, color: dueSoon.length > 0 ? "text-[#D9A441] dark:text-[#F3C262]" : "text-[#111215] dark:text-white" },
+          { label: "Yakında Teslim", value: dueSoon.length, icon: AlertTriangle, color: dueSoon.length > 0 ? "text-[#8A6A16] dark:text-[#F3C262]" : "text-[#111215] dark:text-white" },
           { label: "Gecikmiş", value: overdueTasks.length, icon: AlertTriangle, color: overdueTasks.length > 0 ? "text-[#B8402C] dark:text-[#F8A092]" : "text-[#111215] dark:text-white" },
         ].map((s) => (
           <div key={s.label} className={`stss-card rounded-xl p-4 bg-[#FFFDF8] dark:bg-[#1C1D24] border border-[#24262B]/15 dark:border-white/15 shadow-xs ${

@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { Users, BookOpen, Trash2, CheckCircle2, Search, RefreshCw, BarChart2, ClipboardList, Bell } from "lucide-react";
+import SendNotificationModal from "../components/SendNotificationModal";
 import { userApi } from "../services/api";
 
-export default function AdminDashboard({ tasks, courses, users, setUsers, attachments, onRefresh }) {
+export default function AdminDashboard({ tasks, courses, users, setUsers, attachments, onRefresh, onSendNotification }) {
   const [searchTerm, setSearchTerm] = useState("");
+  const [showNotificationModal, setShowNotificationModal] = useState(false);
 
   const totalTasks = tasks.length;
   const studentUsers = users.filter((u) => u.roleId === 2);
@@ -52,6 +54,16 @@ export default function AdminDashboard({ tasks, courses, users, setUsers, attach
 
   return (
     <div className="space-y-6">
+      {showNotificationModal && (
+        <SendNotificationModal
+          users={users}
+          onClose={() => setShowNotificationModal(false)}
+          onSend={(msg, targetId) => {
+            if (onSendNotification) onSendNotification(msg, targetId);
+          }}
+        />
+      )}
+
       {/* Header Banner with Atmospheric Image */}
       <div className="relative overflow-hidden rounded-2xl border-2 border-[#24262B]/15 dark:border-white/15 p-6 sm:p-7 shadow-md bg-[#16171D] text-white">
         <div 
@@ -203,7 +215,7 @@ export default function AdminDashboard({ tasks, courses, users, setUsers, attach
           <p className="text-xs text-[#111215] dark:text-white/80 font-bold mt-1">Aktif Öğrenci</p>
         </div>
         <div className="stss-card rounded-xl p-5 bg-[#FFFDF8] dark:bg-[#1C1D24] border-2 border-[#24262B]/15 dark:border-white/15 shadow-xs">
-          <BookOpen size={22} className="text-[#D9A441] dark:text-[#F3C262] mb-2" />
+          <BookOpen size={22} className="text-[#8A6A16] dark:text-[#F3C262] mb-2" />
           <p className="stss-display text-2xl font-extrabold text-[#111215] dark:text-white">{courses.length}</p>
           <p className="text-xs text-[#111215] dark:text-white/80 font-bold mt-1">Mevcut Ders</p>
         </div>
@@ -235,7 +247,7 @@ export default function AdminDashboard({ tasks, courses, users, setUsers, attach
               </button>
             )}
             <div className="relative flex-1 sm:w-72 sm:flex-none">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#111215]/60 dark:text-white/60" />
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#111215]/75 dark:text-white/60" />
               <input
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -260,7 +272,7 @@ export default function AdminDashboard({ tasks, courses, users, setUsers, attach
             <tbody className="divide-y divide-[#24262B]/12 dark:divide-white/12">
               {filteredUsers.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="py-6 text-center text-[#111215]/70 dark:text-white/60 italic font-bold">
+                  <td colSpan={5} className="py-6 text-center text-[#111215]/80 dark:text-white/60 italic font-bold">
                     Arama kriterine uygun kullanıcı bulunamadı.
                   </td>
                 </tr>

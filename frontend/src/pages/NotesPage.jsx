@@ -170,7 +170,7 @@ export default function NotesPage({
                   >
                     {isChecked ? <CheckSquare size={16} /> : <Square size={16} />}
                   </button>
-                  <span className={`text-[13px] ${isChecked ? 'line-through text-[#111215]/40 dark:text-white/40' : 'text-[#111215] dark:text-white/90 font-medium'}`}>
+                  <span className={`text-[13px] ${isChecked ? 'line-through text-[#111215]/55 dark:text-white/40' : 'text-[#111215] dark:text-white/90 font-medium'}`}>
                     {text}
                   </span>
                 </div>
@@ -203,7 +203,7 @@ export default function NotesPage({
             <StickyNote size={24} className="text-[#E2725B]" />
             Notlarım
           </h1>
-          <p className="text-xs text-[#111215]/75 dark:text-white/65 mt-0.5 font-medium">
+          <p className="text-xs text-[#111215]/85 dark:text-white/65 mt-0.5 font-medium">
             Derslerinize ve görevlerinize özel hızlı notlar alın, yapılacak listeleri oluşturun
           </p>
         </div>
@@ -271,14 +271,14 @@ export default function NotesPage({
               placeholder="Not Başlığı"
               value={formTitle}
               onChange={(e) => setFormTitle(e.target.value)}
-              className="w-full px-3 py-2 bg-transparent border-b-2 border-[#24262B]/20 dark:border-white/20 focus:border-[#3E8E7E] dark:focus:border-[#3E8E7E] outline-none text-lg font-bold text-[#111215] dark:text-white placeholder-[#111215]/40 dark:placeholder-white/40"
+              className="w-full px-3 py-2 bg-transparent border-b-2 border-[#24262B]/20 dark:border-white/20 focus:border-[#3E8E7E] dark:focus:border-[#3E8E7E] outline-none text-lg font-bold text-[#111215] dark:text-white placeholder-[#111215]/60 dark:placeholder-white/40"
             />
             
             <textarea
               placeholder="Not içeriğinizi yazın... Checklist için [ ] kullanın"
               value={formContent}
               onChange={(e) => setFormContent(e.target.value)}
-              className="w-full px-4 py-3 bg-[#F5F0E4]/40 dark:bg-[#121316]/40 border-2 border-[#24262B]/15 dark:border-white/15 rounded-xl focus:border-[#3E8E7E] dark:focus:border-[#3E8E7E] outline-none min-h-[150px] resize-y text-sm text-[#111215] dark:text-white font-medium placeholder-[#111215]/50 dark:placeholder-white/40 stss-scroll"
+              className="w-full px-4 py-3 bg-[#F5F0E4]/40 dark:bg-[#121316]/40 border-2 border-[#24262B]/15 dark:border-white/15 rounded-xl focus:border-[#3E8E7E] dark:focus:border-[#3E8E7E] outline-none min-h-[150px] resize-y text-sm text-[#111215] dark:text-white font-medium placeholder-[#111215]/60 dark:placeholder-white/40 stss-scroll"
             />
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -374,9 +374,9 @@ export default function NotesPage({
         ) : (
           pinnedNotes.length === 0 && (
             <div className="text-center py-16 bg-white/70 dark:bg-[#1C1D24]/50 rounded-2xl border-2 border-dashed border-[#24262B]/20 dark:border-white/10">
-              <StickyNote size={48} className="mx-auto text-[#111215]/25 dark:text-white/15 mb-3" />
+              <StickyNote size={48} className="mx-auto text-[#111215]/40 dark:text-white/15 mb-3" />
               <p className="text-sm text-[#111215]/75 dark:text-white/50 font-bold">Henüz not eklenmemiş</p>
-              <p className="text-xs text-[#111215]/55 dark:text-white/40 mt-1 font-medium">Yeni bir not ekleyerek başlayın</p>
+              <p className="text-xs text-[#111215]/70 dark:text-white/40 mt-1 font-medium">Yeni bir not ekleyerek başlayın</p>
             </div>
           )
         )}

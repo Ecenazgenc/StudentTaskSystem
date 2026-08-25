@@ -47,7 +47,7 @@ export default function ProfileModal({ currentUser, onClose, onUpdateUser }) {
             </div>
             <div>
               <h3 className="stss-display text-lg font-bold leading-none text-[#111215] dark:text-white">Profil Ayarları</h3>
-              <p className="stss-mono text-[10px] text-[#24262B]/70 dark:text-white/70 mt-1 uppercase font-bold">Ad ve Soyad Düzenle</p>
+              <p className="stss-mono text-[10px] text-[#24262B]/85 dark:text-white/70 mt-1 uppercase font-bold">Ad ve Soyad Düzenle</p>
             </div>
           </div>
           <button 
@@ -115,7 +115,7 @@ export default function ProfileModal({ currentUser, onClose, onUpdateUser }) {
                 className="w-full pl-9 pr-3 py-2.5 rounded-lg border-2 border-[#111215]/15 dark:border-white/15 bg-[#F2EDE2] dark:bg-[#222430] text-xs font-bold text-[#111215] dark:text-[#E5E7EB] cursor-not-allowed opacity-90"
               />
             </div>
-            <p className="text-[10.5px] text-[#111215]/60 dark:text-white/60 mt-1 italic font-medium">E-posta adresi değiştirilemez.</p>
+            <p className="text-[10.5px] text-[#111215]/75 dark:text-white/60 mt-1 italic font-medium">E-posta adresi değiştirilemez.</p>
           </div>
 
           <div>
@@ -125,7 +125,7 @@ export default function ProfileModal({ currentUser, onClose, onUpdateUser }) {
             <div className="px-3.5 py-2.5 rounded-lg border-2 border-[#111215]/15 dark:border-white/15 bg-[#F2EDE2] dark:bg-[#222430] text-xs font-extrabold text-[#111215] dark:text-[#E5E7EB] flex items-center gap-2">
               <ShieldCheck size={16} className={isAdmin ? "text-[#E2725B]" : "text-[#3E8E7E]"} />
               <span>{isAdmin ? "Yönetici (Admin)" : "Öğrenci"}</span>
-              <span className="text-[10px] text-[#111215]/60 dark:text-white/60 font-normal ml-auto">(Rol değiştirilemez)</span>
+              <span className="text-[10px] text-[#111215]/75 dark:text-white/60 font-normal ml-auto">(Rol değiştirilemez)</span>
             </div>
           </div>
 

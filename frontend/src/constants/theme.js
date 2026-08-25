@@ -1,11 +1,11 @@
 import { Circle, Clock, CheckCircle2, AlertTriangle, Lock } from "lucide-react";
 
 export const TAPE = [
-  { bg: "#E2725B", tint: "#FBEAE5" }, // kiremit
-  { bg: "#3E8E7E", tint: "#E6F1EE" }, // çam yeşili
-  { bg: "#D9A441", tint: "#FBF1E1" }, // hardal
-  { bg: "#6C6EA0", tint: "#ECECF4" }, // lavanta
-  { bg: "#4E7CA1", tint: "#E7EFF4" }, // gök mavisi
+  { bg: "#E2725B", tint: "#FBEAE5", text: "#E2725B" }, // kiremit
+  { bg: "#3E8E7E", tint: "#E6F1EE", text: "#3E8E7E" }, // çam yeşili
+  { bg: "#D9A441", tint: "#FBF1E1", text: "#8A6A16" }, // hardal
+  { bg: "#6C6EA0", tint: "#ECECF4", text: "#6C6EA0" }, // lavanta
+  { bg: "#4E7CA1", tint: "#E7EFF4", text: "#4E7CA1" }, // gök mavisi
 ];
 
 export const PRIORITY_STYLE = {

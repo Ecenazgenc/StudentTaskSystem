@@ -56,7 +56,7 @@ export default function CalendarPage({ tasks = [], courses = [], onOpenTask, isA
             <CalendarIcon size={24} className="text-[#3E8E7E]" />
             Takvim Görünümü
           </h1>
-          <p className="text-xs text-[#111215]/75 dark:text-white/70 mt-0.5 font-semibold">
+          <p className="text-xs text-[#111215]/85 dark:text-white/70 mt-0.5 font-semibold">
             Son teslim tarihlerine göre tüm ödev ve görevlerinizi ders fotoğraflarıyla takip edin
           </p>
         </div>
@@ -105,7 +105,7 @@ export default function CalendarPage({ tasks = [], courses = [], onOpenTask, isA
         <div className="grid grid-cols-7 divide-x-2 divide-y-2 divide-[#111215]/15 dark:divide-white/15 text-xs bg-white dark:bg-[#1C1D24]">
           {calendarCells.map((dayNum, idx) => {
             if (dayNum === null) {
-              return <div key={`empty-${idx}`} className="min-h-[115px] bg-[#F7F4EA]/60 dark:bg-[#14151B]/60" />;
+              return <div key={`empty-${idx}`} className="min-h-[115px] bg-[#EAE2CE]/50 dark:bg-[#14151B]/60" />;
             }
 
             const dayStr = formatDayString(dayNum);
