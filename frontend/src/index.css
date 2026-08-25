@@ -1,6 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   font-family: 'Inter', sans-serif;
 }
@@ -35,9 +37,9 @@ body {
 }
 
 .stss-card {
-  background: rgba(255, 253, 248, 0.88);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(255, 253, 248, 0.97);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(36, 38, 43, 0.16);
   color: #111215;
   box-shadow: 0 4px 16px rgba(36, 38, 43, 0.06);
@@ -47,7 +49,7 @@ body {
 .stss-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 12px 28px rgba(36, 38, 43, 0.12);
-  background: rgba(255, 253, 248, 0.96);
+  background: rgba(255, 253, 248, 1);
 }
 
 /* Atmospheric Full Screen Background Photo */
@@ -67,7 +69,7 @@ body {
   z-index: 0;
   pointer-events: none;
   background-image: 
-    linear-gradient(to bottom, rgba(245, 240, 228, 0.74) 0%, rgba(245, 240, 228, 0.65) 50%, rgba(245, 240, 228, 0.78) 100%),
+    linear-gradient(to bottom, rgba(245, 240, 228, 0.92) 0%, rgba(245, 240, 228, 0.88) 50%, rgba(245, 240, 228, 0.93) 100%),
     url('https://images.unsplash.com/photo-1516979187457-637abb4f9353?q=80&w=2070&auto=format&fit=crop');
   background-size: cover;
   background-position: center center;
@@ -149,7 +151,7 @@ textarea::placeholder {
 }
 
 .dark .stss-card {
-  background: rgba(28, 29, 36, 0.86);
+  background: rgba(28, 29, 36, 0.95);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-color: rgba(255, 255, 255, 0.12);
@@ -159,25 +161,7 @@ textarea::placeholder {
 
 .dark .stss-card:hover {
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
-  background: rgba(28, 29, 36, 0.95);
-}
-
-.dark input, .dark select, .dark textarea {
-  background-color: #262832 !important;
-  color: #E2E4E9 !important;
-  border-color: rgba(255,255,255,0.15) !important;
-}
-
-.dark table th {
-  color: rgba(226,228,233,0.6) !important;
-}
-
-.dark table tr {
-  border-color: rgba(255,255,255,0.08) !important;
-}
-
-.dark table td {
-  color: #E2E4E9 !important;
+  background: rgba(28, 29, 36, 1);
 }
 
 .dark .stss-scroll::-webkit-scrollbar-thumb {

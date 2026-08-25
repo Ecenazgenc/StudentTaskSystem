@@ -32,7 +32,7 @@ export default function Sidebar({ currentUser, onLogout, page, setPage, unread, 
       )}
       <aside
         className={`fixed md:static z-40 top-0 left-0 h-full md:h-auto w-64 md:w-56 shrink-0 flex flex-col
-          border-r border-[#24262B]/15 bg-[#EFE8D6]/90 dark:bg-[#181920]/90 backdrop-blur-xl dark:border-white/10 transition-transform duration-200
+          border-r border-[#24262B]/15 bg-[#EFE8D6] dark:bg-[#181920]/95 backdrop-blur-xl dark:border-white/10 transition-transform duration-200
           ${mobileOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
       >
         <div className="flex items-center justify-between px-5 py-6">
