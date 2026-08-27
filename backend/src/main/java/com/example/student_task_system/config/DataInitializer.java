@@ -24,19 +24,23 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
         // 1. Rollerin veritabanında varlık kontrolü ve eklenmesi
-        Role adminRole = roleRepository.findById(1).orElseGet(() -> {
-            Role r = new Role();
-            r.setRoleId(1);
-            r.setRoleName("Admin");
-            return roleRepository.save(r);
-        });
+        Role adminRole = roleRepository.findAll().stream()
+                .filter(r -> "Admin".equalsIgnoreCase(r.getRoleName()))
+                .findFirst()
+                .orElseGet(() -> {
+                    Role r = new Role();
+                    r.setRoleName("Admin");
+                    return roleRepository.save(r);
+                });
 
-        Role studentRole = roleRepository.findById(2).orElseGet(() -> {
-            Role r = new Role();
-            r.setRoleId(2);
-            r.setRoleName("Öğrenci");
-            return roleRepository.save(r);
-        });
+        Role studentRole = roleRepository.findAll().stream()
+                .filter(r -> "Öğrenci".equalsIgnoreCase(r.getRoleName()))
+                .findFirst()
+                .orElseGet(() -> {
+                    Role r = new Role();
+                    r.setRoleName("Öğrenci");
+                    return roleRepository.save(r);
+                });
 
         // 2. Admin hesabının (admin@ogr.edu.tr) kontrolü ve veritabanına eklenmesi
         if (!userRepository.existsByEmail("admin@ogr.edu.tr")) {

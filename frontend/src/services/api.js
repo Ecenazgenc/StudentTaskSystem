@@ -46,7 +46,27 @@ export const userApi = {
 };
 
 export const taskApi = {
-  getAll: (fallback) => fetchWithFallback('/tasks', {}, fallback),
+  getAll: (paramsOrFallback, maybeFallback) => {
+    let endpoint = '/tasks';
+    let fallback = null;
+    if (paramsOrFallback && typeof paramsOrFallback === 'object' && !Array.isArray(paramsOrFallback)) {
+      const query = new URLSearchParams();
+      if (paramsOrFallback.search) query.set('search', paramsOrFallback.search);
+      if (paramsOrFallback.courseId && paramsOrFallback.courseId !== 'all') query.set('courseId', paramsOrFallback.courseId);
+      if (paramsOrFallback.categoryId && paramsOrFallback.categoryId !== 'all') query.set('categoryId', paramsOrFallback.categoryId);
+      if (paramsOrFallback.status && paramsOrFallback.status !== 'all') query.set('status', paramsOrFallback.status);
+      if (paramsOrFallback.priority && paramsOrFallback.priority !== 'all') query.set('priority', paramsOrFallback.priority);
+      if (paramsOrFallback.page !== undefined) query.set('page', paramsOrFallback.page);
+      if (paramsOrFallback.size !== undefined) query.set('size', paramsOrFallback.size);
+      if (paramsOrFallback.unpaged !== undefined) query.set('unpaged', paramsOrFallback.unpaged);
+      const qs = query.toString();
+      if (qs) endpoint += `?${qs}`;
+      fallback = maybeFallback;
+    } else {
+      fallback = paramsOrFallback;
+    }
+    return fetchWithFallback(endpoint, {}, fallback);
+  },
   create: (task, fallback) => fetchWithFallback('/tasks', { method: 'POST', body: JSON.stringify(task) }, fallback),
   update: (id, task, fallback) => fetchWithFallback(`/tasks/${id}`, { method: 'PUT', body: JSON.stringify(task) }, fallback),
   delete: (id, fallback) => fetchWithFallback(`/tasks/${id}`, { method: 'DELETE' }, fallback),

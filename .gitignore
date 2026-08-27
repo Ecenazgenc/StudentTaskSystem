@@ -32,5 +32,15 @@ build/
 ### VS Code ###
 .vscode/
 
-### Node ###
+### Node & Frontend ###
 node_modules/
+dist/
+.env
+.env.local
+.env.*.local
+
+### Secrets & Local Profiles ###
+application-local.properties
+application-*.properties
+!application.properties
+*.env

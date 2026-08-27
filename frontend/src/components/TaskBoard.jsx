@@ -1,20 +1,22 @@
-import React from "react";
+import React, { useMemo, memo } from "react";
 import { Search, Plus, Clock, AlertTriangle, FileText, FileSpreadsheet, CheckCircle2 } from "lucide-react";
 import { STATUS_ICON, PRIORITY_STYLE, isOverdue, daysUntil } from "../constants/theme";
 
-export default function TaskBoard({ tasks, courses, categories, attachments, onOpen, onNew, filters, setFilters, isAdmin, allUsers, currentUser }) {
-  const filtered = tasks
-    .filter((t) =>
-      (filters.course === "all" || t.courseId === filters.course) &&
-      (filters.category === "all" || t.categoryId === filters.category) &&
-      (t.title.toLowerCase().includes(filters.search.toLowerCase()))
-    )
-    // Gecikmiş olanlar öne geşsin
-    .sort((a, b) => {
-      const aOver = isOverdue(a) ? -1 : 0;
-      const bOver = isOverdue(b) ? -1 : 0;
-      return aOver - bOver;
-    });
+function TaskBoardComponent({ tasks, courses, categories, attachments, onOpen, onNew, filters, setFilters, isAdmin, allUsers, currentUser }) {
+  const filtered = useMemo(() => {
+    return tasks
+      .filter((t) =>
+        (filters.course === "all" || t.courseId === filters.course) &&
+        (filters.category === "all" || t.categoryId === filters.category) &&
+        (t.title.toLowerCase().includes(filters.search.toLowerCase()))
+      )
+      // Gecikmiş olanlar öne geçsin
+      .sort((a, b) => {
+        const aOver = isOverdue(a) ? -1 : 0;
+        const bOver = isOverdue(b) ? -1 : 0;
+        return aOver - bOver;
+      });
+  }, [tasks, filters]);
 
   const handleExportCSV = () => {
     let csvContent = "data:text/csv;charset=utf-8,Gorev ID;Gorev Basligi;Ders;Oncelik;Son Teslim Tarihi\n";
@@ -240,3 +242,5 @@ export default function TaskBoard({ tasks, courses, categories, attachments, onO
     </div>
   );
 }
+
+export default memo(TaskBoardComponent);

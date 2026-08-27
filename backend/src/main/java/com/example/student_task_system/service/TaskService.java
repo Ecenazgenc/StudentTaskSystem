@@ -4,14 +4,18 @@ import com.example.student_task_system.dto.TaskDTO;
 import com.example.student_task_system.entity.Category;
 import com.example.student_task_system.entity.Course;
 import com.example.student_task_system.entity.Task;
-import com.example.student_task_system.entity.User;
 import com.example.student_task_system.exception.BadRequestException;
 import com.example.student_task_system.exception.ResourceNotFoundException;
 import com.example.student_task_system.repository.CategoryRepository;
 import com.example.student_task_system.repository.CourseRepository;
 import com.example.student_task_system.repository.TaskRepository;
 import com.example.student_task_system.repository.UserRepository;
+import com.example.student_task_system.specification.TaskSpecification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,19 +36,45 @@ public class TaskService {
         this.categoryRepository = categoryRepository;
     }
 
+    @Transactional(readOnly = true)
     public List<TaskDTO> getAllTasks() {
-        return taskRepository.findAll()
+        return taskRepository.findAllWithRelations()
                 .stream()
                 .map(TaskDTO::fromEntity)
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public Page<TaskDTO> getAllTasks(Pageable pageable) {
+        return taskRepository.findAllWithRelations(pageable)
+                .map(TaskDTO::fromEntity);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<TaskDTO> getTasks(String search, Integer courseId, Integer categoryId, String status, String priority, Pageable pageable) {
+        Specification<Task> spec = TaskSpecification.filterTasks(search, courseId, categoryId, status, priority);
+        return taskRepository.findAll(spec, pageable)
+                .map(TaskDTO::fromEntity);
+    }
+
+    @Transactional(readOnly = true)
+    public List<TaskDTO> getAllTasksList(String search, Integer courseId, Integer categoryId, String status, String priority) {
+        Specification<Task> spec = TaskSpecification.filterTasks(search, courseId, categoryId, status, priority);
+        return taskRepository.findAll(spec)
+                .stream()
+                .map(TaskDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
     public TaskDTO getTaskById(Integer id) {
-        Task task = taskRepository.findById(id)
+        Task task = taskRepository.findByIdWithRelations(id)
+                .or(() -> taskRepository.findById(id))
                 .orElseThrow(() -> new ResourceNotFoundException("Görev bulunamadı: id=" + id));
         return TaskDTO.fromEntity(task);
     }
 
+    @Transactional
     public TaskDTO saveTask(TaskDTO.Request request) {
         Task task = new Task();
         applyRequestToEntity(task, request);
@@ -52,6 +82,7 @@ public class TaskService {
         return TaskDTO.fromEntity(saved);
     }
 
+    @Transactional
     public TaskDTO updateTask(Integer id, TaskDTO.Request request) {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Görev bulunamadı: id=" + id));
@@ -61,6 +92,7 @@ public class TaskService {
         return TaskDTO.fromEntity(saved);
     }
 
+    @Transactional
     public void deleteTask(Integer id) {
         if (!taskRepository.existsById(id)) {
             throw new ResourceNotFoundException("Görev bulunamadı: id=" + id);

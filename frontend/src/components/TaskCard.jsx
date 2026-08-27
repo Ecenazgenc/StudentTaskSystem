@@ -1,8 +1,8 @@
-import React from "react";
+import React, { memo } from "react";
 import { Pin, Calendar } from "lucide-react";
 import { tapeFor, fmtDate, daysUntil, PRIORITY_STYLE, defaultCourseImage } from "../constants/theme";
 
-export default function TaskCard({ task, course, category, onOpen }) {
+function TaskCardComponent({ task, course, category, onOpen }) {
   const tape = tapeFor(task.courseId);
   const dleft = daysUntil(task.dueDate);
   const urgent = task.status !== "Tamamlandı" && dleft <= 1;
@@ -28,7 +28,7 @@ export default function TaskCard({ task, course, category, onOpen }) {
           style={{ background: tape.tint, color: tape.text || tape.bg }}
         >
           {courseImg && (
-            <img src={courseImg} alt="" className="w-3.5 h-3.5 rounded object-cover" />
+            <img src={courseImg} alt="" loading="lazy" className="w-3.5 h-3.5 rounded object-cover" />
           )}
           <span>{course?.courseName || "Ders"}</span>
         </span>
@@ -49,3 +49,5 @@ export default function TaskCard({ task, course, category, onOpen }) {
     </button>
   );
 }
+
+export default memo(TaskCardComponent);

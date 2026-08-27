@@ -48,6 +48,22 @@ public class EmailService {
         return sendEmail(toEmail, subject, body);
     }
 
+    public boolean sendPasswordResetEmail(String toEmail, String fullName, String resetLink) {
+        String subject = "Görev Defteri - Şifre Sıfırlama Talebi";
+        String body = String.format(
+            "Merhaba %s,\n\n" +
+            "Görev Defteri hesabınız için bir şifre sıfırlama talebinde bulunuldu.\n" +
+            "Aşağıdaki bağlantıyı kullanarak yeni şifrenizi belirleyebilirsiniz:\n\n" +
+            "🔗 %s\n\n" +
+            "Bu bağlantı 1 saat boyunca geçerlidir. Talebi siz yapmadıysanız lütfen bu e-postayı dikkate almayınız.\n\n" +
+            "İyi çalışmalar,\n" +
+            "Görev Defteri Ekibi",
+            fullName, resetLink
+        );
+
+        return sendEmail(toEmail, subject, body);
+    }
+
     private boolean sendEmail(String to, String subject, String content) {
         if (mailSender == null || fromEmail == null || fromEmail.isBlank() || fromEmail.contains("ornek.eposta")) {
             System.out.println("=== [SIMULATED EMAIL SENT] ===");

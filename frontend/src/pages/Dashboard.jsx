@@ -1,18 +1,22 @@
-import React from "react";
+import React, { useMemo, memo } from "react";
 import { ClipboardList, CheckCircle2, AlertTriangle, BookOpen, ChevronRight } from "lucide-react";
 import { tapeFor, daysUntil, isOverdue } from "../constants/theme";
 
-export default function Dashboard({ currentUser, tasks, courses, setPage }) {
-  const total = tasks.length;
-  const done = tasks.filter((t) => t.status === "Tamamlandı").length;
-  const overdueTasks = tasks.filter((t) => isOverdue(t));
-  const dueSoon = tasks.filter((t) => t.status !== "Tamamlandı" && !isOverdue(t) && daysUntil(t.dueDate) <= 2 && daysUntil(t.dueDate) >= 0);
-  const pct = total ? Math.round((done / total) * 100) : 0;
+function DashboardComponent({ currentUser, tasks, courses, setPage }) {
+  const { total, done, overdueTasks, dueSoon, pct, byCourse } = useMemo(() => {
+    const tot = tasks.length;
+    const dn = tasks.filter((t) => t.status === "Tamamlandı").length;
+    const over = tasks.filter((t) => isOverdue(t));
+    const soon = tasks.filter((t) => t.status !== "Tamamlandı" && !isOverdue(t) && daysUntil(t.dueDate) <= 2 && daysUntil(t.dueDate) >= 0);
+    const p = tot ? Math.round((dn / tot) * 100) : 0;
 
-  const byCourse = courses.map((c) => ({
-    course: c,
-    count: tasks.filter((t) => t.courseId === c.courseId && t.status !== "Tamamlandı").length,
-  }));
+    const bc = courses.map((c) => ({
+      course: c,
+      count: tasks.filter((t) => t.courseId === c.courseId && t.status !== "Tamamlandı").length,
+    }));
+
+    return { total: tot, done: dn, overdueTasks: over, dueSoon: soon, pct: p, byCourse: bc };
+  }, [tasks, courses]);
 
   return (
     <div>
@@ -148,3 +152,5 @@ export default function Dashboard({ currentUser, tasks, courses, setPage }) {
     </div>
   );
 }
+
+export default memo(DashboardComponent);

@@ -246,13 +246,14 @@ export default function App() {
         }
       }
 
-      if (backendTasks && backendTasks.length > 0) {
+      const rawTasks = Array.isArray(backendTasks) ? backendTasks : (backendTasks?.content || []);
+      if (rawTasks && rawTasks.length > 0) {
         const savedTasks = localStorage.getItem("stss_tasks");
         const localTasks = savedTasks ? JSON.parse(savedTasks) : [];
         const localStatusMap = {};
         localTasks.forEach((t) => { localStatusMap[t.taskId] = t.status; });
 
-        const loadedTasks = backendTasks.map((t) => ({
+        const loadedTasks = rawTasks.map((t) => ({
           taskId: t.taskId,
           title: t.title,
           description: t.description,
