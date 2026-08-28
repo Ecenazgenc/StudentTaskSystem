@@ -135,13 +135,31 @@ StudentTaskSystem/
 
 ---
 
-### ⚡ Tek Komutla Çalıştırma (Tavsiye Edilen)
-Artık backend ve frontend'i 2 ayrı terminal açmadan projenin kök dizininden tek bir komutla eşzamanlı olarak çalıştırabilirsiniz:
+### ⚡ Tek Komutla Çalıştırma (Geliştirme Ortamı)
+Backend ve frontend'i 2 ayrı terminal açmadan projenin kök dizininden tek bir komutla eşzamanlı olarak çalıştırabilirsiniz:
 
 ```bash
 npm run dev
 ```
-*(veya Windows'ta projedeki `dev.bat` dosyasına tıklayabilirsiniz).*
+*(veya Windows'ta projedeki `dev.bat` dosyasını çalıştırabilirsiniz).*
+
+---
+
+### 🐳 Docker ile Dağıtım (Production / Deployment)
+Tüm sistemi (MSSQL Server, Spring Boot Backend ve Nginx ile React Frontend) Docker üzerinde tek komutla ayağa kaldırmak için:
+
+1. `.env.example` dosyasını `.env` olarak kopyalayın ve şifrelerinizi belirleyin:
+   ```bash
+   cp .env.example .env
+   ```
+2. Docker Compose ile tüm servisleri derleyin ve başlatın:
+   ```bash
+   docker compose up -d --build
+   ```
+3. Uygulamaya erişin:
+   - **Frontend (Nginx):** `http://localhost`
+   - **Backend API:** `http://localhost:8080`
+   - **MSSQL:** `localhost:51020`
 
 ---
 
