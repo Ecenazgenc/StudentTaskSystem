@@ -3,6 +3,7 @@ package com.example.student_task_system.config;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -12,10 +13,15 @@ import java.util.Date;
 @Component
 public class JwtUtils {
 
-    private static final String SECRET_STRING = "StudentTaskManagementSystemSecretKeyForJWTAuth2026SecureKeyWithMin256BitsLength";
-    private static final long EXPIRATION_MS = 86400000; // 24 saat
+    private final SecretKey key;
+    private final long expirationMs;
 
-    private final SecretKey key = Keys.hmacShaKeyFor(SECRET_STRING.getBytes(StandardCharsets.UTF_8));
+    public JwtUtils(
+            @Value("${jwt.secret:StudentTaskManagementSystemSecretKeyForJWTAuth2026SecureKeyWithMin256BitsLength}") String secret,
+            @Value("${jwt.expiration:86400000}") long expirationMs) {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        this.expirationMs = expirationMs;
+    }
 
     public String generateToken(String email, Integer userId, String role) {
         return Jwts.builder()
@@ -23,7 +29,7 @@ public class JwtUtils {
                 .claim("userId", userId)
                 .claim("role", role)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_MS))
+                .expiration(new Date(System.currentTimeMillis() + expirationMs))
                 .signWith(key)
                 .compact();
     }

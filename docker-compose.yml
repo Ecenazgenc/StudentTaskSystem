@@ -1,0 +1,74 @@
+version: "3.8"
+
+services:
+  # ==========================================
+  #  Microsoft SQL Server Veritabanı
+  # ==========================================
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: stss-mssql
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${DB_PASSWORD:-YeniGuclu$ifre123}
+      MSSQL_PID: Express
+    ports:
+      - "51020:1433"
+    volumes:
+      - mssql_data:/var/opt/mssql
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$${MSSQL_SA_PASSWORD}" -Q "SELECT 1" -C -b
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+
+  # ==========================================
+  #  Spring Boot Backend API
+  # ==========================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: stss-backend
+    environment:
+      DB_URL: jdbc:sqlserver://mssql:1433;databaseName=StudentTaskSystemDB;encrypt=false;trustServerCertificate=true
+      DB_USERNAME: ${DB_USERNAME:-sa}
+      DB_PASSWORD: ${DB_PASSWORD:-YeniGuclu$ifre123}
+      JPA_DDL_AUTO: update
+      JPA_SHOW_SQL: "false"
+      MAIL_HOST: ${MAIL_HOST:-smtp.gmail.com}
+      MAIL_PORT: ${MAIL_PORT:-587}
+      MAIL_USERNAME: ${MAIL_USERNAME:-ogrenci.gorev.sistemi@gmail.com}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+      JWT_SECRET: ${JWT_SECRET:-StudentTaskManagementSystemSecretKeyForJWTAuth2026SecureKeyWithMin256BitsLength}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-86400000}
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.SQLServerDialect
+    ports:
+      - "8080:8080"
+    volumes:
+      - uploads_data:/app/uploads
+    depends_on:
+      mssql:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ==========================================
+  #  React Frontend (Nginx)
+  # ==========================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: stss-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  mssql_data:
+    driver: local
+  uploads_data:
+    driver: local
