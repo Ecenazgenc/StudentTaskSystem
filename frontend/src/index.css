@@ -204,3 +204,74 @@ html.dark {
 .dark textarea::placeholder {
   color: rgba(226, 228, 233, 0.4) !important;
 }
+
+/* ===== Responsive Tasarım İyileştirmeleri ===== */
+
+/* Tablet Landscape (1024px) — grid düzeni ve tablo genişliği */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .stss-root main .px-5 {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+}
+
+/* Tablo yatay kaydırma iyileştirmesi */
+.overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.overflow-x-auto::-webkit-scrollbar {
+  height: 6px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  background: rgba(36, 38, 43, 0.15);
+  border-radius: 3px;
+}
+
+.dark .overflow-x-auto::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Dokunma alanı minimum boyutu (44px) — mobil erişilebilirlik */
+@media (max-width: 768px) {
+  button,
+  select,
+  a[role="button"],
+  [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Filtre select'leri tam genişlik */
+  .filter-group select,
+  .flex.items-center.gap-2 > select {
+    min-width: 0;
+    flex: 1;
+  }
+}
+
+/* Küçük ekranlarda modal bottom-sheet optimizasyonu */
+@media (max-width: 640px) {
+  .fixed.inset-0.z-50 > div {
+    max-height: 92vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Print stillerinde gereksiz elemanları gizle */
+@media print {
+  .stss-root nav,
+  .stss-root aside,
+  .stss-root button,
+  .stss-root .fixed {
+    display: none !important;
+  }
+
+  .stss-root main {
+    margin: 0 !important;
+    padding: 1rem !important;
+  }
+}

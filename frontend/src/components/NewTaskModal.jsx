@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { X } from "lucide-react";
+import { X, AlertCircle } from "lucide-react";
 import { todayPlus, PRIORITY_STYLE } from "../constants/theme";
 
 export default function NewTaskModal({ courses, categories, onClose, onCreate }) {
@@ -7,7 +7,20 @@ export default function NewTaskModal({ courses, categories, onClose, onCreate })
     title: "", description: "", dueDate: todayPlus(3),
     priority: "Orta", courseId: courses[0]?.courseId || 1, categoryId: categories[0]?.categoryId || 1,
   });
-  const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+  const [validationError, setValidationError] = useState("");
+  const set = (k, v) => { setForm((f) => ({ ...f, [k]: v })); setValidationError(""); };
+
+  const handleSubmit = () => {
+    if (!form.title.trim()) {
+      setValidationError("Görev başlığı boş bırakılamaz. Lütfen bir başlık giriniz.");
+      return;
+    }
+    if (!form.dueDate) {
+      setValidationError("Son teslim tarihi seçilmelidir.");
+      return;
+    }
+    onCreate(form);
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 dark:bg-black/80 px-0 sm:px-4">
@@ -16,11 +29,17 @@ export default function NewTaskModal({ courses, categories, onClose, onCreate })
           <h3 className="stss-display text-[19px] font-bold text-[#111215] dark:text-white">Yeni Görev</h3>
           <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-[#24262B]/10 dark:hover:bg-white/10 text-[#111215] dark:text-white transition-colors cursor-pointer"><X size={18} /></button>
         </div>
+        {validationError && (
+          <div className="mb-3 p-3 rounded-lg bg-[#B8402C]/10 dark:bg-[#B8402C]/20 border border-[#B8402C]/30 text-[#902A1A] dark:text-[#F8A092] text-xs font-bold flex items-center gap-2">
+            <AlertCircle size={14} className="flex-shrink-0" />
+            <span>{validationError}</span>
+          </div>
+        )}
         <div className="space-y-3.5">
           <div>
-            <label className="stss-mono text-[11px] font-extrabold text-[#111215] dark:text-[#E5E7EB] block mb-1 uppercase">BAŞLIK</label>
+            <label className="stss-mono text-[11px] font-extrabold text-[#111215] dark:text-[#E5E7EB] block mb-1 uppercase">BAŞLIK <span className="text-[#B8402C]">*</span></label>
             <input value={form.title} onChange={(e) => set("title", e.target.value)}
-              className="w-full px-3 py-2.5 rounded-lg border-2 border-[#111215]/20 dark:border-white/20 bg-white dark:bg-[#15161D] text-[#111215] dark:text-white text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#3E8E7E]"
+              className={`w-full px-3 py-2.5 rounded-lg border-2 ${validationError && !form.title.trim() ? 'border-[#B8402C]/50 ring-2 ring-[#B8402C]/20' : 'border-[#111215]/20 dark:border-white/20'} bg-white dark:bg-[#15161D] text-[#111215] dark:text-white text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#3E8E7E]`}
               placeholder="Örn. Veritabanı ödevi" />
           </div>
           <div>
@@ -47,7 +66,7 @@ export default function NewTaskModal({ courses, categories, onClose, onCreate })
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="stss-mono text-[11px] font-extrabold text-[#111215] dark:text-[#E5E7EB] block mb-1 uppercase">SON TARİH</label>
+              <label className="stss-mono text-[11px] font-extrabold text-[#111215] dark:text-[#E5E7EB] block mb-1 uppercase">SON TARİH <span className="text-[#B8402C]">*</span></label>
               <input type="date" value={form.dueDate} onChange={(e) => set("dueDate", e.target.value)}
                 className="w-full px-3 py-2.5 rounded-lg border-2 border-[#111215]/20 dark:border-white/20 bg-white dark:bg-[#15161D] text-[#111215] dark:text-white text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#3E8E7E]" />
             </div>
@@ -69,9 +88,8 @@ export default function NewTaskModal({ courses, categories, onClose, onCreate })
             İptal
           </button>
           <button
-            disabled={!form.title.trim()}
-            onClick={() => onCreate(form)}
-            className="flex-1 py-2.5 rounded-lg bg-[#24262B] dark:bg-[#3E8E7E] text-white text-xs font-bold disabled:opacity-40 hover:bg-[#3a3d45] dark:hover:bg-[#327366] transition-colors shadow-sm cursor-pointer"
+            onClick={handleSubmit}
+            className="flex-1 py-2.5 rounded-lg bg-[#24262B] dark:bg-[#3E8E7E] text-white text-xs font-bold hover:bg-[#3a3d45] dark:hover:bg-[#327366] transition-colors shadow-sm cursor-pointer"
           >
             Görevi Oluştur
           </button>

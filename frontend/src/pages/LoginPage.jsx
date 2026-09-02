@@ -22,7 +22,8 @@ import {
   ChevronDown,
   ArrowDown,
   Layers,
-  Sparkle
+  Sparkle,
+  AlertCircle
 } from "lucide-react";
 import { triggerWelcomeEmail } from "../services/emailService";
 import { userApi, authApi } from "../services/api";
@@ -461,8 +462,9 @@ export default function LoginPage({ onLogin, onEmailSent }) {
               )}
 
               {error && (
-                <div className="mb-4 p-3 rounded-lg bg-[#B8402C]/15 dark:bg-[#B8402C]/25 border border-[#B8402C]/40 text-[#902A1A] dark:text-[#F8A092] text-xs font-bold">
-                  {error}
+                <div className="mb-4 p-3 rounded-lg bg-[#B8402C]/15 dark:bg-[#B8402C]/25 border border-[#B8402C]/40 text-[#902A1A] dark:text-[#F8A092] text-xs font-bold flex items-center gap-2">
+                  <AlertCircle size={14} className="flex-shrink-0" />
+                  <span>{error}</span>
                 </div>
               )}
 

@@ -1,9 +1,9 @@
 # 🎓 Öğrenci Görev Takip Sistemi (Student Task System)
 
-![Java](https://img.shields.io/badge/Java-21%2B-orange?style=for-the-badge&logo=java)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen?style=for-the-badge&logo=springboot)
+![Java](https://img.shields.io/badge/Java-25-orange?style=for-the-badge&logo=java)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.0-brightgreen?style=for-the-badge&logo=springboot)
 ![React](https://img.shields.io/badge/React-19.x-61DAFB?style=for-the-badge&logo=react)
-![Vite](https://img.shields.io/badge/Vite-6.x-646CFF?style=for-the-badge&logo=vite)
+![Vite](https://img.shields.io/badge/Vite-8.x-646CFF?style=for-the-badge&logo=vite)
 ![MSSQL](https://img.shields.io/badge/MSSQL-Server-CC292B?style=for-the-badge&logo=microsoftsqlserver)
 ![TailwindCSS](https://img.shields.io/badge/Tailwind-v4-06B6D4?style=for-the-badge&logo=tailwindcss)
 
@@ -58,10 +58,10 @@
 
 | Bileşen | Teknolojiler |
 |---|---|
-| **Backend** | Java 21+, Spring Boot 3.x, Spring Security, Spring Data JPA, Hibernate, JavaMailSender, Lombok |
-| **Frontend** | React 19, Vite, Tailwind CSS v4, Lucide React Icons, Axios |
+| **Backend** | Java 25, Spring Boot 4.1.0, Spring Security, Spring Data JPA, Hibernate, JavaMailSender |
+| **Frontend** | React 19, Vite 8, Tailwind CSS v4, Lucide React Icons |
 | **Veritabanı** | Microsoft SQL Server (MSSQL), T-SQL |
-| **Güvenlik** | JWT (Stateless Auth), BCrypt Password Hashing, Rate Limiting (Bucket4j/Custom), XSS Sanitizer |
+| **Güvenlik** | JWT (Stateless Auth), BCrypt Password Hashing, Bucket4j Rate Limiting, XSS Sanitizer |
 | **Derleme & Araçlar** | Apache Maven, Node.js (npm), Git, Postman |
 
 ---
@@ -121,7 +121,7 @@ StudentTaskSystem/
 ## 🚀 Kurulum ve Çalıştırma
 
 ### Gereksinimler
-- **Java JDK 21** veya üzeri
+- **Java JDK 25** veya üzeri
 - **Node.js 18+** ve **npm**
 - **Microsoft SQL Server** (LocalDB veya Dedicated instance)
 
@@ -210,6 +210,26 @@ Detaylı teknik dokümantasyona `documentation/` klasörü altından erişebilir
 - 📖 [API Dokümanı](documentation/API_Dokumani.md)
 - 📊 [Veritabanı Tasarımı](documentation/Veritabani_Tasarimi.md)
 - 📐 [Proje Analizi](documentation/Proje_Analizi.md)
+
+---
+
+## 🧪 Test Altyapısı
+
+- 83 JUnit test (8 Controller + 8 Service + 1 Integration + SpringBootTest)
+- @SpringBootTest + MockMvc controller testleri
+- H2 in-memory test veritabanı (MSSQLServer modu)
+- Postman koleksiyonu: postman/StudentTaskSystem.postman_collection.json
+- TaskSpecification ile gelişmiş arama ve filtreleme (search, courseId, categoryId, status, priority)
+
+---
+
+## 👤 Test Hesapları
+
+| Rol | E-posta | Şifre | Kullanıcı |
+|-----|---------|-------|-----------|
+| Yönetici (Admin) | admin@ogr.edu.tr | admin | Prof. Ahmet Kaya |
+| Öğrenci | ege.yilmaz@ogr.edu.tr | 123 | Ege Yılmaz |
+| Öğrenci | ayse.demir@ogr.edu.tr | 123 | Ayşe Demir |
 
 ---
 

@@ -959,6 +959,365 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "10. Gelişmiş Filtreleme ve Doğrulama Testleri",
+			"description": "Gelişmiş arama, filtreleme ve negatif test senaryoları",
+			"item": [
+				{
+					"name": "Sadece Arama Kelimesi ile Filtreleme",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('Response is paginated or array', function () {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.content) {",
+									"        pm.expect(jsonData.content).to.be.an('array');",
+									"    } else {",
+									"        pm.expect(jsonData).to.be.an('array');",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/tasks?search=Rapor&unpaged=true",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "Rapor"
+								},
+								{
+									"key": "unpaged",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sadece Derse Göre Filtreleme",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('All tasks belong to the filtered course', function () {",
+									"    var jsonData = pm.response.json();",
+									"    var tasks = jsonData.content || jsonData;",
+									"    tasks.forEach(function(task) {",
+									"        pm.expect(task.courseId).to.eql(1);",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/tasks?courseId=1&unpaged=true",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "courseId",
+									"value": "1"
+								},
+								{
+									"key": "unpaged",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sadece Önceliğe Göre Filtreleme",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('All tasks have Yüksek priority', function () {",
+									"    var jsonData = pm.response.json();",
+									"    var tasks = jsonData.content || jsonData;",
+									"    tasks.forEach(function(task) {",
+									"        pm.expect(task.priority).to.eql('Yüksek');",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/tasks?priority=Yüksek&unpaged=true",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "priority",
+									"value": "Yüksek"
+								},
+								{
+									"key": "unpaged",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ders + Kategori Kombinasyonu ile Filtreleme",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('Tasks match both course and category filters', function () {",
+									"    var jsonData = pm.response.json();",
+									"    var tasks = jsonData.content || jsonData;",
+									"    tasks.forEach(function(task) {",
+									"        pm.expect(task.courseId).to.eql(1);",
+									"        pm.expect(task.categoryId).to.eql(1);",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/tasks?courseId=1&categoryId=1&unpaged=true",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "courseId",
+									"value": "1"
+								},
+								{
+									"key": "categoryId",
+									"value": "1"
+								},
+								{
+									"key": "unpaged",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Negatif Test - Olmayan Görev ID (404)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 404', function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"pm.test('Error message contains not found info', function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message || JSON.stringify(jsonData)).to.include('bulunamadı');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/tasks/99999",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tasks",
+								"99999"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Negatif Test - Boş Başlıkla Görev Oluşturma (400)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 400 Bad Request', function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"pm.test('Validation error returned', function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(JSON.stringify(jsonData)).to.include('boş olamaz');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"\",\n  \"description\": \"Test\",\n  \"dueDate\": \"2026-12-01T23:59:00\",\n  \"status\": \"Bekliyor\",\n  \"priority\": \"Orta\",\n  \"courseId\": 1,\n  \"categoryId\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/tasks",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tasks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sadece Duruma Göre Filtreleme (Bekliyor)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('All tasks have Bekliyor status', function () {",
+									"    var jsonData = pm.response.json();",
+									"    var tasks = jsonData.content || jsonData;",
+									"    tasks.forEach(function(task) {",
+									"        pm.expect(task.status).to.eql('Bekliyor');",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/tasks?status=Bekliyor&unpaged=true",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "Bekliyor"
+								},
+								{
+									"key": "unpaged",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"variable": [

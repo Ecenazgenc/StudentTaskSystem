@@ -6,6 +6,7 @@ import { notificationApi } from "../services/api";
 export default function TaskModal({ task, course, category, comments, attachments, onClose, onStatusChange, onAddComment, onAddAttachment, onDeleteAttachment, onDelete, isAdmin, allUsers, currentUser }) {
   const [draft, setDraft] = useState("");
   const fileInputRef = useRef(null);
+  const [gradeToast, setGradeToast] = useState(null);
 
   // --- NOTLANDIRMA STATE (Geri Bildirim) ---
   const [gradesMap, setGradesMap] = useState(() => {
@@ -68,7 +69,8 @@ export default function TaskModal({ task, course, category, comments, attachment
       console.warn("Bildirim gönderilemedi:", e);
     }
 
-    alert("Ödev notu ve geri bildirim başarıyla kaydedildi! 🌟");
+    setGradeToast("Ödev notu ve geri bildirim başarıyla kaydedildi! 🌟");
+    setTimeout(() => setGradeToast(null), 3000);
   };
 
   const handleFileUpload = (e) => {
@@ -237,6 +239,13 @@ startxref
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 dark:bg-black/75 px-0 sm:px-4">
       <div className="stss-card relative w-full sm:max-w-lg max-h-[92vh] overflow-y-auto stss-scroll rounded-t-xl sm:rounded-lg bg-[#FFFDF8] dark:bg-[#1C1D24] border-2 border-[#24262B]/15 dark:border-white/15 text-[#24262B] dark:text-white">
         <div className="h-2 w-full" style={{ background: tape.bg }} />
+        {/* Notlandırma Toast Bildirimi */}
+        {gradeToast && (
+          <div className="mx-4 mt-3 p-3 rounded-lg bg-[#E6F1EE] dark:bg-[#3E8E7E]/25 border border-[#3E8E7E]/40 text-[#1E564B] dark:text-[#A4E0D5] text-xs font-bold flex items-center gap-2 animate-pulse">
+            <CheckCircle2 size={15} />
+            <span>{gradeToast}</span>
+          </div>
+        )}
         <div className="p-6">
           <div className="flex items-start justify-between mb-1">
             <span className="stss-mono text-[10.5px] px-2 py-0.5 rounded font-extrabold" style={{ background: tape.tint, color: tape.text || tape.bg }}>

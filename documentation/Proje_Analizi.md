@@ -142,30 +142,29 @@ Kullanıcıların görevler hakkında not veya açıklama ekleyebilmesi sağlana
 # 6. Kullanılacak Teknolojiler
 
 ## Backend
-
-* Java 21
-* Spring Boot
+* Java 25
+* Spring Boot 4.1.0
+* Spring Security (JWT + Rate Limiting)
 * Spring Data JPA
-* Spring Security
+* Hibernate
 
 ## Frontend
-
-* HTML
-* CSS
-* JavaScript
-* Thymeleaf
-* Bootstrap
+* React 19
+* Vite 8
+* Tailwind CSS v4
+* Lucide React Icons
 
 ## Veritabanı
-
-* Microsoft SQL Server
+* Microsoft SQL Server (MSSQL)
+* H2 (Test ortamı)
 
 ## Geliştirme Araçları
-
 * IntelliJ IDEA
+* VS Code
 * SQL Server Management Studio
-* Git / GitHub
+* Git/GitHub
 * Postman
+* Docker
 
 ---
 
@@ -184,4 +183,27 @@ Kullanıcıların görevler hakkında not veya açıklama ekleyebilmesi sağlana
 
 # 8. Proje Durumu
 
-Proje geliştirme aşamasındadır.
+Proje tamamlanmıştır. Tüm temel özellikler (görev yönetimi, dosya teslim, notlandırma, bildirim sistemi, not defteri, responsive tasarım) başarıyla geliştirilmiş ve 83 JUnit/MockMvc testi ile doğrulanmıştır.
+
+---
+
+# 9. Staj Sürecinde Edinilen Kazanımlar
+
+* Full-stack web uygulama geliştirme (Spring Boot + React)
+* RESTful API tasarımı ve Katmanlı Mimari (Layered Architecture) prensibi
+* JWT tabanlı kimlik doğrulama ve rol bazlı erişim kontrolü (RBAC)
+* JPA Specification API ile dinamik sorgulama ve N+1 sorgu optimizasyonu
+* JUnit 5 + MockMvc ile birim ve entegrasyon test yazımı
+* Docker ile konteynerleştirme ve dağıtım
+* Git versiyon kontrol sistemi ile takım çalışması
+* Responsive tasarım ve kullanıcı deneyimi (UX) odaklı geliştirme
+
+---
+
+# 10. Karşılaşılan Zorluklar ve Çözümler
+
+* N+1 sorgu problemi → @EntityGraph ve JPQL JOIN FETCH ile çözüldü
+* JWT token yönetimi → Refresh Token mekanizması eklendi
+* CORS politikaları → Spring Security'de özel CorsConfigurationSource tanımlandı
+* Büyük veri setlerinde performans → Specification API + Pagination kullanıldı
+* Dosya güvenliği → FileSecurityUtils ve XssSanitizerUtils sınıfları geliştirildi

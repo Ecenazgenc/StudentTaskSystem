@@ -1,26 +1,122 @@
-import React, { useMemo, memo } from "react";
-import { Search, Plus, Clock, AlertTriangle, FileText, FileSpreadsheet, CheckCircle2 } from "lucide-react";
+import React, { useMemo, memo, useState, useEffect, useRef, useCallback } from "react";
+import { Search, Plus, Clock, AlertTriangle, FileText, FileSpreadsheet, CheckCircle2, Loader2 } from "lucide-react";
 import { STATUS_ICON, PRIORITY_STYLE, isOverdue, daysUntil } from "../constants/theme";
+import { taskApi } from "../services/api";
 
-function TaskBoardComponent({ tasks, courses, categories, attachments, onOpen, onNew, filters, setFilters, isAdmin, allUsers, currentUser }) {
-  const filtered = useMemo(() => {
-    return tasks
-      .filter((t) =>
-        (filters.course === "all" || t.courseId === filters.course) &&
-        (filters.category === "all" || t.categoryId === filters.category) &&
-        (t.title.toLowerCase().includes(filters.search.toLowerCase()))
-      )
-      // Gecikmiş olanlar öne geçsin
-      .sort((a, b) => {
-        const aOver = isOverdue(a) ? -1 : 0;
-        const bOver = isOverdue(b) ? -1 : 0;
-        return aOver - bOver;
-      });
+function TaskBoardComponent({ tasks, courses, categories, attachments, onOpen, onNew, filters, setFilters, isAdmin, allUsers, currentUser, onTasksFiltered }) {
+  const [filteredTasks, setFilteredTasks] = useState(tasks);
+  const [isSearching, setIsSearching] = useState(false);
+  const debounceRef = useRef(null);
+
+  // Backend'den filtrelenmiş görevleri getir
+  const fetchFilteredTasks = useCallback(async (currentFilters) => {
+    const hasActiveFilters =
+      (currentFilters.search && currentFilters.search.trim().length > 0) ||
+      (currentFilters.course !== "all") ||
+      (currentFilters.category !== "all");
+
+    if (!hasActiveFilters) {
+      // Filtre yoksa tüm görevleri göster
+      setFilteredTasks(tasks);
+      setIsSearching(false);
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      const params = { unpaged: true };
+      if (currentFilters.search && currentFilters.search.trim()) {
+        params.search = currentFilters.search.trim();
+      }
+      if (currentFilters.course !== "all") {
+        params.courseId = currentFilters.course;
+      }
+      if (currentFilters.category !== "all") {
+        params.categoryId = currentFilters.category;
+      }
+
+      const result = await taskApi.getAll(params, null);
+
+      if (result && Array.isArray(result)) {
+        // Backend sonuçlarını normalize et
+        const normalized = result.map((t) => ({
+          taskId: t.taskId,
+          title: t.title,
+          description: t.description,
+          dueDate: t.dueDate ? t.dueDate.slice(0, 10) : "",
+          status: t.status,
+          priority: t.priority,
+          courseId: t.courseId,
+          categoryId: t.categoryId,
+        }));
+        setFilteredTasks(normalized);
+      } else {
+        // Fallback: client-side filtreleme
+        const fallback = tasks.filter((t) =>
+          (currentFilters.course === "all" || t.courseId === currentFilters.course) &&
+          (currentFilters.category === "all" || t.categoryId === currentFilters.category) &&
+          (t.title.toLowerCase().includes((currentFilters.search || "").toLowerCase()))
+        );
+        setFilteredTasks(fallback);
+      }
+    } catch (err) {
+      console.warn("Backend filtreleme hatası, client-side fallback kullanılıyor:", err);
+      // Client-side fallback
+      const fallback = tasks.filter((t) =>
+        (currentFilters.course === "all" || t.courseId === currentFilters.course) &&
+        (currentFilters.category === "all" || t.categoryId === currentFilters.category) &&
+        (t.title.toLowerCase().includes((currentFilters.search || "").toLowerCase()))
+      );
+      setFilteredTasks(fallback);
+    } finally {
+      setIsSearching(false);
+    }
+  }, [tasks]);
+
+  // Debounce ile filtre değişikliklerini backend'e gönder
+  useEffect(() => {
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+
+    // Arama alanı değiştiğinde 300ms bekle, dropdown değiştiğinde hemen gönder
+    const delay = filters.search ? 300 : 0;
+
+    debounceRef.current = setTimeout(() => {
+      fetchFilteredTasks(filters);
+    }, delay);
+
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+    };
+  }, [filters, fetchFilteredTasks]);
+
+  // tasks prop'u değiştiğinde (yeni görev eklendiğinde vb.) listeyi güncelle
+  useEffect(() => {
+    const hasActiveFilters =
+      (filters.search && filters.search.trim().length > 0) ||
+      (filters.course !== "all") ||
+      (filters.category !== "all");
+
+    if (!hasActiveFilters) {
+      setFilteredTasks(tasks);
+    }
   }, [tasks, filters]);
+
+  // Gecikmiş görevleri öne taşı (client-side sıralama — attachment durumuna bağlı)
+  const sorted = useMemo(() => {
+    return [...filteredTasks].sort((a, b) => {
+      const aOver = isOverdue(a) ? -1 : 0;
+      const bOver = isOverdue(b) ? -1 : 0;
+      return aOver - bOver;
+    });
+  }, [filteredTasks]);
 
   const handleExportCSV = () => {
     let csvContent = "data:text/csv;charset=utf-8,Gorev ID;Gorev Basligi;Ders;Oncelik;Son Teslim Tarihi\n";
-    filtered.forEach((t) => {
+    sorted.forEach((t) => {
       const c = courses.find((x) => x.courseId === t.courseId);
       csvContent += `${t.taskId};"${t.title}";"${c?.courseName || ''}";${t.priority};${t.dueDate}\n`;
     });
@@ -59,7 +155,7 @@ function TaskBoardComponent({ tasks, courses, categories, attachments, onOpen, o
               </tr>
             </thead>
             <tbody>
-              ${filtered.map(t => {
+              ${sorted.map(t => {
                 const c = courses.find(x => x.courseId === t.courseId);
                 return `<tr><td>${t.title}</td><td>${c?.courseName || '-'}</td><td>${t.priority}</td><td>${t.dueDate ? t.dueDate.split('T')[0] : '-'}</td></tr>`;
               }).join('')}
@@ -112,7 +208,11 @@ function TaskBoardComponent({ tasks, courses, categories, attachments, onOpen, o
       <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
         <div className="flex items-center gap-2 flex-1 min-w-[200px] max-w-xs">
           <div className="relative w-full">
-            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#111215]/60 dark:text-white/50" />
+            {isSearching ? (
+              <Loader2 size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#3E8E7E] animate-spin" />
+            ) : (
+              <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#111215]/60 dark:text-white/50" />
+            )}
             <input
               type="text"
               value={filters.search}
@@ -122,7 +222,7 @@ function TaskBoardComponent({ tasks, courses, categories, attachments, onOpen, o
             />
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <select
             value={filters.course}
             onChange={(e) => setFilters({ ...filters, course: e.target.value === "all" ? "all" : Number(e.target.value) })}
@@ -147,8 +247,8 @@ function TaskBoardComponent({ tasks, courses, categories, attachments, onOpen, o
       </div>
 
       <div className="stss-card rounded-xl overflow-hidden bg-[#FFFDF8] dark:bg-[#1C1D24] border-2 border-[#24262B]/15 dark:border-white/15 shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-[13px]">
+        <div className="overflow-x-auto -mx-0 sm:mx-0">
+          <table className="w-full text-left text-[13px] min-w-[640px]">
             <thead>
               <tr className="border-b-2 border-[#24262B]/15 dark:border-white/15 text-[#111215] dark:text-white bg-[#24262B]/8 dark:bg-white/8 stss-mono uppercase font-extrabold text-[11.5px]">
                 <th className="py-3 px-3.5">Görev Adı</th>
@@ -160,14 +260,23 @@ function TaskBoardComponent({ tasks, courses, categories, attachments, onOpen, o
               </tr>
             </thead>
             <tbody className="divide-y divide-[#24262B]/10 dark:divide-white/10">
-              {filtered.length === 0 ? (
+              {isSearching ? (
+                <tr>
+                  <td colSpan={isAdmin ? 6 : 5} className="py-8 text-center text-[#111215]/60 dark:text-white/50 font-semibold">
+                    <div className="flex items-center justify-center gap-2">
+                      <Loader2 size={16} className="animate-spin text-[#3E8E7E]" />
+                      <span>Görevler aranıyor...</span>
+                    </div>
+                  </td>
+                </tr>
+              ) : sorted.length === 0 ? (
                 <tr>
                   <td colSpan={isAdmin ? 6 : 5} className="py-8 text-center text-[#111215]/60 dark:text-white/50 italic font-semibold">
                     Arama kriterlerine uygun görev bulunamadı.
                   </td>
                 </tr>
               ) : (
-                filtered.map((t) => {
+                sorted.map((t) => {
                   const c = courses.find((x) => x.courseId === t.courseId);
 
                   const taskAttachments = attachments?.filter((a) => a.taskId === t.taskId) || [];
