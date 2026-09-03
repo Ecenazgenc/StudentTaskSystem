@@ -11,6 +11,7 @@ export async function fetchWithFallback(endpoint, options = {}, fallbackData = n
     };
 
     const response = await fetch(`${API_BASE}${endpoint}`, {
+      credentials: 'include',
       ...options,
       headers,
     });

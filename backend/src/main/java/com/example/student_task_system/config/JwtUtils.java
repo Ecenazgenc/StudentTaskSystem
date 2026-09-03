@@ -19,7 +19,11 @@ public class JwtUtils {
     public JwtUtils(
             @Value("${jwt.secret:StudentTaskManagementSystemSecretKeyForJWTAuth2026SecureKeyWithMin256BitsLength}") String secret,
             @Value("${jwt.expiration:86400000}") long expirationMs) {
-        this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
+        if (keyBytes.length < 32) {
+            throw new IllegalArgumentException("Kritik Güvenlik Hatası: JWT Secret en az 256 bit (32 bayt) uzunluğunda olmalıdır!");
+        }
+        this.key = Keys.hmacShaKeyFor(keyBytes);
         this.expirationMs = expirationMs;
     }
 

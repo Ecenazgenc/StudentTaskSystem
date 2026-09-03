@@ -14,10 +14,13 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Duration;
 import java.util.Map;
 
 @RestController
@@ -71,19 +74,32 @@ public class AuthController {
             String newPassword
     ) {}
 
+    private ResponseCookie createJwtCookie(String token) {
+        return ResponseCookie.from("stss_jwt_token", token)
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(Duration.ofDays(1))
+                .sameSite("Lax")
+                .build();
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
         UserDTO user = userService.authenticate(request.email(), request.password());
         String token = jwtUtils.generateToken(user.email(), user.userId(), user.roleName());
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.userId());
+        ResponseCookie cookie = createJwtCookie(token);
 
-        return ResponseEntity.ok(Map.of(
-                "success", true,
-                "token", token,
-                "refreshToken", refreshToken.getToken(),
-                "message", "Giriş başarılı",
-                "user", user
-        ));
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(Map.of(
+                        "success", true,
+                        "token", token,
+                        "refreshToken", refreshToken.getToken(),
+                        "message", "Giriş başarılı",
+                        "user", user
+                ));
     }
 
     @PostMapping("/register")
@@ -91,14 +107,17 @@ public class AuthController {
         UserDTO created = userService.saveUser(request);
         String token = jwtUtils.generateToken(created.email(), created.userId(), created.roleName());
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(created.userId());
+        ResponseCookie cookie = createJwtCookie(token);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
-                "success", true,
-                "token", token,
-                "refreshToken", refreshToken.getToken(),
-                "message", "Kayıt başarıyla tamamlandı",
-                "user", created
-        ));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(Map.of(
+                        "success", true,
+                        "token", token,
+                        "refreshToken", refreshToken.getToken(),
+                        "message", "Kayıt başarıyla tamamlandı",
+                        "user", created
+                ));
     }
 
     @PostMapping("/refresh")
@@ -108,13 +127,33 @@ public class AuthController {
 
         UserDTO user = UserDTO.fromEntity(tokenObj.getUser());
         String newToken = jwtUtils.generateToken(user.email(), user.userId(), user.roleName());
+        ResponseCookie cookie = createJwtCookie(newToken);
 
-        return ResponseEntity.ok(Map.of(
-                "success", true,
-                "token", newToken,
-                "refreshToken", tokenObj.getToken(),
-                "user", user
-        ));
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(Map.of(
+                        "success", true,
+                        "token", newToken,
+                        "refreshToken", tokenObj.getToken(),
+                        "user", user
+                ));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout() {
+        ResponseCookie cleanCookie = ResponseCookie.from("stss_jwt_token", "")
+                .httpOnly(true)
+                .path("/")
+                .maxAge(0)
+                .sameSite("Lax")
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cleanCookie.toString())
+                .body(Map.of(
+                        "success", true,
+                        "message", "Oturum başarıyla sonlandırıldı"
+                ));
     }
 
     @PostMapping("/forgot-password")
