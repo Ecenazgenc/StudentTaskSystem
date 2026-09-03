@@ -1,36 +1,34 @@
-CREATE DATABASE StudentTaskSystemDB;
+﻿CREATE DATABASE StudentTaskSystemDB;
 GO
 
 USE StudentTaskSystemDB;
 GO
 
-
--- Roller Tablosu
+-- 1. Roller Tablosu (Roles)
 CREATE TABLE Roles (
     RoleId INT IDENTITY(1,1) PRIMARY KEY,
-    RoleName VARCHAR(50) NOT NULL
+    RoleName NVARCHAR(50) NOT NULL
 );
 
-
--- Kullan�c�lar Tablosu
+-- 2. Kullanıcılar Tablosu (Users)
 CREATE TABLE Users (
     UserId INT IDENTITY(1,1) PRIMARY KEY,
-    FirstName VARCHAR(100) NOT NULL,
-    LastName VARCHAR(100) NOT NULL,
-    Email VARCHAR(150) UNIQUE NOT NULL,
-    Password VARCHAR(255) NOT NULL,
+    FirstName NVARCHAR(100) NOT NULL,
+    LastName NVARCHAR(100) NOT NULL,
+    Email NVARCHAR(150) UNIQUE NOT NULL,
+    Password NVARCHAR(255) NOT NULL,
     RoleId INT NOT NULL,
+    AvatarUrl NVARCHAR(500) NULL,
 
     CONSTRAINT FK_Users_Roles
     FOREIGN KEY (RoleId)
     REFERENCES Roles(RoleId)
 );
 
-
--- Dersler Tablosu
+-- 3. Dersler Tablosu (Courses)
 CREATE TABLE Courses (
     CourseId INT IDENTITY(1,1) PRIMARY KEY,
-    CourseName VARCHAR(100) NOT NULL,
+    CourseName NVARCHAR(100) NOT NULL,
     UserId INT NOT NULL,
 
     CONSTRAINT FK_Courses_Users
@@ -38,99 +36,86 @@ CREATE TABLE Courses (
     REFERENCES Users(UserId)
 );
 
-
--- Kategoriler Tablosu
+-- 4. Kategoriler Tablosu (Categories)
 CREATE TABLE Categories (
     CategoryId INT IDENTITY(1,1) PRIMARY KEY,
-    CategoryName VARCHAR(50) NOT NULL
+    CategoryName NVARCHAR(50) NOT NULL
 );
 
-
--- G�revler Tablosu
+-- 5. Görevler Tablosu (Tasks)
 CREATE TABLE Tasks (
     TaskId INT IDENTITY(1,1) PRIMARY KEY,
-    Title VARCHAR(150) NOT NULL,
-    Description VARCHAR(MAX),
+    Title NVARCHAR(150) NOT NULL,
+    Description NVARCHAR(MAX),
     DueDate DATE,
-    Status VARCHAR(50) NOT NULL,
-    Priority VARCHAR(50) NOT NULL,
-
-    UserId INT NOT NULL,
+    Status NVARCHAR(50) NOT NULL,
+    Priority NVARCHAR(50) NOT NULL,
+    UserId INT NULL,
     CourseId INT NOT NULL,
     CategoryId INT NOT NULL,
-
 
     CONSTRAINT FK_Tasks_Users
     FOREIGN KEY (UserId)
     REFERENCES Users(UserId),
 
-
     CONSTRAINT FK_Tasks_Courses
     FOREIGN KEY (CourseId)
     REFERENCES Courses(CourseId),
-
 
     CONSTRAINT FK_Tasks_Categories
     FOREIGN KEY (CategoryId)
     REFERENCES Categories(CategoryId)
 );
 
-
--- Yorumlar Tablosu
+-- 6. Yorumlar Tablosu (Comments)
 CREATE TABLE Comments (
     CommentId INT IDENTITY(1,1) PRIMARY KEY,
-    CommentText VARCHAR(MAX) NOT NULL,
+    CommentText NVARCHAR(MAX) NOT NULL,
     CreatedDate DATETIME DEFAULT GETDATE(),
-
     TaskId INT NOT NULL,
     UserId INT NOT NULL,
-
 
     CONSTRAINT FK_Comments_Tasks
     FOREIGN KEY (TaskId)
     REFERENCES Tasks(TaskId),
-
 
     CONSTRAINT FK_Comments_Users
     FOREIGN KEY (UserId)
     REFERENCES Users(UserId)
 );
 
-
-
--- Dosya Ekleri Tablosu
+-- 7. Dosya Ekleri Tablosu (Attachments)
 CREATE TABLE Attachments (
     AttachmentId INT IDENTITY(1,1) PRIMARY KEY,
-    FileName VARCHAR(255) NOT NULL,
-    FilePath VARCHAR(500) NOT NULL,
+    FileName NVARCHAR(255) NOT NULL,
+    FilePath NVARCHAR(500) NOT NULL,
     UploadDate DATETIME DEFAULT GETDATE(),
-
     TaskId INT NOT NULL,
-
+    UserId INT NULL,
 
     CONSTRAINT FK_Attachments_Tasks
     FOREIGN KEY (TaskId)
-    REFERENCES Tasks(TaskId)
+    REFERENCES Tasks(TaskId),
+
+    CONSTRAINT FK_Attachments_Users
+    FOREIGN KEY (UserId)
+    REFERENCES Users(UserId)
 );
 
-
-
--- Bildirimler Tablosu
+-- 8. Bildirimler Tablosu (Notifications)
 CREATE TABLE Notifications (
     NotificationId INT IDENTITY(1,1) PRIMARY KEY,
-    Message VARCHAR(500) NOT NULL,
+    Message NVARCHAR(500) NOT NULL,
     IsRead BIT DEFAULT 0,
     CreatedDate DATETIME DEFAULT GETDATE(),
-
-    UserId INT NOT NULL,
-
+    UserId INT NULL,
 
     CONSTRAINT FK_Notifications_Users
     FOREIGN KEY (UserId)
     REFERENCES Users(UserId)
 );
 
--- Notlar Tablosu
+-- 9. Notlar Tablosu (Notes)
 CREATE TABLE Notes (
     NoteId INT IDENTITY(1,1) PRIMARY KEY,
     Title NVARCHAR(150) NOT NULL,
@@ -140,7 +125,6 @@ CREATE TABLE Notes (
     IsPinned BIT DEFAULT 0,
     CreatedDate DATETIME DEFAULT GETDATE(),
     UpdatedDate DATETIME DEFAULT GETDATE(),
-
     UserId INT NOT NULL,
     CourseId INT NULL,
     TaskId INT NULL,
@@ -157,3 +141,28 @@ CREATE TABLE Notes (
     FOREIGN KEY (TaskId)
     REFERENCES Tasks(TaskId)
 );
+
+-- 10. Oturum Yenileme Jetonları (RefreshTokens)
+CREATE TABLE RefreshTokens (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    UserId INT NOT NULL,
+    Token NVARCHAR(255) UNIQUE NOT NULL,
+    ExpiryDate DATETIME NOT NULL,
+
+    CONSTRAINT FK_RefreshTokens_Users
+    FOREIGN KEY (UserId)
+    REFERENCES Users(UserId)
+);
+
+-- 11. Şifre Sıfırlama Jetonları (PasswordResetTokens)
+CREATE TABLE PasswordResetTokens (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    UserId INT NOT NULL,
+    Token NVARCHAR(255) UNIQUE NOT NULL,
+    ExpiryDate DATETIME NOT NULL,
+
+    CONSTRAINT FK_PasswordResetTokens_Users
+    FOREIGN KEY (UserId)
+    REFERENCES Users(UserId)
+);
+GO

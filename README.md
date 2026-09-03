@@ -233,9 +233,17 @@ Detaylı teknik dokümantasyona `documentation/` klasörü altından erişebilir
 
 | Rol | E-posta | Şifre | Kullanıcı |
 |-----|---------|-------|-----------|
-| Yönetici (Admin) | admin@ogr.edu.tr | admin | Prof. Ahmet Kaya |
-| Öğrenci | ege.yilmaz@ogr.edu.tr | 123 | Ege Yılmaz |
-| Öğrenci | ayse.demir@ogr.edu.tr | 123 | Ayşe Demir |
+| 👑 Yönetici (Admin) | `admin@ogr.edu.tr` | `admin` | Prof. Dr. Ahmet Kaya |
+| 🎓 Öğrenci | `gencece123@gmail.com` | `123` | Ecenaz Genç |
+| 🎓 Öğrenci | `ege.yilmaz@ogr.edu.tr` | `123` | Ege Yiğit Yılmaz |
+| 🎓 Öğrenci | `ayse.demir@ogr.edu.tr` | `123` | Ayşe Demir |
+| 🎓 Öğrenci | `gencece098@gmail.com` | `123` | Ece Naz Genç |
+| 🎓 Öğrenci | `burak.kaya@ogr.edu.tr` | `123` | Burak Kaya |
+| 🎓 Öğrenci | `zeynep.celik@ogr.edu.tr` | `123` | Zeynep Çelik |
+| 🎓 Öğrenci | `mert.ozturk@ogr.edu.tr` | `123` | Mert Öztürk |
+| 🎓 Öğrenci | `elif.sahin@ogr.edu.tr` | `123` | Elif Şahin |
+| 🎓 Öğrenci | `can.yildirim@ogr.edu.tr` | `123` | Can Yıldırım |
+| 🎓 Öğrenci | `selin.arslan@ogr.edu.tr` | `123` | Selin Arslan |
 
 ---
 
