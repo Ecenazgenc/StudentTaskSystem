@@ -5,6 +5,7 @@ import { userApi } from "../services/api";
 
 export default function AdminDashboard({ tasks, courses, users, setUsers, attachments, onRefresh, onSendNotification }) {
   const [searchTerm, setSearchTerm] = useState("");
+  const [roleFilter, setRoleFilter] = useState("all");
   const [showNotificationModal, setShowNotificationModal] = useState(false);
 
   const totalTasks = tasks.length;
@@ -41,9 +42,14 @@ export default function AdminDashboard({ tasks, courses, users, setUsers, attach
     }
   };
 
-  const filteredUsers = users.filter((u) =>
-    `${u.firstName} ${u.lastName} ${u.email}`.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredUsers = users.filter((u) => {
+    const matchesSearch = `${u.firstName} ${u.lastName} ${u.email}`.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesRole =
+      roleFilter === "all" ||
+      (roleFilter === "admin" && (u.roleId === 1 || u.roleName?.toLowerCase() === "admin")) ||
+      (roleFilter === "student" && (u.roleId === 2 || u.roleName?.toLowerCase() !== "admin"));
+    return matchesSearch && matchesRole;
+  });
 
   return (
     <div className="space-y-6">
@@ -249,6 +255,39 @@ export default function AdminDashboard({ tasks, courses, users, setUsers, attach
               />
             </div>
           </div>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 mb-4">
+          <button
+            onClick={() => setRoleFilter("all")}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              roleFilter === "all"
+                ? "bg-[#24262B] text-white dark:bg-white dark:text-[#121316] shadow-xs"
+                : "bg-[#24262B]/8 text-[#24262B] dark:bg-white/10 dark:text-white hover:bg-[#24262B]/15"
+            }`}
+          >
+            Tümü ({users.length})
+          </button>
+          <button
+            onClick={() => setRoleFilter("student")}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              roleFilter === "student"
+                ? "bg-[#3E8E7E] text-white shadow-xs"
+                : "bg-[#3E8E7E]/15 text-[#1E564B] dark:text-[#A4E0D5] hover:bg-[#3E8E7E]/25"
+            }`}
+          >
+            Öğrenciler ({studentCount})
+          </button>
+          <button
+            onClick={() => setRoleFilter("admin")}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              roleFilter === "admin"
+                ? "bg-[#E2725B] text-white shadow-xs"
+                : "bg-[#E2725B]/15 text-[#B8402C] dark:text-[#F8A092] hover:bg-[#E2725B]/25"
+            }`}
+          >
+            Yöneticiler ({users.length - studentCount})
+          </button>
         </div>
 
         <div className="overflow-x-auto">

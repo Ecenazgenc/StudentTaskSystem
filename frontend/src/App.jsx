@@ -1096,6 +1096,19 @@ export default function App() {
               onTogglePin={handleTogglePin}
             />
           )}
+
+          {/* Akademik Alt Bilgi (Footer) */}
+          <footer className="mt-12 pt-6 pb-2 border-t border-[#24262B]/10 dark:border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-[#24262B]/60 dark:text-white/50 font-medium">
+            <p>© 2026 Öğrenci Görev Takip Sistemi — Tüm hakları saklıdır.</p>
+            <div className="flex items-center gap-3">
+              <span className="inline-flex items-center gap-1.5 font-semibold text-[#3E8E7E] dark:text-[#52B4A0]">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#3E8E7E] animate-pulse" />
+                Sistem Canlıda (Vercel)
+              </span>
+              <span className="text-[#24262B]/30 dark:text-white/20">•</span>
+              <span>v2.1 Full-Stack</span>
+            </div>
+          </footer>
         </div>
       </main>
 

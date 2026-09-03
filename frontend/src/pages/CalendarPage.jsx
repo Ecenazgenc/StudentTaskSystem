@@ -13,9 +13,10 @@ export default function CalendarPage({ tasks = [], courses = [], onOpenTask, cur
     "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"
   ];
 
-  const daysOfWeek = ["Paz", "Pzt", "Sal", "Çar", "Per", "Cum", "Cmt"];
+  const daysOfWeek = ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"];
 
-  const firstDayOfMonth = new Date(year, month, 1).getDay();
+  // Pazartesi'den başlamak için pazar (0) gününü 6'ya, pazartesiyi (1) 0'a dönüştür
+  const firstDayOfMonth = (new Date(year, month, 1).getDay() + 6) % 7;
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
   const prevMonth = () => setCurrentDate(new Date(year, month - 1, 1));
