@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Clock, CheckCircle2, AlertTriangle, BookOpen } from "lucide-react";
 import { tapeFor, isOverdue, defaultCourseImage } from "../constants/theme";
 
-export default function CalendarPage({ tasks = [], courses = [], onOpenTask, isAdmin, currentUser, attachments = [] }) {
+export default function CalendarPage({ tasks = [], courses = [], onOpenTask, currentUser, attachments = [] }) {
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const year = currentDate.getFullYear();

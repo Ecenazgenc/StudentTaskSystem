@@ -1,4 +1,4 @@
-import { Circle, Clock, CheckCircle2, AlertTriangle, Lock } from "lucide-react";
+import { Circle, CheckCircle2, AlertTriangle, Lock } from "lucide-react";
 
 export const TAPE = [
   { bg: "#E2725B", tint: "#FBEAE5", text: "#E2725B" }, // kiremit

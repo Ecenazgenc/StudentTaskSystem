@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Plus, Search, Pin, PinOff, Trash2, Edit3, Copy, Check, X, StickyNote, Filter, BookOpen, Tag as TagIcon, CheckSquare, Square } from 'lucide-react';
+import { Plus, Search, Pin, PinOff, Trash2, Edit3, Copy, Check, X, StickyNote, BookOpen, Tag as TagIcon, CheckSquare, Square } from 'lucide-react';
 
 const COLORS = ['amber', 'emerald', 'indigo', 'rose', 'slate'];
 const TAGS = ["Ders Notu", "Sınav Hazırlığı", "Ödev Notu", "Fikir", "Checklist"];
@@ -21,7 +21,7 @@ const badgeColors = {
 };
 
 export default function NotesPage({ 
-  notes, courses, tasks, currentUser, isAdmin,
+  notes, courses, currentUser,
   onAddNote, onUpdateNote, onDeleteNote, onTogglePin 
 }) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -103,17 +103,16 @@ export default function NotesPage({
   };
 
   const filteredNotes = useMemo(() => {
-    return (notes || []).filter(note => {
-      if (isAdmin) return true;
-      return true;
-    }).filter(note => {
-      const matchSearch = note.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          note.content.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchCourse = selectedCourse === "all" || note.courseId === parseInt(selectedCourse);
+    return (notes || []).filter((note) => {
+      const matchSearch =
+        note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        note.content.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchCourse =
+        selectedCourse === "all" || note.courseId === parseInt(selectedCourse);
       const matchTag = selectedTag === "all" || note.tag === selectedTag;
       return matchSearch && matchCourse && matchTag;
     });
-  }, [notes, searchQuery, selectedCourse, selectedTag, isAdmin]);
+  }, [notes, searchQuery, selectedCourse, selectedTag]);
 
   const pinnedNotes = filteredNotes.filter(n => n.isPinned);
   const unpinnedNotes = filteredNotes.filter(n => !n.isPinned);

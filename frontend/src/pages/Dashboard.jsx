@@ -1,5 +1,5 @@
 import React, { useMemo, memo } from "react";
-import { ClipboardList, CheckCircle2, AlertTriangle, BookOpen, ChevronRight } from "lucide-react";
+import { ClipboardList, CheckCircle2, AlertTriangle, ChevronRight } from "lucide-react";
 import { tapeFor, daysUntil, isOverdue } from "../constants/theme";
 
 function DashboardComponent({ currentUser, tasks, courses, setPage }) {

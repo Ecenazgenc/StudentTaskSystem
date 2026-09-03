@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Bell, Send, CheckCheck } from "lucide-react";
+import { Bell, CheckCheck } from "lucide-react";
 import { fmtDate } from "../constants/theme";
 import SendNotificationModal from "../components/SendNotificationModal";
 

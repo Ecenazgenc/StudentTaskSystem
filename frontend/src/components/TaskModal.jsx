@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { X, Tag, Calendar, Paperclip, FileText, Upload, MessageSquare, Send, Trash2, CheckCircle2, Clock, Download, Lock, Check, Award, Star } from "lucide-react";
-import { tapeFor, fmtDate, PRIORITY_STYLE, CURRENT_USER, daysUntil } from "../constants/theme";
+import { tapeFor, fmtDate, PRIORITY_STYLE, daysUntil } from "../constants/theme";
 import { notificationApi } from "../services/api";
 
 export default function TaskModal({ task, course, category, comments, attachments, onClose, onStatusChange, onAddComment, onAddAttachment, onDeleteAttachment, onDelete, isAdmin, allUsers, currentUser }) {

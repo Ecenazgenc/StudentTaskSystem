@@ -23,13 +23,6 @@ export default function AdminDashboard({ tasks, courses, users, setUsers, attach
     ? Math.round((actualSubmissionsCount / expectedSubmissionsCount) * 100)
     : 0;
 
-  // Tamamen (tüm öğrenciler tarafından) teslim edilmiş görev sayısı
-  const fullyCompletedTasksCount = tasks.filter((t) => {
-    const taskSubmissions = (attachments || []).filter((a) => a.taskId === t.taskId && studentUserIds.has(a.userId));
-    const submittedUserIds = new Set(taskSubmissions.map((a) => a.userId));
-    return studentCount > 0 && submittedUserIds.size === studentCount;
-  }).length;
-
   const handleDeleteUser = async (userId) => {
     const userObj = users.find((u) => u.userId === userId);
     const userName = userObj ? `${userObj.firstName} ${userObj.lastName}` : "kullanıcıyı";

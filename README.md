@@ -207,9 +207,12 @@ Tüm sistemi (MSSQL Server, Spring Boot Backend ve Nginx ile React Frontend) Doc
 ## 📚 Dokümantasyon
 
 Detaylı teknik dokümantasyona `documentation/` klasörü altından erişebilirsiniz:
+- 🎓 [Staj Sonu Değerlendirme Raporu ve Sistem Kabul Tutanağı](documentation/Staj_Sonu_Raporu_ve_Sistem_Kabul_Tutanagi.md)
+- 🧪 [UAT Kullanıcı Kabul Test Raporu](documentation/UAT_Test_Raporu.md)
 - 📖 [API Dokümanı](documentation/API_Dokumani.md)
 - 📊 [Veritabanı Tasarımı](documentation/Veritabani_Tasarimi.md)
 - 📐 [Proje Analizi](documentation/Proje_Analizi.md)
+- 📊 [UML Diyagramları](documentation/UML_Diyagramlari.md)
 
 ---
 

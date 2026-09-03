@@ -3,7 +3,6 @@ import {
   GraduationCap,
   Lock,
   Mail,
-  UserCheck,
   ArrowRight,
   Eye,
   EyeOff,
@@ -14,40 +13,17 @@ import {
   Bell,
   BarChart3,
   BookOpen,
-  ShieldCheck,
   Clock,
   UploadCloud,
   FileText,
   CheckCircle2,
   ChevronDown,
-  ArrowDown,
-  Layers,
   Sparkle,
   AlertCircle
 } from "lucide-react";
 import { triggerWelcomeEmail } from "../services/emailService";
 import { userApi, authApi } from "../services/api";
-
-export const MOCK_USERS = [
-  {
-    userId: 1,
-    firstName: "Ege",
-    lastName: "Yılmaz",
-    email: "ege.yilmaz@ogr.edu.tr",
-    password: "123",
-    roleId: 2, // Öğrenci
-    roleName: "Öğrenci",
-  },
-  {
-    userId: 2,
-    firstName: "Ayşe",
-    lastName: "Demir",
-    email: "ayse.demir@ogr.edu.tr",
-    password: "123",
-    roleId: 2, // Öğrenci
-    roleName: "Öğrenci",
-  },
-];
+import { MOCK_USERS } from "../data/mockUsers";
 
 export default function LoginPage({ onLogin, onEmailSent }) {
   const [activeTab, setActiveTab] = useState("login"); // 'login' | 'signup'

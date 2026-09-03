@@ -1,9 +1,9 @@
 import React, { useMemo, memo, useState, useEffect, useRef, useCallback } from "react";
-import { Search, Plus, Clock, AlertTriangle, FileText, FileSpreadsheet, CheckCircle2, Loader2 } from "lucide-react";
+import { Search, Plus, Clock, FileText, FileSpreadsheet, Loader2 } from "lucide-react";
 import { STATUS_ICON, PRIORITY_STYLE, isOverdue, daysUntil } from "../constants/theme";
 import { taskApi } from "../services/api";
 
-function TaskBoardComponent({ tasks, courses, categories, attachments, onOpen, onNew, filters, setFilters, isAdmin, allUsers, currentUser, onTasksFiltered }) {
+function TaskBoardComponent({ tasks, courses, categories, attachments, onOpen, onNew, filters, setFilters, isAdmin, allUsers, currentUser }) {
   const [filteredTasks, setFilteredTasks] = useState(tasks);
   const [isSearching, setIsSearching] = useState(false);
   const debounceRef = useRef(null);

@@ -17,11 +17,11 @@ import NotesPage from "./pages/NotesPage";
 
 import ProfileModal from "./components/ProfileModal";
 import CalendarPage from "./pages/CalendarPage";
-import { MOCK_USERS } from "./pages/LoginPage";
+import { MOCK_USERS } from "./data/mockUsers";
 
 import { todayPlus, isOverdue, defaultCourseImage } from "./constants/theme";
 import { triggerTaskAssignmentEmail } from "./services/emailService";
-import { authApi, userApi, taskApi, courseApi, commentApi, attachmentApi, notificationApi, noteApi, fetchWithFallback } from "./services/api";
+import { userApi, taskApi, courseApi, commentApi, attachmentApi, notificationApi, noteApi, fetchWithFallback } from "./services/api";
 import {
   INIT_COURSES,
   CATEGORIES,
@@ -31,6 +31,11 @@ import {
   INIT_NOTIFICATIONS,
   INIT_NOTES
 } from "./data/initialData";
+
+const DEFAULT_USERS = [
+  { userId: 99, firstName: "Sistem", lastName: "Yöneticisi", email: "admin@ogr.edu.tr", roleId: 1, roleName: "Admin" },
+  ...MOCK_USERS
+];
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -88,7 +93,6 @@ export default function App() {
   };
   const [mobileOpen, setMobileOpen] = useState(false);
   const [emailToast, setEmailToast] = useState(null);
-  const [dataLoaded, setDataLoaded] = useState(true);
 
   const [courses, setCourses] = useState(() => {
     const saved = localStorage.getItem("stss_courses");
@@ -146,10 +150,6 @@ export default function App() {
     const saved = localStorage.getItem("stss_notes");
     return saved ? JSON.parse(saved) : INIT_NOTES;
   });
-  const DEFAULT_USERS = [
-    { userId: 99, firstName: "Sistem", lastName: "Yöneticisi", email: "admin@ogr.edu.tr", roleId: 1, roleName: "Admin" },
-    ...MOCK_USERS
-  ];
 
   const [users, setUsers] = useState(() => {
     const saved = localStorage.getItem("stss_all_users");

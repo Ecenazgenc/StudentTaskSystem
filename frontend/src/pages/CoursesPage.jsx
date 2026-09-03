@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Plus, Trash2, Edit3, BookOpen, Image as ImageIcon } from "lucide-react";
+import { Plus, Trash2, Edit3, BookOpen } from "lucide-react";
 import { tapeFor, defaultCourseImage } from "../constants/theme";
 import NewCourseModal from "../components/NewCourseModal";
 
