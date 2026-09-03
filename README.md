@@ -7,7 +7,10 @@
 ![MSSQL](https://img.shields.io/badge/MSSQL-Server-CC292B?style=for-the-badge&logo=microsoftsqlserver)
 ![TailwindCSS](https://img.shields.io/badge/Tailwind-v4-06B6D4?style=for-the-badge&logo=tailwindcss)
 
-Öğrenci Görev Takip Sistemi, öğrencilerin akademik sorumluluklarını (ödevler, projeler, sınavlar, dersler) katmanlı mimari (Layered Architecture) prensiplerine uygun, güvenli, modern ve responsive bir web arayüzü üzerinden yönetebilmelerini sağlayan kurumsal ölçekli bir tam yığın (Full-Stack) web uygulamasıdır.
+ Öğrenci Görev Takip Sistemi, öğrencilerin akademik sorumluluklarını (ödevler, projeler, sınavlar, dersler) katmanlı mimari (Layered Architecture) prensiplerine uygun, güvenli, modern ve responsive bir web arayüzü üzerinden yönetebilmelerini sağlayan kurumsal ölçekli bir tam yığın (Full-Stack) web uygulamasıdır.
+
+> 🚀 **Canlı Sistem (Production Link):** [https://student-task-system-qtce.vercel.app](https://student-task-system-qtce.vercel.app)  
+> *(7/24 kesintisiz açık, terminal gerektirmez, mobil ve masaüstü uyumludur)*
 
 ---
 

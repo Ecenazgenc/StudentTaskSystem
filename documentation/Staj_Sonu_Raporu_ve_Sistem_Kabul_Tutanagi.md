@@ -17,7 +17,9 @@
 
 Staj döneminin son gününde, staj süresince geliştirilen **Öğrenci Görev Takip Sistemi** üzerinde kapsamlı, genel ve uçtan uca kontroller gerçekleştirilmiştir. Sistemin backend ve frontend modülleri yeniden çalıştırılmış; veritabanı bağlantılarının, kullanıcı girişi ile yetkilendirme mekanizmalarının ve tüm temel işlevlerin (görev, ders, not, dosya teslim ve bildirim yönetimi) sorunsuz ve kararlı çalıştığı doğrulanmıştır. Tespit edilen küçük eksiklikler giderilmiş, kod kalitesi en üst seviyeye taşınmış ve staj dosyası ile proje dokümantasyonu gözden geçirilerek eksiksiz hale getirilmiştir. 
 
-Yapılan tüm sistem kontrolleri ve testlerin başarıyla tamamlanmasıyla birlikte sistem canlı kullanıma hazır hale getirilmiş ve staj süreci resmi olarak sona ermiştir.
+Yapılan tüm sistem kontrolleri ve testlerin başarıyla tamamlanmasıyla birlikte sistem canlı kullanıma hazır hale getirilmiş, bulut ortamında (Vercel) 7/24 kesintisiz olarak yayına alınmış ve staj süreci resmi olarak sona ermiştir.
+
+> 🌐 **Canlı Sistem Bağlantısı:** [https://student-task-system-qtce.vercel.app](https://student-task-system-qtce.vercel.app)
 
 ---
 
