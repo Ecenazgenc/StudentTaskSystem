@@ -406,8 +406,6 @@ export default function App() {
       }
     } catch (err) {
       console.warn("Backend veri yükleme uyarısı:", err);
-    } finally {
-      setDataLoaded(true);
     }
   }, []);
 
@@ -451,7 +449,6 @@ export default function App() {
   }, [tasks, currentUser]);
 
   const handleLogin = (user) => {
-    setDataLoaded(true);
     setCurrentUser(user);
     const saved = localStorage.getItem("stss_page");
     setPage(saved && VALID_PAGES.includes(saved) ? saved : "panel");
