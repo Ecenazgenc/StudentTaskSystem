@@ -57,6 +57,36 @@ export default function LoginPage({ onLogin, onEmailSent }) {
     setError("");
     setSuccessMsg("");
 
+    if (quickEmail === "admin@ogr.edu.tr") {
+      try {
+        const result = await authApi.login("admin@ogr.edu.tr", "admin", null);
+        if (result && result.token) sessionStorage.setItem("stss_jwt_token", result.token);
+        if (result && result.refreshToken) sessionStorage.setItem("stss_refresh_token", result.refreshToken);
+        if (result && result.user) {
+          onLogin({
+            userId: result.user.userId,
+            firstName: result.user.firstName,
+            lastName: result.user.lastName,
+            email: result.user.email,
+            roleId: 1,
+            roleName: "Admin",
+          });
+          return;
+        }
+      } catch (e) {
+        console.warn("Backend hızlı admin girişi fallback:", e);
+      }
+      onLogin({
+        userId: 99,
+        firstName: "Sistem",
+        lastName: "Yöneticisi",
+        email: "admin@ogr.edu.tr",
+        roleId: 1,
+        roleName: "Admin",
+      });
+      return;
+    }
+
     try {
       const result = await authApi.login(quickEmail, quickPassword, null);
       if (result && result.success && result.user) {
@@ -74,18 +104,6 @@ export default function LoginPage({ onLogin, onEmailSent }) {
       }
     } catch (e) {
       console.warn("Backend hızlı giriş atlandı, yerel oturuma geçiliyor:", e);
-    }
-
-    if (quickEmail === "admin@ogr.edu.tr") {
-      onLogin({
-        userId: 99,
-        firstName: "Sistem",
-        lastName: "Yöneticisi",
-        email: "admin@ogr.edu.tr",
-        roleId: 1,
-        roleName: "Admin",
-      });
-      return;
     }
 
     const found = MOCK_USERS.find((u) => u.email.toLowerCase() === quickEmail.toLowerCase());
@@ -108,10 +126,53 @@ export default function LoginPage({ onLogin, onEmailSent }) {
     setError("");
     setSuccessMsg("");
 
-    const inputEmail = email.trim().toLowerCase();
+    let inputEmail = email.trim().toLowerCase();
+    if (inputEmail === "admin") {
+      inputEmail = "admin@ogr.edu.tr";
+    }
 
+    // 1. Yönetici Kontrolü (Hızlı ve Güvenilir)
+    if (inputEmail === "admin@ogr.edu.tr") {
+      if (password !== "admin") {
+        setError("Hatalı şifre girdiniz. Yönetici şifresi: admin");
+        return;
+      }
+      try {
+        const result = await authApi.login("admin@ogr.edu.tr", "admin", null);
+        if (result && result.token) {
+          sessionStorage.setItem("stss_jwt_token", result.token);
+        }
+        if (result && result.refreshToken) {
+          sessionStorage.setItem("stss_refresh_token", result.refreshToken);
+        }
+        if (result && result.user) {
+          onLogin({
+            userId: result.user.userId,
+            firstName: result.user.firstName,
+            lastName: result.user.lastName,
+            email: result.user.email,
+            roleId: 1,
+            roleName: "Admin",
+          });
+          return;
+        }
+      } catch (err) {
+        console.warn("Backend admin login fallback:", err);
+      }
+      onLogin({
+        userId: 99,
+        firstName: "Sistem",
+        lastName: "Yöneticisi",
+        email: "admin@ogr.edu.tr",
+        password: "admin",
+        roleId: 1,
+        roleName: "Admin",
+      });
+      return;
+    }
+
+    // 2. Standart Kullanıcı Girişi (Backend API)
     try {
-      // 1. Backend API ile giriş denemesi
       const result = await authApi.login(inputEmail, password, null);
 
       if (result && result.success && result.user) {
@@ -133,24 +194,6 @@ export default function LoginPage({ onLogin, onEmailSent }) {
       }
     } catch (err) {
       console.warn("Backend giriş başarısız, yerel kullanıcı kontrolüne geçiliyor:", err.message);
-    }
-
-    // 2. Yerel Admin Kontrolü
-    if (inputEmail === "admin@ogr.edu.tr") {
-      if (password !== "admin") {
-        setError("Hatalı şifre girdiniz. Lütfen tekrar deneyiniz.");
-        return;
-      }
-      onLogin({
-        userId: 99,
-        firstName: "Sistem",
-        lastName: "Yöneticisi",
-        email: "admin@ogr.edu.tr",
-        password: "admin",
-        roleId: 1,
-        roleName: "Admin",
-      });
-      return;
     }
 
     // 3. Yerel Mock Kullanıcı Kontrolü
@@ -450,16 +493,16 @@ export default function LoginPage({ onLogin, onEmailSent }) {
                   <form onSubmit={handleLoginSubmit} className="space-y-4">
                     <div>
                       <label className="stss-mono text-[11px] font-extrabold text-[#111215] dark:text-[#E5E7EB] block mb-1.5 uppercase">
-                        E-Posta Adresi
+                        E-Posta veya Kullanıcı Adı
                       </label>
                       <div className="relative">
                         <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#111215]/60 dark:text-white/60" />
                         <input
-                          type="email"
+                          type="text"
                           required
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          placeholder="ornek@ogr.edu.tr"
+                          placeholder="admin@ogr.edu.tr veya admin"
                           className="w-full pl-10 pr-3 py-2.5 rounded-lg border-2 border-[#111215]/20 dark:border-white/20 bg-white dark:bg-[#15161D] text-[#111215] dark:text-white text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#3E8E7E]"
                         />
                       </div>

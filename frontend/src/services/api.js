@@ -2,7 +2,8 @@ const API_BASE = '/api';
 
 export async function fetchWithFallback(endpoint, options = {}, fallbackData = null) {
   try {
-    const token = sessionStorage.getItem('stss_jwt_token') || localStorage.getItem('stss_jwt_token');
+    const isAuthRoute = endpoint.startsWith('/auth/login') || endpoint.startsWith('/auth/register');
+    const token = isAuthRoute ? null : (sessionStorage.getItem('stss_jwt_token') || localStorage.getItem('stss_jwt_token'));
     const headers = {
       'Content-Type': 'application/json',
       ...(token ? { 'Authorization': `Bearer ${token}` } : {}),

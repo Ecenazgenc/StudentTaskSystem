@@ -2,7 +2,7 @@ import React from "react";
 import { Home, ClipboardList, BookOpen, Bell, GraduationCap, LogOut, ShieldCheck, CalendarDays, Sun, Moon, StickyNote } from "lucide-react";
 
 export default function Sidebar({ currentUser, onLogout, page, setPage, unread, mobileOpen, setMobileOpen, onOpenProfile, isDarkMode, onToggleDarkMode }) {
-  const isAdmin = currentUser?.roleId === 1;
+  const isAdmin = Boolean(currentUser && (Number(currentUser.roleId) === 1 || currentUser.roleName?.toLowerCase() === "admin"));
 
   const items = isAdmin
     ? [

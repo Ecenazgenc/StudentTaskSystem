@@ -38,7 +38,14 @@ const DEFAULT_USERS = [
 ];
 
 export default function App() {
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem("stss_user");
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
 
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const saved = localStorage.getItem("stss_theme");
@@ -459,6 +466,7 @@ export default function App() {
     setSelectedTaskId(null);
     setShowNewTask(false);
     localStorage.removeItem("stss_page");
+    localStorage.removeItem("stss_user");
     sessionStorage.removeItem("stss_jwt_token");
     sessionStorage.removeItem("stss_refresh_token");
   };
@@ -478,7 +486,7 @@ export default function App() {
     );
   }
 
-  const isAdmin = currentUser.roleId === 1;
+  const isAdmin = Boolean(currentUser && (Number(currentUser.roleId) === 1 || currentUser.roleName?.toLowerCase() === "admin"));
   const nextId = (arr, key) => (arr.length ? Math.max(...arr.map((x) => x[key])) + 1 : 1);
   
   const currentUid = currentUser?.userId != null ? Number(currentUser.userId) : null;
