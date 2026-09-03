@@ -33,7 +33,7 @@ import {
 } from "./data/initialData";
 
 const DEFAULT_USERS = [
-  { userId: 99, firstName: "Sistem", lastName: "Yöneticisi", email: "admin@ogr.edu.tr", roleId: 1, roleName: "Admin" },
+  { userId: 5, firstName: "Prof. Dr. Ahmet", lastName: "Kaya", email: "admin@ogr.edu.tr", roleId: 1, roleName: "Admin" },
   ...MOCK_USERS
 ];
 
@@ -145,17 +145,27 @@ export default function App() {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length >= INIT_ATTACHMENTS.length) return parsed;
       } catch (e) {
         console.error("Attachment parse error", e);
       }
     }
+    localStorage.setItem("stss_attachments", JSON.stringify(INIT_ATTACHMENTS));
     return INIT_ATTACHMENTS;
   });
 
   const [notes, setNotes] = useState(() => {
     const saved = localStorage.getItem("stss_notes");
-    return saved ? JSON.parse(saved) : INIT_NOTES;
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length >= INIT_NOTES.length) return parsed;
+      } catch (e) {
+        console.error("Note parse error", e);
+      }
+    }
+    localStorage.setItem("stss_notes", JSON.stringify(INIT_NOTES));
+    return INIT_NOTES;
   });
 
   const [users, setUsers] = useState(() => {
@@ -163,11 +173,12 @@ export default function App() {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length >= DEFAULT_USERS.length) return parsed;
       } catch (e) {
         console.error("User parse error", e);
       }
     }
+    localStorage.setItem("stss_all_users", JSON.stringify(DEFAULT_USERS));
     return DEFAULT_USERS;
   });
   const [notifications, setNotifications] = useState(() => {

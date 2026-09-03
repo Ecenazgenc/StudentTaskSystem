@@ -546,22 +546,38 @@ export default function LoginPage({ onLogin, onEmailSent }) {
                     <p className="stss-mono text-[10.5px] text-[#111215]/75 dark:text-white/70 mb-2 flex items-center gap-1 uppercase tracking-wider font-extrabold">
                       <Sparkles size={11} className="text-[#D9A441]" /> Tek Tıkla Hızlı Giriş Yap:
                     </p>
-                    <div className="flex flex-wrap gap-2 text-xs">
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      <button
+                        type="button"
+                        onClick={() => handleQuickLogin("admin@ogr.edu.tr", "admin")}
+                        className="stss-mono text-[11px] px-2.5 py-1.5 rounded-lg bg-[#FBEAE5] dark:bg-[#E2725B]/25 text-[#B8402C] dark:text-[#F8A092] font-bold border border-[#E2725B]/30 hover:bg-[#E2725B] hover:text-white transition-colors cursor-pointer text-left truncate"
+                        title="Yönetici olarak anında giriş yap"
+                      >
+                        ⚡ Admin (Prof. Dr. Ahmet Kaya)
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleQuickLogin("gencece123@gmail.com", "123")}
+                        className="stss-mono text-[11px] px-2.5 py-1.5 rounded-lg bg-[#E6F1EE] dark:bg-[#3E8E7E]/25 text-[#1E564B] dark:text-[#A4E0D5] font-bold border border-[#3E8E7E]/30 hover:bg-[#3E8E7E] hover:text-white transition-colors cursor-pointer text-left truncate"
+                        title="Ecenaz Genç olarak anında giriş yap"
+                      >
+                        ⚡ Öğrenci (Ecenaz Genç)
+                      </button>
                       <button
                         type="button"
                         onClick={() => handleQuickLogin("ege.yilmaz@ogr.edu.tr", "123")}
-                        className="stss-mono text-[11px] px-3 py-1.5 rounded-lg bg-[#E6F1EE] dark:bg-[#3E8E7E]/25 text-[#1E564B] dark:text-[#A4E0D5] font-bold border border-[#3E8E7E]/30 hover:bg-[#3E8E7E] hover:text-white transition-colors cursor-pointer"
-                        title="Ege Yılmaz olarak anında giriş yap"
+                        className="stss-mono text-[11px] px-2.5 py-1.5 rounded-lg bg-[#EAF2F8] dark:bg-[#4E7CA1]/25 text-[#2C5E8A] dark:text-[#90CDF4] font-bold border border-[#4E7CA1]/30 hover:bg-[#4E7CA1] hover:text-white transition-colors cursor-pointer text-left truncate"
+                        title="Ege Yiğit Yılmaz olarak anında giriş yap"
                       >
                         ⚡ Öğrenci (Ege Yılmaz)
                       </button>
                       <button
                         type="button"
-                        onClick={() => handleQuickLogin("admin@ogr.edu.tr", "admin")}
-                        className="stss-mono text-[11px] px-3 py-1.5 rounded-lg bg-[#FBEAE5] dark:bg-[#E2725B]/25 text-[#B8402C] dark:text-[#F8A092] font-bold border border-[#E2725B]/30 hover:bg-[#E2725B] hover:text-white transition-colors cursor-pointer"
-                        title="Yönetici olarak anında giriş yap"
+                        onClick={() => handleQuickLogin("ayse.demir@ogr.edu.tr", "123")}
+                        className="stss-mono text-[11px] px-2.5 py-1.5 rounded-lg bg-[#F3E8FF] dark:bg-[#9333EA]/25 text-[#6B21A8] dark:text-[#D8B4FE] font-bold border border-[#9333EA]/30 hover:bg-[#9333EA] hover:text-white transition-colors cursor-pointer text-left truncate"
+                        title="Ayşe Demir olarak anında giriş yap"
                       >
-                        ⚡ Admin (Prof. Ahmet Kaya)
+                        ⚡ Öğrenci (Ayşe Demir)
                       </button>
                     </div>
                   </div>
