@@ -44,3 +44,6 @@ application-local.properties
 application-*.properties
 !application.properties
 *.env
+
+### Yerel Rehber ve Notlar (Local Only) ###
+documentation/Juri_Sunum_ve_Proje_Savunma_Rehberi*.md
