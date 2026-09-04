@@ -40,7 +40,9 @@ const DEFAULT_USERS = [
 export default function App() {
   const [currentUser, setCurrentUser] = useState(() => {
     try {
-      const saved = localStorage.getItem("stss_user");
+      // Kalıcı localStorage oturumunu temizle; linke tıklandığında HER ZAMAN doğrudan Giriş Ekranı (LoginPage) açılsın
+      localStorage.removeItem("stss_user");
+      const saved = sessionStorage.getItem("stss_user");
       return saved ? JSON.parse(saved) : null;
     } catch {
       return null;
@@ -194,7 +196,8 @@ export default function App() {
 
   const handleUpdateUser = async (updatedUserData) => {
     setCurrentUser(updatedUserData);
-    localStorage.setItem("stss_user", JSON.stringify(updatedUserData));
+    sessionStorage.setItem("stss_user", JSON.stringify(updatedUserData));
+    localStorage.removeItem("stss_user");
 
     const idx = MOCK_USERS.findIndex((u) => u.userId === updatedUserData.userId);
     if (idx !== -1) {
@@ -429,9 +432,11 @@ export default function App() {
 
   useEffect(() => {
     if (currentUser) {
-      localStorage.setItem("stss_user", JSON.stringify(currentUser));
+      sessionStorage.setItem("stss_user", JSON.stringify(currentUser));
+      localStorage.removeItem("stss_user");
       loadDataFromBackend();
     } else {
+      sessionStorage.removeItem("stss_user");
       localStorage.removeItem("stss_user");
     }
   }, [currentUser, loadDataFromBackend]);
@@ -478,6 +483,7 @@ export default function App() {
     setShowNewTask(false);
     localStorage.removeItem("stss_page");
     localStorage.removeItem("stss_user");
+    sessionStorage.removeItem("stss_user");
     sessionStorage.removeItem("stss_jwt_token");
     sessionStorage.removeItem("stss_refresh_token");
   };
