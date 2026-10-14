@@ -7,9 +7,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
+// Eklenti (Attachment) verilerini istemciye iletmek için kullanılan Data Transfer Object (DTO).
 public record AttachmentDTO(int attachmentId, String fileName, String filePath,
                             LocalDateTime uploadDate, int taskId, String taskTitle, int userId) {
 
+    // Attachment varlığını (entity) AttachmentDTO'ya dönüştüren yardımcı metot
     public static AttachmentDTO fromEntity(Attachment attachment) {
         int tid = 0;
         String tTitle = null;
@@ -30,6 +32,7 @@ public record AttachmentDTO(int attachmentId, String fileName, String filePath,
         );
     }
 
+    // Eklenti oluşturma/güncelleme isteklerinde (Request) kullanılan DTO
     public record Request(
             @NotBlank(message = "Dosya adı boş olamaz")
             @Size(max = 255, message = "Dosya adı en fazla 255 karakter olabilir")

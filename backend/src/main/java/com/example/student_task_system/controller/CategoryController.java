@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Kategori yönetimi için REST API uç noktalarını sağlayan Controller sınıfı.
+ */
 @RestController
 @RequestMapping("/categories")
 public class CategoryController {

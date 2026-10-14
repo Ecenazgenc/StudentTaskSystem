@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.student_task_system.dto.NoteDTO;
 import com.example.student_task_system.service.NoteService;
 
+/**
+ * Kullanıcı notlarının (Notes) yönetimi için REST API uç noktalarını sağlayan Controller sınıfı.
+ */
 @RestController
 @RequestMapping("/notes")
 public class NoteController {

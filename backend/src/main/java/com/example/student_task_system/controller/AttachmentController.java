@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Görevlere eklenen dosyaların (eklerin) yönetimi için REST API uç noktalarını sağlayan Controller sınıfı.
+ */
 @RestController
 @RequestMapping("/attachments")
 public class AttachmentController {

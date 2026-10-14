@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+// Görev (Task) işlemlerini yöneten servis sınıfı
 public class TaskService {
 
     private final TaskRepository taskRepository;
@@ -37,6 +38,7 @@ public class TaskService {
     }
 
     @Transactional(readOnly = true)
+    // Tüm görevleri ilişkili tablolarıyla birlikte getirir.
     public List<TaskDTO> getAllTasks() {
         return taskRepository.findAllWithRelations()
                 .stream()
@@ -45,12 +47,14 @@ public class TaskService {
     }
 
     @Transactional(readOnly = true)
+    // Tüm görevleri sayfalama yaparak ilişkileriyle getirir.
     public Page<TaskDTO> getAllTasks(Pageable pageable) {
         return taskRepository.findAllWithRelations(pageable)
                 .map(TaskDTO::fromEntity);
     }
 
     @Transactional(readOnly = true)
+    // Belirtilen filtrelere göre görevleri sayfalama ile getirir.
     public Page<TaskDTO> getTasks(String search, Integer courseId, Integer categoryId, String status, String priority, Pageable pageable) {
         Specification<Task> spec = TaskSpecification.filterTasks(search, courseId, categoryId, status, priority);
         return taskRepository.findAll(spec, pageable)
@@ -58,6 +62,7 @@ public class TaskService {
     }
 
     @Transactional(readOnly = true)
+    // Belirtilen filtrelere göre tüm görevleri liste olarak getirir.
     public List<TaskDTO> getAllTasksList(String search, Integer courseId, Integer categoryId, String status, String priority) {
         Specification<Task> spec = TaskSpecification.filterTasks(search, courseId, categoryId, status, priority);
         return taskRepository.findAll(spec)
@@ -67,6 +72,7 @@ public class TaskService {
     }
 
     @Transactional(readOnly = true)
+    // Belirtilen ID'ye sahip görevi getirir.
     public TaskDTO getTaskById(Integer id) {
         Task task = taskRepository.findByIdWithRelations(id)
                 .or(() -> taskRepository.findById(id))
@@ -75,6 +81,7 @@ public class TaskService {
     }
 
     @Transactional
+    // Yeni bir görev oluşturur.
     public TaskDTO saveTask(TaskDTO.Request request) {
         Task task = new Task();
         applyRequestToEntity(task, request);
@@ -83,6 +90,7 @@ public class TaskService {
     }
 
     @Transactional
+    // Mevcut bir görevi günceller.
     public TaskDTO updateTask(Integer id, TaskDTO.Request request) {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Görev bulunamadı: id=" + id));
@@ -93,6 +101,7 @@ public class TaskService {
     }
 
     @Transactional
+    // Belirtilen ID'ye sahip görevi siler.
     public void deleteTask(Integer id) {
         if (!taskRepository.existsById(id)) {
             throw new ResourceNotFoundException("Görev bulunamadı: id=" + id);
@@ -100,6 +109,7 @@ public class TaskService {
         taskRepository.deleteById(id);
     }
 
+    // DTO'dan gelen verileri görev varlığına uygular.
     private void applyRequestToEntity(Task task, TaskDTO.Request request) {
         task.setTitle(request.title());
         task.setDescription(request.description());

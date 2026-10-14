@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Görev (Task) yönetimi ile ilgili uç noktaları (endpoints) sağlayan Controller sınıfı.
+ */
 @RestController
 @RequestMapping({"/tasks", "/api/tasks"})
 @CrossOrigin(origins = "*")
@@ -23,6 +26,11 @@ public class TaskController {
     public TaskController(TaskService taskService) {
         this.taskService = taskService;
     }
+
+    /**
+     * Belirtilen filtrelere (arama, kurs, kategori, durum, öncelik) göre görevleri listeler.
+     * Sayfalama (pagination) destekler.
+     */
 
     @GetMapping
     public ResponseEntity<?> getAllTasks(
@@ -51,22 +59,34 @@ public class TaskController {
         return ResponseEntity.ok(page);
     }
 
+    /**
+     * Belirtilen ID'ye sahip görevin detaylarını döner.
+     */
     @GetMapping("/{id}")
     public ResponseEntity<TaskDTO> getTaskById(@PathVariable Integer id) {
         return ResponseEntity.ok(taskService.getTaskById(id));
     }
 
+    /**
+     * Yeni bir görev oluşturur.
+     */
     @PostMapping
     public ResponseEntity<TaskDTO> createTask(@Valid @RequestBody TaskDTO.Request request) {
         TaskDTO created = taskService.saveTask(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
+    /**
+     * Mevcut bir görevi günceller.
+     */
     @PutMapping("/{id}")
     public ResponseEntity<TaskDTO> updateTask(@PathVariable Integer id, @Valid @RequestBody TaskDTO.Request request) {
         return ResponseEntity.ok(taskService.updateTask(id, request));
     }
 
+    /**
+     * Belirtilen görevi siler.
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable Integer id) {
         taskService.deleteTask(id);

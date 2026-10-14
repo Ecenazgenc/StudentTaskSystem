@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @RestControllerAdvice
+// Uygulama genelindeki istisnaları (exception) yakalayan ve işleyen sınıf
 public class GlobalExceptionHandler {
 
     // 400 — Validation hataları (@NotBlank, @Email, @Size vb.)

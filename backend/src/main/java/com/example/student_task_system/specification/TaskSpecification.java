@@ -7,8 +7,10 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.ArrayList;
 import java.util.List;
 
+// Görevler üzerinde dinamik sorgulama (filtreleme) yapmayı sağlayan specification sınıfı
 public class TaskSpecification {
 
+    // Verilen kriterlere göre görevleri filtreleyen metot.
     public static Specification<Task> filterTasks(String search, Integer courseId, Integer categoryId, String status, String priority) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();

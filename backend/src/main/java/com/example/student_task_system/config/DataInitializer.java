@@ -8,6 +8,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+/**
+ * Uygulama başladığında veritabanına varsayılan verileri (roller, örnek kullanıcılar) ekleyen sınıf.
+ */
 @Component
 public class DataInitializer implements CommandLineRunner {
 
@@ -21,6 +24,9 @@ public class DataInitializer implements CommandLineRunner {
         this.passwordEncoder = passwordEncoder;
     }
 
+    /**
+     * Veritabanı başlatılırken çalıştırılacak işlemler.
+     */
     @Override
     public void run(String... args) {
         // 1. Rollerin veritabanında varlık kontrolü ve eklenmesi

@@ -4,7 +4,9 @@ import { STATUS_ICON, PRIORITY_STYLE, isOverdue, daysUntil } from "../constants/
 import { taskApi } from "../services/api";
 
 function TaskBoardComponent({ tasks, courses, categories, attachments, onOpen, onNew, filters, setFilters, isAdmin, allUsers, currentUser }) {
+  // Bileşen state (durum) tanımı
   const [filteredTasks, setFilteredTasks] = useState(tasks);
+  // Bileşen state (durum) tanımı
   const [isSearching, setIsSearching] = useState(false);
   const debounceRef = useRef(null);
 
@@ -74,6 +76,7 @@ function TaskBoardComponent({ tasks, courses, categories, attachments, onOpen, o
   }, [tasks]);
 
   // Debounce ile filtre değişikliklerini backend'e gönder
+  // Yan etki (effect) işlemleri
   useEffect(() => {
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
@@ -94,6 +97,7 @@ function TaskBoardComponent({ tasks, courses, categories, attachments, onOpen, o
   }, [filters, fetchFilteredTasks]);
 
   // tasks prop'u değiştiğinde (yeni görev eklendiğinde vb.) listeyi güncelle
+  // Yan etki (effect) işlemleri
   useEffect(() => {
     const hasActiveFilters =
       (filters.search && filters.search.trim().length > 0) ||
@@ -114,6 +118,7 @@ function TaskBoardComponent({ tasks, courses, categories, attachments, onOpen, o
     });
   }, [filteredTasks]);
 
+  // Olay (event) işleyici fonksiyon
   const handleExportCSV = () => {
     let csvContent = "data:text/csv;charset=utf-8,Gorev ID;Gorev Basligi;Ders;Oncelik;Son Teslim Tarihi\n";
     sorted.forEach((t) => {
@@ -129,6 +134,7 @@ function TaskBoardComponent({ tasks, courses, categories, attachments, onOpen, o
     document.body.removeChild(link);
   };
 
+  // Olay (event) işleyici fonksiyon
   const handleExportPDF = () => {
     const printWindow = window.open("", "_blank");
     const htmlContent = `

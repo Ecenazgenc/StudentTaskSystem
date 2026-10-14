@@ -20,6 +20,7 @@ import com.example.student_task_system.repository.TaskRepository;
 import com.example.student_task_system.config.XssSanitizerUtils;
 
 @Service
+// Not işlemlerini yöneten servis sınıfı
 public class NoteService {
 
     private final NoteRepository noteRepository;
@@ -35,24 +36,28 @@ public class NoteService {
         this.taskRepository = taskRepository;
     }
 
+    // Tüm notları getirir.
     public List<NoteDTO> getAllNotes() {
         return noteRepository.findAll().stream()
                 .map(NoteDTO::fromEntity)
                 .collect(Collectors.toList());
     }
 
+    // Belirtilen ID'ye sahip notu getirir.
     public NoteDTO getNoteById(Integer id) {
         Note note = noteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Not bulunamadı."));
         return NoteDTO.fromEntity(note);
     }
 
+    // Belirli bir kullanıcıya ait notları getirir.
     public List<NoteDTO> getNotesByUserId(int userId) {
         return noteRepository.findByUser_UserId(userId).stream()
                 .map(NoteDTO::fromEntity)
                 .collect(Collectors.toList());
     }
 
+    // Yeni bir not kaydeder.
     public NoteDTO saveNote(NoteDTO.Request request) {
         User user = userRepository.findById(request.userId())
                 .orElseThrow(() -> new ResourceNotFoundException("Kullanıcı bulunamadı."));
@@ -83,6 +88,7 @@ public class NoteService {
         return NoteDTO.fromEntity(savedNote);
     }
 
+    // Mevcut bir notu günceller.
     public NoteDTO updateNote(Integer id, NoteDTO.Request request) {
         Note note = noteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Not bulunamadı."));
@@ -114,6 +120,7 @@ public class NoteService {
         return NoteDTO.fromEntity(updatedNote);
     }
 
+    // Notun sabitlenme (pin) durumunu değiştirir.
     public NoteDTO togglePin(Integer id) {
         Note note = noteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Not bulunamadı."));
@@ -123,6 +130,7 @@ public class NoteService {
         return NoteDTO.fromEntity(updatedNote);
     }
 
+    // Belirtilen ID'ye sahip notu siler.
     public void deleteNote(Integer id) {
         if (!noteRepository.existsById(id)) {
             throw new ResourceNotFoundException("Not bulunamadı.");

@@ -37,7 +37,9 @@ const DEFAULT_USERS = [
   ...MOCK_USERS
 ];
 
+// Uygulamanın ana bileşeni (App Container)
 export default function App() {
+  // Bileşen state (durum) tanımı
   const [currentUser, setCurrentUser] = useState(() => {
     try {
       // Kalıcı localStorage oturumunu temizle; linke tıklandığında HER ZAMAN doğrudan Giriş Ekranı (LoginPage) açılsın
@@ -49,15 +51,18 @@ export default function App() {
     }
   });
 
+  // Bileşen state (durum) tanımı
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const saved = localStorage.getItem("stss_theme");
     if (saved) return saved === "dark";
     return window.matchMedia("(prefers-color-scheme: dark)").matches;
   });
 
+  // Yan etki (effect) işlemleri
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    const handleChange = (e) => {
+    // Olay (event) işleyici fonksiyon
+  const handleChange = (e) => {
       if (!localStorage.getItem("stss_theme")) {
         setIsDarkMode(e.matches);
       }
@@ -78,6 +83,7 @@ export default function App() {
     };
   }, []);
 
+  // Yan etki (effect) işlemleri
   useEffect(() => {
     if (isDarkMode) {
       document.documentElement.classList.add("dark");
@@ -91,6 +97,7 @@ export default function App() {
   const toggleDarkMode = () => setIsDarkMode((prev) => !prev);
 
   const VALID_PAGES = ["panel", "gorevler", "takvim", "dersler", "bildirimler", "notlar"];
+  // Bileşen state (durum) tanımı
   const [page, setPageState] = useState(() => {
     const saved = localStorage.getItem("stss_page");
     return saved && VALID_PAGES.includes(saved) ? saved : "panel";
@@ -100,9 +107,12 @@ export default function App() {
     setPageState(valid);
     localStorage.setItem("stss_page", valid);
   };
+  // Bileşen state (durum) tanımı
   const [mobileOpen, setMobileOpen] = useState(false);
+  // Bileşen state (durum) tanımı
   const [emailToast, setEmailToast] = useState(null);
 
+  // Bileşen state (durum) tanımı
   const [courses, setCourses] = useState(() => {
     const saved = localStorage.getItem("stss_courses");
     if (saved) {
@@ -116,6 +126,7 @@ export default function App() {
     return INIT_COURSES;
   });
 
+  // Bileşen state (durum) tanımı
   const [tasks, setTasks] = useState(() => {
     const saved = localStorage.getItem("stss_tasks");
     if (saved) {
@@ -129,6 +140,7 @@ export default function App() {
     return INIT_TASKS;
   });
 
+  // Bileşen state (durum) tanımı
   const [comments, setComments] = useState(() => {
     const saved = localStorage.getItem("stss_comments");
     if (saved) {
@@ -142,6 +154,7 @@ export default function App() {
     return INIT_COMMENTS;
   });
 
+  // Bileşen state (durum) tanımı
   const [attachments, setAttachments] = useState(() => {
     const saved = localStorage.getItem("stss_attachments");
     if (saved) {
@@ -156,6 +169,7 @@ export default function App() {
     return INIT_ATTACHMENTS;
   });
 
+  // Bileşen state (durum) tanımı
   const [notes, setNotes] = useState(() => {
     const saved = localStorage.getItem("stss_notes");
     if (saved) {
@@ -170,6 +184,7 @@ export default function App() {
     return INIT_NOTES;
   });
 
+  // Bileşen state (durum) tanımı
   const [users, setUsers] = useState(() => {
     const saved = localStorage.getItem("stss_all_users");
     if (saved) {
@@ -183,17 +198,23 @@ export default function App() {
     localStorage.setItem("stss_all_users", JSON.stringify(DEFAULT_USERS));
     return DEFAULT_USERS;
   });
+  // Bileşen state (durum) tanımı
   const [notifications, setNotifications] = useState(() => {
     const saved = localStorage.getItem("stss_notifications");
     return saved ? JSON.parse(saved) : INIT_NOTIFICATIONS;
   });
 
 
+  // Bileşen state (durum) tanımı
   const [selectedTaskId, setSelectedTaskId] = useState(null);
+  // Bileşen state (durum) tanımı
   const [showNewTask, setShowNewTask] = useState(false);
+  // Bileşen state (durum) tanımı
   const [showProfile, setShowProfile] = useState(false);
+  // Bileşen state (durum) tanımı
   const [filters, setFilters] = useState({ course: "all", category: "all", search: "" });
 
+  // Olay (event) işleyici fonksiyon
   const handleUpdateUser = async (updatedUserData) => {
     setCurrentUser(updatedUserData);
     sessionStorage.setItem("stss_user", JSON.stringify(updatedUserData));
@@ -430,6 +451,7 @@ export default function App() {
     }
   }, []);
 
+  // Yan etki (effect) işlemleri
   useEffect(() => {
     if (currentUser) {
       sessionStorage.setItem("stss_user", JSON.stringify(currentUser));
@@ -441,6 +463,7 @@ export default function App() {
     }
   }, [currentUser, loadDataFromBackend]);
 
+  // Yan etki (effect) işlemleri
   useEffect(() => {
     if (!currentUser || currentUser.roleId === 1) return;
     setNotifications((prev) => {
@@ -471,12 +494,14 @@ export default function App() {
     });
   }, [tasks, currentUser]);
 
+  // Olay (event) işleyici fonksiyon
   const handleLogin = (user) => {
     setCurrentUser(user);
     const saved = localStorage.getItem("stss_page");
     setPage(saved && VALID_PAGES.includes(saved) ? saved : "panel");
   };
 
+  // Olay (event) işleyici fonksiyon
   const handleLogout = () => {
     setCurrentUser(null);
     setSelectedTaskId(null);
@@ -514,6 +539,7 @@ export default function App() {
   const unread = userNotifications.filter((n) => !n.isRead && !(isAdmin && (n.message || "").includes("DUYURU:"))).length;
   const selectedTask = tasks.find((t) => t.taskId === selectedTaskId);
 
+  // Olay (event) işleyici fonksiyon
   const handleStatusChange = async (taskId, status) => {
     setTasks((ts) => {
       const updated = ts.map((t) => (t.taskId === taskId ? { ...t, status } : t));
@@ -538,6 +564,7 @@ export default function App() {
     }
   };
 
+  // Olay (event) işleyici fonksiyon
   const handleAddComment = (taskId, text) => {
     if (!text || !text.trim()) return;
     const trimmed = text.trim();
@@ -569,6 +596,7 @@ export default function App() {
       .catch((e) => console.warn("Yorum DB kaydı atlandı:", e));
   };
 
+  // Olay (event) işleyici fonksiyon
   const handleAddAttachment = (taskId, fileName, fileUrl) => {
     const fname = fileName || `dosya_${Math.floor(Math.random() * 900 + 100)}.pdf`;
     const filePath = fileUrl || `/uploads/${fname}`;
@@ -627,6 +655,7 @@ export default function App() {
     }
   };
 
+  // Olay (event) işleyici fonksiyon
   const handleDeleteAttachment = async (attachmentId) => {
     const attObj = attachments.find((a) => a.attachmentId === attachmentId);
     const fileName = attObj ? attObj.fileName : "dosyayı";
@@ -647,6 +676,7 @@ export default function App() {
     }
   };
 
+  // Olay (event) işleyici fonksiyon
   const handleDeleteTask = async (taskId) => {
     const taskObj = tasks.find((t) => t.taskId === taskId);
     const title = taskObj ? taskObj.title : "görevi";
@@ -667,7 +697,8 @@ export default function App() {
     }
   };
 
-    const handleCreateTask = async (form) => {
+    // Olay (event) işleyici fonksiyon
+  const handleCreateTask = async (form) => {
     let created = null;
     try {
       created = await taskApi.create({
@@ -712,6 +743,7 @@ export default function App() {
     if (toastObj && !isAdmin) setEmailToast(toastObj);
   };
 
+  // Olay (event) işleyici fonksiyon
   const handleAddCourse = async (courseData, maybeImageUrl = "") => {
     let name = "";
     let img = "";
@@ -756,6 +788,7 @@ export default function App() {
     }
   };
 
+  // Olay (event) işleyici fonksiyon
   const handleEditCourse = async (courseId, newCourseName, maybeImageUrl = "") => {
     let name = "";
     let img = "";
@@ -787,6 +820,7 @@ export default function App() {
     }
   };
 
+  // Olay (event) işleyici fonksiyon
   const handleDeleteCourse = async (courseId) => {
     const courseObj = courses.find((c) => c.courseId === courseId);
     const courseName = courseObj ? courseObj.courseName : "dersi";
@@ -811,6 +845,7 @@ export default function App() {
     }
   };
 
+  // Olay (event) işleyici fonksiyon
   const handleSendNotification = async (message, targetUserId = null) => {
     const cleanText = (message || "").trim().replace(/^(\?\?|\?|)+\s*/, "").replace(/^📢\s*/, "");
     const formattedMessage = cleanText.startsWith("DUYURU:") ? cleanText : `DUYURU: ${cleanText}`;
@@ -901,6 +936,7 @@ export default function App() {
     });
   };
 
+  // Olay (event) işleyici fonksiyon
   const handleMarkRead = (id) => {
     setNotifications((ns) => {
       const updated = ns.map((n) => (Number(n.notificationId) === Number(id) ? { ...n, isRead: true } : n));
@@ -910,6 +946,7 @@ export default function App() {
     notificationApi.markRead(id).catch(e => console.warn("Bildirim okundu işaretleme hatası", e));
   };
 
+  // Olay (event) işleyici fonksiyon
   const handleMarkAllRead = () => {
     const currentUserId = currentUser?.userId != null ? Number(currentUser.userId) : null;
 
@@ -930,6 +967,7 @@ export default function App() {
     }
   };
 
+  // Olay (event) işleyici fonksiyon
   const handleAddNote = async (noteData) => {
     const tempId = Date.now();
     const newNote = {
@@ -957,6 +995,7 @@ export default function App() {
     }
   };
 
+  // Olay (event) işleyici fonksiyon
   const handleUpdateNote = async (id, noteData) => {
     setNotes(prev => {
       const updated = prev.map(n => n.noteId === id ? { ...n, ...noteData } : n);
@@ -970,6 +1009,7 @@ export default function App() {
     }
   };
 
+  // Olay (event) işleyici fonksiyon
   const handleDeleteNote = async (id) => {
     setNotes(prev => {
       const updated = prev.filter(n => n.noteId !== id);
@@ -983,6 +1023,7 @@ export default function App() {
     }
   };
 
+  // Olay (event) işleyici fonksiyon
   const handleTogglePin = async (id) => {
     setNotes(prev => {
       const updated = prev.map(n => {

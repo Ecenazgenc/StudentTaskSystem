@@ -1,15 +1,20 @@
 import React, { useState } from "react";
 import { X, User, Mail, CheckCircle2, ShieldCheck } from "lucide-react";
 
+// Ana bileşen tanımı
 export default function ProfileModal({ currentUser, onClose, onUpdateUser }) {
+  // Bileşen state (durum) tanımı
   const [form, setForm] = useState({
     firstName: currentUser?.firstName || "",
     lastName: currentUser?.lastName || "",
   });
 
+  // Bileşen state (durum) tanımı
   const [error, setError] = useState("");
+  // Bileşen state (durum) tanımı
   const [success, setSuccess] = useState(false);
 
+  // Olay (event) işleyici fonksiyon
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");

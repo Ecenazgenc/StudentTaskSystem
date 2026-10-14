@@ -1,3 +1,4 @@
+// Uygulama için varsayılan (başlangıç) verisi
 export const MOCK_USERS = [
   {
     userId: 4,

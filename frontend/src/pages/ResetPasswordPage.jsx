@@ -2,13 +2,20 @@ import React, { useState, useEffect } from "react";
 import { Lock, ArrowRight, CheckCircle2 } from "lucide-react";
 import { authApi } from "../services/api";
 
+// Ana bileşen tanımı
 export default function ResetPasswordPage() {
+  // Bileşen state (durum) tanımı
   const [token, setToken] = useState("");
+  // Bileşen state (durum) tanımı
   const [newPassword, setNewPassword] = useState("");
+  // Bileşen state (durum) tanımı
   const [confirmPassword, setConfirmPassword] = useState("");
+  // Bileşen state (durum) tanımı
   const [status, setStatus] = useState("idle"); // idle, submitting, success, error
+  // Bileşen state (durum) tanımı
   const [message, setMessage] = useState("");
 
+  // Yan etki (effect) işlemleri
   useEffect(() => {
     // Extract token from URL
     const params = new URLSearchParams(window.location.search);
@@ -21,6 +28,7 @@ export default function ResetPasswordPage() {
     }
   }, []);
 
+  // Olay (event) işleyici fonksiyon
   const handleSubmit = async (e) => {
     e.preventDefault();
     

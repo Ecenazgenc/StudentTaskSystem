@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import jakarta.mail.internet.MimeMessage;
 
 @Service
+// E-posta gönderim işlemlerini yöneten servis sınıfı
 public class EmailService {
 
     @Autowired(required = false)
@@ -17,6 +18,7 @@ public class EmailService {
     @Value("${spring.mail.username:}")
     private String fromEmail;
 
+    // Hoş geldin e-postası gönderir.
     public boolean sendWelcomeEmail(String toEmail, String fullName) {
         String subject = "Görev Defteri - Hoş Geldiniz!";
         String body = String.format(
@@ -31,6 +33,7 @@ public class EmailService {
         return sendEmail(toEmail, subject, body);
     }
 
+    // Görev atama e-postası gönderir.
     public boolean sendTaskAssignmentEmail(String toEmail, String fullName, String taskTitle, String courseName, String dueDate) {
         String subject = "Yeni Görev Atandı: " + taskTitle;
         String body = String.format(
@@ -48,6 +51,7 @@ public class EmailService {
         return sendEmail(toEmail, subject, body);
     }
 
+    // Şifre sıfırlama e-postası gönderir.
     public boolean sendPasswordResetEmail(String toEmail, String fullName, String resetLink) {
         String subject = "Görev Defteri - Şifre Sıfırlama Talebi";
         String body = String.format(
@@ -64,6 +68,7 @@ public class EmailService {
         return sendEmail(toEmail, subject, body);
     }
 
+    // Belirtilen adrese, belirtilen konu ve içerikte e-posta gönderir.
     private boolean sendEmail(String to, String subject, String content) {
         if (mailSender == null || fromEmail == null || fromEmail.isBlank() || fromEmail.contains("ornek.eposta")) {
             System.out.println("=== [SIMULATED EMAIL SENT] ===");

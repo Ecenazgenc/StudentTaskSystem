@@ -3,12 +3,16 @@ import { X, Tag, Calendar, Paperclip, FileText, Upload, MessageSquare, Send, Tra
 import { tapeFor, fmtDate, PRIORITY_STYLE, daysUntil } from "../constants/theme";
 import { notificationApi } from "../services/api";
 
+// Ana bileşen tanımı
 export default function TaskModal({ task, course, category, comments, attachments, onClose, onStatusChange, onAddComment, onAddAttachment, onDeleteAttachment, onDelete, isAdmin, allUsers, currentUser }) {
+  // Bileşen state (durum) tanımı
   const [draft, setDraft] = useState("");
   const fileInputRef = useRef(null);
+  // Bileşen state (durum) tanımı
   const [gradeToast, setGradeToast] = useState(null);
 
   // --- NOTLANDIRMA STATE (Geri Bildirim) ---
+  // Bileşen state (durum) tanımı
   const [gradesMap, setGradesMap] = useState(() => {
     try {
       const saved = localStorage.getItem("stss_grades");
@@ -18,8 +22,11 @@ export default function TaskModal({ task, course, category, comments, attachment
     }
   });
 
+  // Bileşen state (durum) tanımı
   const [inputGrade, setInputGrade] = useState("");
+  // Bileşen state (durum) tanımı
   const [inputFeedback, setInputFeedback] = useState("");
+  // Bileşen state (durum) tanımı
   const [selectedStudentForGrading, setSelectedStudentForGrading] = useState("");
 
   if (!task) return null;
@@ -38,6 +45,7 @@ export default function TaskModal({ task, course, category, comments, attachment
   const gradeKey = `${task.taskId}_${currentUser?.userId}`;
   const currentStudentGrade = gradesMap[gradeKey];
 
+  // Olay (event) işleyici fonksiyon
   const handleSaveGrade = async (targetStudentId) => {
     if (!targetStudentId) return;
     const key = `${task.taskId}_${targetStudentId}`;
@@ -73,6 +81,7 @@ export default function TaskModal({ task, course, category, comments, attachment
     setTimeout(() => setGradeToast(null), 3000);
   };
 
+  // Olay (event) işleyici fonksiyon
   const handleFileUpload = (e) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;

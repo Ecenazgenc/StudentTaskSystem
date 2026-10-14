@@ -2,14 +2,18 @@ import React, { useState } from "react";
 import { X, AlertCircle } from "lucide-react";
 import { todayPlus, PRIORITY_STYLE } from "../constants/theme";
 
+// Ana bileşen tanımı
 export default function NewTaskModal({ courses, categories, onClose, onCreate }) {
+  // Bileşen state (durum) tanımı
   const [form, setForm] = useState({
     title: "", description: "", dueDate: todayPlus(3),
     priority: "Orta", courseId: courses[0]?.courseId || 1, categoryId: categories[0]?.categoryId || 1,
   });
+  // Bileşen state (durum) tanımı
   const [validationError, setValidationError] = useState("");
   const set = (k, v) => { setForm((f) => ({ ...f, [k]: v })); setValidationError(""); };
 
+  // Olay (event) işleyici fonksiyon
   const handleSubmit = () => {
     if (!form.title.trim()) {
       setValidationError("Görev başlığı boş bırakılamaz. Lütfen bir başlık giriniz.");

@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Görevlere yapılan yorumların yönetimi için REST API uç noktalarını sağlayan Controller sınıfı.
+ */
 @RestController
 @RequestMapping("/comments")
 public class CommentController {

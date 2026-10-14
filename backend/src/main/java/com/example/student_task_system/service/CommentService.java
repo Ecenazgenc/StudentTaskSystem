@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+// Yorum işlemlerini yöneten servis sınıfı
 public class CommentService {
 
     private final CommentRepository commentRepository;
@@ -30,6 +31,7 @@ public class CommentService {
         this.userRepository = userRepository;
     }
 
+    // Tüm yorumları getirir.
     public List<CommentDTO> getAllComments() {
         return commentRepository.findAll()
                 .stream()
@@ -37,12 +39,14 @@ public class CommentService {
                 .collect(Collectors.toList());
     }
 
+    // Belirtilen ID'ye sahip yorumu getirir.
     public CommentDTO getCommentById(Integer id) {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Yorum bulunamadı: id=" + id));
         return CommentDTO.fromEntity(comment);
     }
 
+    // Yeni bir yorum ekler.
     public CommentDTO saveComment(CommentDTO.Request request) {
         Comment comment = new Comment();
         comment.setCommentText(XssSanitizerUtils.sanitize(request.commentText()));
@@ -60,6 +64,7 @@ public class CommentService {
         return CommentDTO.fromEntity(saved);
     }
 
+    // Mevcut bir yorumu günceller.
     public CommentDTO updateComment(Integer id, CommentDTO.Request request) {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Yorum bulunamadı: id=" + id));
@@ -78,6 +83,7 @@ public class CommentService {
         return CommentDTO.fromEntity(saved);
     }
 
+    // Belirtilen ID'ye sahip yorumu siler.
     public void deleteComment(Integer id) {
         if (!commentRepository.existsById(id)) {
             throw new ResourceNotFoundException("Yorum bulunamadı: id=" + id);

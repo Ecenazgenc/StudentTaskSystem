@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.student_task_system.service.EmailService;
 
+/**
+ * E-posta gönderim işlemleri (Hoşgeldin, Görev atama vb.) için REST API uç noktalarını sağlayan Controller sınıfı.
+ */
 @RestController
 @RequestMapping({"/api/email", "/email"})
 @CrossOrigin(origins = "*")

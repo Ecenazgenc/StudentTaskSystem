@@ -3,9 +3,11 @@ package com.example.student_task_system.dto;
 import com.example.student_task_system.entity.User;
 import jakarta.validation.constraints.*;
 
+// Kullanıcı (User) verilerini istemciye iletmek için kullanılan Data Transfer Object (DTO) sınıfı.
 public record UserDTO(int userId, String firstName, String lastName,
                       String email, int roleId, String roleName) {
 
+    // User varlığını (entity) UserDTO'ya dönüştüren yardımcı metot
     public static UserDTO fromEntity(User user) {
         return new UserDTO(
             user.getUserId(),
@@ -17,6 +19,7 @@ public record UserDTO(int userId, String firstName, String lastName,
         );
     }
 
+    // Kullanıcı oluşturma/güncelleme isteklerinde (Request) kullanılan DTO
     public record Request(
             @NotBlank(message = "Ad boş olamaz")
             @Size(max = 100, message = "Ad en fazla 100 karakter olabilir")

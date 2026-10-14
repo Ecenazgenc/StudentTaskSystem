@@ -25,17 +25,25 @@ import { triggerWelcomeEmail } from "../services/emailService";
 import { userApi, authApi } from "../services/api";
 import { MOCK_USERS } from "../data/mockUsers";
 
+// Ana bileşen tanımı
 export default function LoginPage({ onLogin, onEmailSent }) {
+  // Bileşen state (durum) tanımı
   const [activeTab, setActiveTab] = useState("login"); // 'login' | 'signup'
 
   // Login form state
+  // Bileşen state (durum) tanımı
   const [email, setEmail] = useState("");
+  // Bileşen state (durum) tanımı
   const [password, setPassword] = useState("");
+  // Bileşen state (durum) tanımı
   const [showPassword, setShowPassword] = useState(false);
+  // Bileşen state (durum) tanımı
   const [error, setError] = useState("");
+  // Bileşen state (durum) tanımı
   const [successMsg, setSuccessMsg] = useState("");
 
   // Signup form state
+  // Bileşen state (durum) tanımı
   const [signUpForm, setSignUpForm] = useState({
     firstName: "",
     lastName: "",
@@ -51,6 +59,7 @@ export default function LoginPage({ onLogin, onEmailSent }) {
     }
   };
 
+  // Olay (event) işleyici fonksiyon
   const handleQuickLogin = async (quickEmail, quickPassword) => {
     setEmail(quickEmail);
     setPassword(quickPassword);
@@ -121,6 +130,7 @@ export default function LoginPage({ onLogin, onEmailSent }) {
     }
   };
 
+  // Olay (event) işleyici fonksiyon
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -212,6 +222,7 @@ export default function LoginPage({ onLogin, onEmailSent }) {
     onLogin(user);
   };
 
+  // Olay (event) işleyici fonksiyon
   const handleSignUpSubmit = async (e) => {
     e.preventDefault();
     setError("");

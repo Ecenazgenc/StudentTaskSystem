@@ -10,6 +10,9 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
+/**
+ * JWT (JSON Web Token) oluşturma, doğrulama ve veri çıkarma işlemlerini yöneten yardımcı sınıf.
+ */
 @Component
 public class JwtUtils {
 
@@ -27,6 +30,9 @@ public class JwtUtils {
         this.expirationMs = expirationMs;
     }
 
+    /**
+     * Kullanıcı bilgileri ile yeni bir JWT oluşturur.
+     */
     public String generateToken(String email, Integer userId, String role) {
         return Jwts.builder()
                 .subject(email)
@@ -50,6 +56,9 @@ public class JwtUtils {
         return getClaims(token).get("role", String.class);
     }
 
+    /**
+     * Token'ın geçerliliğini ve kullanıcıyla eşleşip eşleşmediğini kontrol eder.
+     */
     public boolean validateToken(String token, String email) {
         try {
             Claims claims = getClaims(token);

@@ -8,12 +8,14 @@ import jakarta.validation.constraints.Size;
 
 import com.example.student_task_system.entity.Note;
 
+// Not (Note) verilerini istemciye iletmek için kullanılan Data Transfer Object (DTO).
 public record NoteDTO(int noteId, String title, String content, String tag, String color,
                       boolean pinned, LocalDateTime createdDate, LocalDateTime updatedDate,
                       int userId, String userFullName,
                       Integer courseId, String courseName,
                       Integer taskId, String taskTitle) {
 
+    // Note varlığını (entity) NoteDTO'ya dönüştüren yardımcı metot
     public static NoteDTO fromEntity(Note note) {
         String userFullName = note.getUser() != null ? note.getUser().getFirstName() + " " + note.getUser().getLastName() : null;
         Integer courseId = note.getCourse() != null ? note.getCourse().getCourseId() : null;
@@ -39,6 +41,7 @@ public record NoteDTO(int noteId, String title, String content, String tag, Stri
         );
     }
 
+    // Not oluşturma/güncelleme isteklerinde (Request) kullanılan DTO
     public record Request(
             @NotBlank(message = "Not başlığı boş olamaz")
             @Size(max = 150, message = "Not başlığı en fazla 150 karakter olabilir")

@@ -11,35 +11,43 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+// Eklenti (Attachment) varlık sınıfı, veritabanındaki "Attachments" tablosunu temsil eder.
 @Entity
 @Table(name = "Attachments")
 public class Attachment {
 
+    // Eklentinin benzersiz kimliği (Birincil anahtar)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "AttachmentId")
     private int attachmentId;
 
+    // Dosyanın adı
     @Column(name = "FileName")
     private String fileName;
 
+    // Dosyanın saklandığı yol (Path)
     @Column(name = "FilePath", columnDefinition = "VARCHAR(MAX)")
     private String filePath;
 
+    // Dosyanın yüklenme tarihi ve saati
     @Column(name = "UploadDate")
     private LocalDateTime uploadDate;
 
-
+    // Eklentinin ait olduğu görev (Çoka-bir ilişki)
     @ManyToOne
     @JoinColumn(name = "TaskId")
     private Task task;
 
+    // Eklentiyi yükleyen kullanıcı (Çoka-bir ilişki)
     @ManyToOne
     @JoinColumn(name = "UserId")
     private User user;
 
+    // Varsayılan kurucu metot
     public Attachment() {}
 
+    // Getter ve Setter metotları
     public int getAttachmentId() {return attachmentId;}
     public void setAttachmentId(int attachmentId) { this.attachmentId = attachmentId;}
 

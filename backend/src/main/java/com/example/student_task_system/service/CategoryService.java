@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+// Kategori işlemlerini yöneten servis sınıfı
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
@@ -18,6 +19,7 @@ public class CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
+    // Tüm kategorileri getirir.
     public List<CategoryDTO> getAllCategories() {
         return categoryRepository.findAll()
                 .stream()
@@ -25,12 +27,14 @@ public class CategoryService {
                 .collect(Collectors.toList());
     }
 
+    // Belirtilen ID'ye sahip kategoriyi getirir.
     public CategoryDTO getCategoryById(Integer id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Kategori bulunamadı: id=" + id));
         return CategoryDTO.fromEntity(category);
     }
 
+    // Yeni bir kategori kaydeder.
     public CategoryDTO saveCategory(CategoryDTO.Request request) {
         Category category = new Category();
         category.setCategoryName(request.categoryName());
@@ -38,6 +42,7 @@ public class CategoryService {
         return CategoryDTO.fromEntity(saved);
     }
 
+    // Mevcut bir kategoriyi günceller.
     public CategoryDTO updateCategory(Integer id, CategoryDTO.Request request) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Kategori bulunamadı: id=" + id));
@@ -47,6 +52,7 @@ public class CategoryService {
         return CategoryDTO.fromEntity(saved);
     }
 
+    // Belirtilen ID'ye sahip kategoriyi siler.
     public void deleteCategory(Integer id) {
         if (!categoryRepository.existsById(id)) {
             throw new ResourceNotFoundException("Kategori bulunamadı: id=" + id);

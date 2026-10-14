@@ -15,11 +15,17 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Özellikle giriş ve kayıt gibi hassas işlemlere yönelik istek sayısını sınırlandıran filtre.
+ */
 @Component
 public class RateLimitingFilter extends OncePerRequestFilter {
 
     private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
 
+    /**
+     * Yeni bir hız limiti sepeti oluşturur (1 dakikada en fazla 10 istek).
+     */
     private Bucket createNewBucket() {
         Bandwidth limit = Bandwidth.builder()
                 .capacity(10)
@@ -28,6 +34,9 @@ public class RateLimitingFilter extends OncePerRequestFilter {
         return Bucket.builder().addLimit(limit).build();
     }
 
+    /**
+     * Belirli uç noktalarda (auth) gelen isteklerin hız sınırına takılıp takılmadığını kontrol eder.
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {

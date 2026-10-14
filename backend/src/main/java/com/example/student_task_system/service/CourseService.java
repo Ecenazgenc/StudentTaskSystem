@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+// Ders (Course) işlemlerini yöneten servis sınıfı
 public class CourseService {
 
     private final CourseRepository courseRepository;
@@ -23,6 +24,7 @@ public class CourseService {
         this.userRepository = userRepository;
     }
 
+    // Tüm dersleri getirir.
     public List<CourseDTO> getAllCourses() {
         return courseRepository.findAll()
                 .stream()
@@ -30,12 +32,14 @@ public class CourseService {
                 .collect(Collectors.toList());
     }
 
+    // Belirtilen ID'ye sahip dersi getirir.
     public CourseDTO getCourseById(Integer id) {
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Ders bulunamadı: id=" + id));
         return CourseDTO.fromEntity(course);
     }
 
+    // Yeni bir ders kaydeder.
     public CourseDTO saveCourse(CourseDTO.Request request) {
         Course course = new Course();
         applyRequestToEntity(course, request);
@@ -43,6 +47,7 @@ public class CourseService {
         return CourseDTO.fromEntity(saved);
     }
 
+    // Mevcut bir dersi günceller.
     public CourseDTO updateCourse(Integer id, CourseDTO.Request request) {
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Ders bulunamadı: id=" + id));
@@ -52,6 +57,7 @@ public class CourseService {
         return CourseDTO.fromEntity(saved);
     }
 
+    // Belirtilen ID'ye sahip dersi siler.
     public void deleteCourse(Integer id) {
         if (!courseRepository.existsById(id)) {
             throw new ResourceNotFoundException("Ders bulunamadı: id=" + id);
@@ -59,6 +65,7 @@ public class CourseService {
         courseRepository.deleteById(id);
     }
 
+    // DTO'dan gelen verileri ders varlığına uygular.
     private void applyRequestToEntity(Course course, CourseDTO.Request request) {
         course.setCourseName(request.courseName());
         course.setImageUrl(request.imageUrl());

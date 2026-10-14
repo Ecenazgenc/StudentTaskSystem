@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+// Ek dosya işlemlerini yöneten servis sınıfı
 public class AttachmentService {
 
     private final AttachmentRepository attachmentRepository;
@@ -29,6 +30,7 @@ public class AttachmentService {
         this.userRepository = userRepository;
     }
 
+    // Tüm ek dosyaları getirir.
     public List<AttachmentDTO> getAllAttachments() {
         return attachmentRepository.findAll()
                 .stream()
@@ -36,12 +38,14 @@ public class AttachmentService {
                 .collect(Collectors.toList());
     }
 
+    // Belirtilen ID'ye sahip ek dosyayı getirir.
     public AttachmentDTO getAttachmentById(Integer id) {
         Attachment attachment = attachmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Dosya eki bulunamadı: id=" + id));
         return AttachmentDTO.fromEntity(attachment);
     }
 
+    // Yeni bir ek dosya kaydeder.
     public AttachmentDTO saveAttachment(AttachmentDTO.Request request) {
         Attachment attachment = new Attachment();
         String safeName = FileSecurityUtils.sanitizeFileName(request.fileName());
@@ -61,6 +65,7 @@ public class AttachmentService {
         return AttachmentDTO.fromEntity(saved);
     }
 
+    // Mevcut bir ek dosyayı günceller.
     public AttachmentDTO updateAttachment(Integer id, AttachmentDTO.Request request) {
         Attachment attachment = attachmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Dosya eki bulunamadı: id=" + id));
@@ -80,6 +85,7 @@ public class AttachmentService {
         return AttachmentDTO.fromEntity(saved);
     }
 
+    // Belirtilen ID'ye sahip ek dosyayı siler.
     public void deleteAttachment(Integer id) {
         if (!attachmentRepository.existsById(id)) {
             throw new ResourceNotFoundException("Dosya eki bulunamadı: id=" + id);

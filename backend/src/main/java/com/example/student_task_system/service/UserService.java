@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+// Kullanıcı işlemlerini yöneten servis sınıfı
 public class UserService {
 
     private final UserRepository userRepository;
@@ -26,6 +27,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    // Tüm kullanıcıları getirir.
     public List<UserDTO> getAllUsers() {
         return userRepository.findAll()
                 .stream()
@@ -33,12 +35,14 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    // Belirtilen ID'ye sahip kullanıcıyı getirir.
     public UserDTO getUserById(Integer id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Kullanıcı bulunamadı: id=" + id));
         return UserDTO.fromEntity(user);
     }
 
+    // E-posta ve şifre ile kullanıcı kimlik doğrulaması yapar.
     public UserDTO authenticate(String email, String rawPassword) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new BadRequestException("Geçersiz e-posta veya şifre"));
@@ -56,6 +60,7 @@ public class UserService {
         return UserDTO.fromEntity(user);
     }
 
+    // Yeni bir kullanıcı kaydeder.
     public UserDTO saveUser(UserDTO.Request request) {
         if (userRepository.existsByEmail(request.email())) {
             throw new BadRequestException("Bu e-posta adresi zaten kullanımda: " + request.email());
@@ -71,6 +76,7 @@ public class UserService {
         return UserDTO.fromEntity(saved);
     }
 
+    // Mevcut bir kullanıcıyı günceller.
     public UserDTO updateUser(Integer id, UserDTO.Request request) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Kullanıcı bulunamadı: id=" + id));
@@ -80,6 +86,7 @@ public class UserService {
         return UserDTO.fromEntity(saved);
     }
 
+    // Belirtilen ID'ye sahip kullanıcıyı siler.
     public void deleteUser(Integer id) {
         if (!userRepository.existsById(id)) {
             throw new ResourceNotFoundException("Kullanıcı bulunamadı: id=" + id);
@@ -87,16 +94,19 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
+    // E-posta adresine göre kullanıcı varlığını getirir.
     public User getEntityByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Kullanıcı bulunamadı: email=" + email));
     }
 
+    // Kullanıcının şifresini günceller.
     public void updatePassword(User user, String rawPassword) {
         user.setPassword(passwordEncoder.encode(rawPassword));
         userRepository.save(user);
     }
 
+    // DTO'dan gelen verileri kullanıcı varlığına uygular.
     private void applyRequestToEntity(User user, UserDTO.Request request) {
         user.setFirstName(request.firstName());
         user.setLastName(request.lastName());

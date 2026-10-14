@@ -1,5 +1,6 @@
 import { Circle, CheckCircle2, AlertTriangle, Lock } from "lucide-react";
 
+// Uygulama genelinde kullanılacak renk temaları
 export const TAPE = [
   { bg: "#E2725B", tint: "#FBEAE5", text: "#E2725B" }, // kiremit
   { bg: "#3E8E7E", tint: "#E6F1EE", text: "#3E8E7E" }, // çam yeşili
@@ -8,14 +9,17 @@ export const TAPE = [
   { bg: "#4E7CA1", tint: "#E7EFF4", text: "#4E7CA1" }, // gök mavisi
 ];
 
+// Görev öncelikleri için renk tanımları
 export const PRIORITY_STYLE = {
   Yüksek: { color: "#B8402C", label: "Yüksek", dot: "#E2725B" },
   Orta: { color: "#8A6A16", label: "Orta", dot: "#D9A441" },
   Düşük: { color: "#3E6B5C", label: "Düşük", dot: "#3E8E7E" },
 };
 
+// Mümkün olan görev durumları
 export const STATUSES = ["Bekliyor", "Tamamlandı", "Gecikmiş", "Süresi Doldu", "Kapatıldı"];
 
+// Durumlara karşılık gelen ikonlar
 export const STATUS_ICON = {
   Bekliyor: Circle,
   Tamamlandı: CheckCircle2,
@@ -24,13 +28,14 @@ export const STATUS_ICON = {
   "Kapatıldı": Lock,
 };
 
-// Teslim edilmemiş ve tarihi geçmiş mi?
+// Görevin teslim tarihinin geçip geçmediğini kontrol eden yardımcı fonksiyon
 export const isOverdue = (task) => {
   if (!task.dueDate) return false;
   if (task.status === "Tamamlandı") return false;
   return daysUntil(task.dueDate) < 0;
 };
 
+// Uygulamanın geliştirme (mock) ortamı için varsayılan kullanıcı
 export const CURRENT_USER = {
   userId: 1,
   firstName: "Ege",
@@ -39,18 +44,21 @@ export const CURRENT_USER = {
   roleId: 2,
 };
 
+// Ders (course) ID'sine göre uygun renk temasını getiren fonksiyon
 export const tapeFor = (courseId) => {
   const id = Math.abs(Number(courseId) || 1);
   const idx = Math.max(0, id - 1) % TAPE.length;
   return TAPE[idx] || TAPE[0];
 };
 
+// ISO formatındaki tarihi okunaklı (tr-TR) şekle çeviren fonksiyon
 export const fmtDate = (iso) => {
   if (!iso) return "";
   const d = new Date(iso + "T00:00:00");
   return d.toLocaleDateString("tr-TR", { day: "2-digit", month: "short" });
 };
 
+// Belirtilen tarihe kaç gün kaldığını hesaplayan fonksiyon
 export const daysUntil = (iso) => {
   if (!iso) return 0;
   const d = new Date(iso + "T00:00:00");

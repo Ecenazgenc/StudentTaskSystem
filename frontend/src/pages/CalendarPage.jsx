@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Clock, CheckCircle2, AlertTriangle, BookOpen } from "lucide-react";
 import { tapeFor, isOverdue, defaultCourseImage } from "../constants/theme";
 
+// Ana bileşen tanımı
 export default function CalendarPage({ tasks = [], courses = [], onOpenTask, currentUser, attachments = [] }) {
+  // Bileşen state (durum) tanımı
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const year = currentDate.getFullYear();

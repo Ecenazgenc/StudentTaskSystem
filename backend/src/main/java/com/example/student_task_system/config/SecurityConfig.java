@@ -19,6 +19,10 @@ import java.util.List;
 
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 
+/**
+ * Spring Security yapılandırma sınıfı.
+ * Güvenlik kurallarını, filtreleri ve CORS ayarlarını içerir.
+ */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -32,11 +36,18 @@ public class SecurityConfig {
         this.rateLimitingFilter = rateLimitingFilter;
     }
 
+    /**
+     * Şifrelerin güvenli bir şekilde karma (hash) işlemine tabi tutulmasını sağlayan Bean.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * HTTP güvenlik yapılandırmasını tanımlayan SecurityFilterChain.
+     * CSRF korumasını devre dışı bırakır, CORS ayarlarını uygular ve oturum yönetimini stateless yapar.
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -60,6 +71,9 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * Uygulamaya erişebilecek farklı kökenler (origins) için CORS ayarlarını yapılandırır.
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();

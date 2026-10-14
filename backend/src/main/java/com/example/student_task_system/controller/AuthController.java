@@ -23,6 +23,9 @@ import org.springframework.web.bind.annotation.*;
 import java.time.Duration;
 import java.util.Map;
 
+/**
+ * Kullanıcı girişi, kaydı, oturum yönetimi ve şifre işlemleri için kimlik doğrulama Controller'ı.
+ */
 @RestController
 @RequestMapping({"/api/auth", "/auth"})
 @CrossOrigin(origins = "*")
@@ -84,6 +87,9 @@ public class AuthController {
                 .build();
     }
 
+    /**
+     * Kullanıcı girişi işlemini yapar, JWT ve Refresh token döner.
+     */
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
         UserDTO user = userService.authenticate(request.email(), request.password());
@@ -102,6 +108,9 @@ public class AuthController {
                 ));
     }
 
+    /**
+     * Sisteme yeni bir kullanıcı kaydeder.
+     */
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody UserDTO.Request request) {
         UserDTO created = userService.saveUser(request);
@@ -120,6 +129,9 @@ public class AuthController {
                 ));
     }
 
+    /**
+     * Geçerliliği dolmuş JWT'yi, geçerli bir Refresh Token yardımıyla yeniler.
+     */
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshToken(@Valid @RequestBody RefreshTokenRequest request) {
         RefreshToken tokenObj = refreshTokenService.findByToken(request.refreshToken());
@@ -139,6 +151,9 @@ public class AuthController {
                 ));
     }
 
+    /**
+     * Oturumu kapatır, istemci tarafındaki token çerezini siler.
+     */
     @PostMapping("/logout")
     public ResponseEntity<?> logout() {
         ResponseCookie cleanCookie = ResponseCookie.from("stss_jwt_token", "")
@@ -156,6 +171,9 @@ public class AuthController {
                 ));
     }
 
+    /**
+     * Kullanıcı şifresini unuttuğunda şifre sıfırlama e-postası gönderir.
+     */
     @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
         User user = userService.getEntityByEmail(request.email());

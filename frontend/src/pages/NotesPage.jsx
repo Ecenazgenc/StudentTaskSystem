@@ -24,18 +24,29 @@ export default function NotesPage({
   notes, courses, currentUser,
   onAddNote, onUpdateNote, onDeleteNote, onTogglePin 
 }) {
+  // Bileşen state (durum) tanımı
   const [searchQuery, setSearchQuery] = useState("");
+  // Bileşen state (durum) tanımı
   const [selectedCourse, setSelectedCourse] = useState("all");
+  // Bileşen state (durum) tanımı
   const [selectedTag, setSelectedTag] = useState("all");
   
+  // Bileşen state (durum) tanımı
   const [isFormOpen, setIsFormOpen] = useState(false);
+  // Bileşen state (durum) tanımı
   const [editingNoteId, setEditingNoteId] = useState(null);
   
+  // Bileşen state (durum) tanımı
   const [formTitle, setFormTitle] = useState("");
+  // Bileşen state (durum) tanımı
   const [formContent, setFormContent] = useState("");
+  // Bileşen state (durum) tanımı
   const [formCourseId, setFormCourseId] = useState("");
+  // Bileşen state (durum) tanımı
   const [formTaskId, setFormTaskId] = useState("");
+  // Bileşen state (durum) tanımı
   const [formTag, setFormTag] = useState("Ders Notu");
+  // Bileşen state (durum) tanımı
   const [formColor, setFormColor] = useState("slate");
 
   const resetForm = () => {
@@ -49,6 +60,7 @@ export default function NotesPage({
     setIsFormOpen(false);
   };
 
+  // Olay (event) işleyici fonksiyon
   const handleEditNote = (note) => {
     setFormTitle(note.title);
     setFormContent(note.content);
@@ -60,6 +72,7 @@ export default function NotesPage({
     setIsFormOpen(true);
   };
 
+  // Olay (event) işleyici fonksiyon
   const handleSave = () => {
     if (!formTitle.trim() || !formContent.trim()) return;
     
@@ -82,10 +95,12 @@ export default function NotesPage({
     resetForm();
   };
 
+  // Olay (event) işleyici fonksiyon
   const handleCopy = (note) => {
     navigator.clipboard.writeText(`${note.title}\n\n${note.content}`);
   };
 
+  // Olay (event) işleyici fonksiyon
   const handleDelete = (id) => {
     if (window.confirm("Bu notu silmek istediğinize emin misiniz?")) {
       onDeleteNote(id);

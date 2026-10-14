@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+// Bildirim işlemlerini yöneten servis sınıfı
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
@@ -26,6 +27,7 @@ public class NotificationService {
         this.userRepository = userRepository;
     }
 
+    // Tüm bildirimleri oluşturulma tarihine göre azalan şekilde getirir.
     public List<NotificationDTO> getAllNotifications() {
         return notificationRepository.findAllOrderByCreatedDateDesc()
                 .stream()
@@ -33,6 +35,7 @@ public class NotificationService {
                 .collect(Collectors.toList());
     }
 
+    // Belirli bir kullanıcıya ait bildirimleri getirir.
     public List<NotificationDTO> getNotificationsByUserId(Integer userId) {
         return notificationRepository.findByUserId(userId)
                 .stream()
@@ -40,12 +43,14 @@ public class NotificationService {
                 .collect(Collectors.toList());
     }
 
+    // Belirtilen ID'ye sahip bildirimi getirir.
     public NotificationDTO getNotificationById(Integer id) {
         Notification notification = notificationRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Bildirim bulunamadı: id=" + id));
         return NotificationDTO.fromEntity(notification);
     }
 
+    // Yeni bildirim oluşturur (tek bir kullanıcıya veya tüm öğrencilere).
     public List<NotificationDTO> saveNotification(NotificationDTO.Request request) {
         LocalDateTime now = LocalDateTime.now();
         String messageText = (request.message() != null)
@@ -91,6 +96,7 @@ public class NotificationService {
         return savedList.stream().map(NotificationDTO::fromEntity).collect(Collectors.toList());
     }
 
+    // Mevcut bir bildirimi günceller.
     public NotificationDTO updateNotification(Integer id, NotificationDTO.Request request) {
         Notification notification = notificationRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Bildirim bulunamadı: id=" + id));
@@ -107,6 +113,7 @@ public class NotificationService {
         return NotificationDTO.fromEntity(saved);
     }
 
+    // Bildirimi okundu olarak işaretler.
     public NotificationDTO markAsRead(Integer id) {
         Notification notification = notificationRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Bildirim bulunamadı: id=" + id));
@@ -115,12 +122,14 @@ public class NotificationService {
         return NotificationDTO.fromEntity(saved);
     }
 
+    // Bir kullanıcıya ait tüm bildirimleri okundu olarak işaretler.
     public void markAllAsReadForUser(Integer userId) {
         List<Notification> userNotifications = notificationRepository.findByUserId(userId);
         userNotifications.forEach(n -> n.setRead(true));
         notificationRepository.saveAll(userNotifications);
     }
 
+    // Belirtilen ID'ye sahip bildirimi siler.
     public void deleteNotification(Integer id) {
         if (!notificationRepository.existsById(id)) {
             throw new ResourceNotFoundException("Bildirim bulunamadı: id=" + id);

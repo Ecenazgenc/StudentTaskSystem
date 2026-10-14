@@ -2,14 +2,20 @@ import React, { useState } from "react";
 import { X, BookOpen, Image as ImageIcon, Upload, Check } from "lucide-react";
 import { COURSE_COVER_PRESETS, defaultCourseImage, tapeFor } from "../constants/theme";
 
+// Ana bileşen tanımı
 export default function NewCourseModal({ onClose, onCreate, initialData = null }) {
+  // Bileşen state (durum) tanımı
   const [courseName, setCourseName] = useState(initialData?.courseName || "");
+  // Bileşen state (durum) tanımı
   const [selectedImage, setSelectedImage] = useState(
     initialData?.imageUrl || COURSE_COVER_PRESETS[0].url
   );
+  // Bileşen state (durum) tanımı
   const [customUrl, setCustomUrl] = useState("");
+  // Bileşen state (durum) tanımı
   const [useCustomUrl, setUseCustomUrl] = useState(false);
 
+  // Olay (event) işleyici fonksiyon
   const handleFileUpload = (e) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -21,12 +27,14 @@ export default function NewCourseModal({ onClose, onCreate, initialData = null }
     }
   };
 
+  // Olay (event) işleyici fonksiyon
   const handleCustomUrlApply = () => {
     if (customUrl.trim()) {
       setSelectedImage(customUrl.trim());
     }
   };
 
+  // Olay (event) işleyici fonksiyon
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!courseName.trim()) return;

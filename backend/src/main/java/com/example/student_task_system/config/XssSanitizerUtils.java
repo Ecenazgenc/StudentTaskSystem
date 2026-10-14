@@ -4,6 +4,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.regex.Pattern;
 
+/**
+ * Kullanıcıdan alınan metin girdilerindeki XSS (Cross-Site Scripting) tehditlerini temizleyen yardımcı sınıf.
+ */
 @Component
 public class XssSanitizerUtils {
 
@@ -11,6 +14,9 @@ public class XssSanitizerUtils {
     private static final Pattern SRC_PATTERN = Pattern.compile("src[\r\n]*=[\r\n]*['\"]*(.*?)['\"]*", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
     private static final Pattern EVAL_PATTERN = Pattern.compile("eval\\((.*?)\\)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
 
+    /**
+     * Girdideki zararlı script ve ifadeleri temizler.
+     */
     public static String sanitize(String input) {
         if (input == null) return null;
 

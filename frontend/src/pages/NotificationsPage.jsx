@@ -3,7 +3,9 @@ import { Bell, CheckCheck } from "lucide-react";
 import { fmtDate } from "../constants/theme";
 import SendNotificationModal from "../components/SendNotificationModal";
 
+// Ana bileşen tanımı
 export default function NotificationsPage({ notifications = [], onMarkRead, onMarkAllRead, onMarkAll, isAdmin, users = [], onSendNotification }) {
+  // Bileşen state (durum) tanımı
   const [showModal, setShowModal] = useState(false);
   const markAllFn = onMarkAllRead || onMarkAll;
   const hasUnread = notifications.some((n) => !n.isRead);

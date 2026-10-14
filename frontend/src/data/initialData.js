@@ -1,5 +1,6 @@
 import { todayPlus } from "../constants/theme";
 
+// Uygulama için varsayılan (başlangıç) verisi
 export const INIT_COURSES = [
   { courseId: 1, courseName: "Veritabanı Yönetim Sistemleri", imageUrl: "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?q=80&w=600&auto=format&fit=crop", userId: 1 },
   { courseId: 2, courseName: "Nesneye Yönelik Programlama", imageUrl: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=600&auto=format&fit=crop", userId: 1 },
@@ -8,6 +9,7 @@ export const INIT_COURSES = [
   { courseId: 5, courseName: "Yazılım Mühendisliği ve Test", imageUrl: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=600&auto=format&fit=crop", userId: 1 },
 ];
 
+// Uygulama için varsayılan (başlangıç) verisi
 export const CATEGORIES = [
   { categoryId: 1, categoryName: "Ödev" },
   { categoryId: 2, categoryName: "Proje" },
@@ -15,6 +17,7 @@ export const CATEGORIES = [
   { categoryId: 4, categoryName: "Sınav" },
 ];
 
+// Uygulama için varsayılan (başlangıç) verisi
 export const INIT_TASKS = [
   { taskId: 1, title: "ER diyagramını tamamla", description: "Kullanıcı, ders, görev ilişkilerini içeren ER diyagramını çiz ve rapora ekle.", dueDate: todayPlus(1), status: "Bekliyor", priority: "Yüksek", userId: 4, courseId: 1, categoryId: 2 },
   { taskId: 2, title: "Normalizasyon ödevi", description: "Verilen şemayı 3NF'e getirip adımları açıkla.", dueDate: todayPlus(3), status: "Bekliyor", priority: "Orta", userId: 4, courseId: 1, categoryId: 1 },
@@ -26,6 +29,7 @@ export const INIT_TASKS = [
   { taskId: 8, title: "JUnit ve MockMvc Testleri", description: "Servis ve Controller katmanları için uçtan uca birim testleri yaz.", dueDate: todayPlus(2), status: "Tamamlandı", priority: "Yüksek", userId: 4, courseId: 5, categoryId: 2 },
 ];
 
+// Uygulama için varsayılan (başlangıç) verisi
 export const INIT_COMMENTS = [
   { commentId: 1, taskId: 1, userId: 4, userFullName: "Ecenaz Genç", commentText: "ER diyagramında Roles ve Users ilişkisini 1-N olarak modelledim, ödev dosyası eklendi.", createdDate: todayPlus(-1) },
   { commentId: 2, taskId: 4, userId: 4, userFullName: "Ecenaz Genç", commentText: "Spring Boot CRUD ve JWT servisleri tamamlandı, 83 testin tümü başarıyla geçti.", createdDate: todayPlus(-1) },
@@ -33,6 +37,7 @@ export const INIT_COMMENTS = [
   { commentId: 4, taskId: 5, userId: 6, userFullName: "Ayşe Demir", commentText: "Mobil menü ve karanlık mod geçişleri test edildi, sorunsuz çalışıyor.", createdDate: todayPlus(0) },
 ];
 
+// Uygulama için varsayılan (başlangıç) verisi
 export const INIT_ATTACHMENTS = [
   { attachmentId: 1, taskId: 1, userId: 1, fileName: "ege_er_diyagrami.png", filePath: "/uploads/ege_er_diyagrami.png", uploadDate: todayPlus(-1) },
   { attachmentId: 2, taskId: 2, userId: 1, fileName: "ege_normalizasyon.pdf", filePath: "/uploads/ege_normalizasyon.pdf", uploadDate: todayPlus(-2) },
@@ -50,6 +55,7 @@ export const INIT_ATTACHMENTS = [
   { attachmentId: 14, taskId: 4, userId: 11, fileName: "elif_spring_kodlar.zip", filePath: "/uploads/elif_spring_kodlar.zip", uploadDate: todayPlus(-1) },
 ];
 
+// Uygulama için varsayılan (başlangıç) verisi
 export const INIT_NOTIFICATIONS = [
   { notificationId: 1, userId: null, message: "DUYURU: 2026 Yaz Dönemi Staj Projeleri başarıyla sisteme yüklenmiştir.", isRead: false, createdDate: todayPlus(0) },
   { notificationId: 2, userId: 4, message: "\"JUnit ve MockMvc Testleri\" görevi onaylandı.", isRead: false, createdDate: todayPlus(0) },
@@ -58,6 +64,7 @@ export const INIT_NOTIFICATIONS = [
   { notificationId: 5, userId: null, message: "DUYURU: Final sınav takvimi dersler sekmesine işlenmiştir.", isRead: true, createdDate: todayPlus(-2) },
 ];
 
+// Uygulama için varsayılan (başlangıç) verisi
 export const INIT_NOTES = [
   { noteId: 1, title: "SQL JOIN Türleri ve Sorgu Optimizasyonu", content: "INNER JOIN: İki tabloda eşleşen kayıtlar\nLEFT JOIN: Sol tablodaki tüm kayıtlar\nRIGHT JOIN: Sağ tablodaki tüm kayıtlar\nFULL OUTER JOIN: Her iki tablodaki tüm kayıtlar\n\nİpucu: Büyük tablolarda Foreign Key kolonlarına Index eklenmeli!", tag: "Ders Notu", color: "emerald", isPinned: true, createdDate: todayPlus(0), updatedDate: todayPlus(0), userId: 4, courseId: 1, taskId: 1 },
   { noteId: 2, title: "Staj Sonu Değerlendirme & Proje Sunumu", content: "[x] Spring Boot REST API testleri tamamlandı (83/83 Başarılı)\n[x] React + Vite arayüz tasarımı ve responsive kontroller yapıldı\n[x] MSSQL veritabanı ilişkileri ve kısıtları doğrulandı\n[x] Canlı yayın (Vercel) dağıtımı tamamlandı", tag: "Staj Notu", color: "rose", isPinned: true, createdDate: todayPlus(0), updatedDate: todayPlus(0), userId: 4, courseId: 3, taskId: 4 },

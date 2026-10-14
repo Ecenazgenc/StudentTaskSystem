@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+// Rol işlemlerini yöneten servis sınıfı
 public class RoleService {
 
     private final RoleRepository roleRepository;
@@ -17,6 +18,7 @@ public class RoleService {
         this.roleRepository = roleRepository;
     }
 
+    // Tüm rolleri getirir.
     public List<RoleDTO> getAllRoles() {
         return roleRepository.findAll()
                 .stream()
@@ -24,6 +26,7 @@ public class RoleService {
                 .collect(Collectors.toList());
     }
 
+    // Yeni bir rol kaydeder.
     public RoleDTO saveRole(RoleDTO.Request request) {
         Role role = new Role();
         role.setRoleName(request.roleName());

@@ -6,9 +6,11 @@ import com.example.student_task_system.entity.Notification;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+// Bildirim (Notification) verilerini istemciye iletmek için kullanılan Data Transfer Object (DTO).
 public record NotificationDTO(int notificationId, String message, boolean read,
                               LocalDateTime createdDate, Integer userId, String userFullName) {
 
+    // Notification varlığını (entity) NotificationDTO'ya dönüştüren yardımcı metot
     public static NotificationDTO fromEntity(Notification notification) {
         Integer uid = null;
         String fullName = null;
@@ -24,6 +26,7 @@ public record NotificationDTO(int notificationId, String message, boolean read,
         );
     }
 
+    // Bildirim oluşturma/güncelleme isteklerinde (Request) kullanılan DTO
     public record Request(
             @NotBlank(message = "Bildirim mesajı boş olamaz")
             @Size(max = 500, message = "Bildirim mesajı en fazla 500 karakter olabilir")

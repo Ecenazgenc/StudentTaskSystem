@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import { X, Send, Bell } from "lucide-react";
 
+// Ana bileşen tanımı
 export default function SendNotificationModal({ users = [], targetUser = null, onClose, onSend }) {
+  // Bileşen state (durum) tanımı
   const [message, setMessage] = useState("");
+  // Bileşen state (durum) tanımı
   const [selectedUserId, setSelectedUserId] = useState(targetUser ? targetUser.userId : "all");
 
+  // Olay (event) işleyici fonksiyon
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!message.trim()) return;

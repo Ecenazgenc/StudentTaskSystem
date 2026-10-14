@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
+// Yenileme tokeni (Refresh token) işlemlerini yöneten servis sınıfı
 public class RefreshTokenService {
 
     private static final long REFRESH_TOKEN_DAYS = 7;
@@ -26,6 +27,7 @@ public class RefreshTokenService {
     }
 
     @Transactional
+    // Belirtilen kullanıcı için yeni bir yenileme tokeni oluşturur.
     public RefreshToken createRefreshToken(Integer userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Kullanıcı bulunamadı: id=" + userId));
@@ -40,6 +42,7 @@ public class RefreshTokenService {
         return refreshTokenRepository.save(refreshToken);
     }
 
+    // Tokenin süresinin dolup dolmadığını kontrol eder.
     public RefreshToken verifyExpiration(RefreshToken token) {
         if (token.getExpiryDate().isBefore(LocalDateTime.now())) {
             refreshTokenRepository.delete(token);
@@ -48,6 +51,7 @@ public class RefreshTokenService {
         return token;
     }
 
+    // Verilen token string'ine göre token varlığını bulur.
     public RefreshToken findByToken(String token) {
         return refreshTokenRepository.findByToken(token)
                 .orElseThrow(() -> new ResourceNotFoundException("Geçersiz refresh token"));

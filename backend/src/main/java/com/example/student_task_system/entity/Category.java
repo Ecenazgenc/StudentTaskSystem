@@ -12,24 +12,30 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+// Kategori (Category) varlık sınıfı, veritabanındaki "Categories" tablosunu temsil eder.
 @Entity
 @Table(name = "Categories")
 public class Category {
 
+    // Kategorinin benzersiz kimliği (Birincil anahtar)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CategoryId")
     private int categoryId;
 
+    // Kategorinin adı
     @Column(name = "CategoryName")
     private String categoryName;
 
+    // Bu kategoriye ait olan görevler (Bire-çok ilişki)
     @JsonIgnore
     @OneToMany(mappedBy = "category")
     private List<Task> tasks;
 
+    // Varsayılan kurucu metot
     public Category() {}
 
+    // Getter ve Setter metotları
     public int getCategoryId() {return categoryId;}
     public void setCategoryId(int categoryId) {this.categoryId = categoryId;}
 

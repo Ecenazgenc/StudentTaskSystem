@@ -4,9 +4,12 @@ import { tapeFor, defaultCourseImage } from "../constants/theme";
 import NewCourseModal from "../components/NewCourseModal";
 
 function CoursesPage({ courses = [], tasks = [], onAdd, onDelete, onEdit, isAdmin }) {
+  // Bileşen state (durum) tanımı
   const [showModal, setShowModal] = useState(false);
+  // Bileşen state (durum) tanımı
   const [editingCourse, setEditingCourse] = useState(null);
 
+  // Olay (event) işleyici fonksiyon
   const handleCreateOrEdit = (courseData) => {
     if (editingCourse) {
       if (onEdit) {

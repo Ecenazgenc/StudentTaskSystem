@@ -14,6 +14,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Her istekte JWT doğrulamasını gerçekleştiren filtre.
+ */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -23,6 +26,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.jwtUtils = jwtUtils;
     }
 
+    /**
+     * Gelen isteği filtreleyip, geçerli bir JWT içerip içermediğini kontrol eder.
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {

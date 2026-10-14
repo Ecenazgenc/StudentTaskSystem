@@ -6,9 +6,11 @@ import com.example.student_task_system.entity.Comment;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 
+// Yorum (Comment) verilerini istemciye iletmek için kullanılan Data Transfer Object (DTO).
 public record CommentDTO(int commentId, String commentText, LocalDateTime createdDate,
                          int taskId, String taskTitle, int userId, String userFullName) {
 
+    // Comment varlığını (entity) CommentDTO'ya dönüştüren yardımcı metot
     public static CommentDTO fromEntity(Comment comment) {
         int tid = 0;
         String tTitle = null;
@@ -30,6 +32,7 @@ public record CommentDTO(int commentId, String commentText, LocalDateTime create
         );
     }
 
+    // Yorum oluşturma/güncelleme isteklerinde (Request) kullanılan DTO
     public record Request(
             @NotBlank(message = "Yorum metni boş olamaz")
             String commentText,

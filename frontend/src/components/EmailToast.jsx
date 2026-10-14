@@ -1,7 +1,9 @@
 import React, { useEffect } from "react";
 import { PartyPopper, ClipboardList, Bell, X } from "lucide-react";
 
+// Ana bileşen tanımı
 export default function EmailToast({ email, onClose }) {
+  // Yan etki (effect) işlemleri
   useEffect(() => {
     if (!email) return;
     const timer = setTimeout(() => {

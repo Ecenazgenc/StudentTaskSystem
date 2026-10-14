@@ -8,10 +8,12 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
+// Görev (Task) verilerini istemciye iletmek için kullanılan Data Transfer Object (DTO).
 public record TaskDTO(int taskId, String title, String description, LocalDateTime dueDate,
                       String status, String priority,
                       int courseId, String courseName, int categoryId, String categoryName) {
 
+    // Task varlığını (entity) TaskDTO'ya dönüştüren yardımcı metot
     public static TaskDTO fromEntity(Task task) {
         int cid = 0;
         String cName = null;
@@ -34,6 +36,7 @@ public record TaskDTO(int taskId, String title, String description, LocalDateTim
         );
     }
 
+    // Görev oluşturma/güncelleme isteklerinde (Request) kullanılan DTO
     public record Request(
             @NotBlank(message = "Görev başlığı boş olamaz")
             @Size(max = 150, message = "Görev başlığı en fazla 150 karakter olabilir")

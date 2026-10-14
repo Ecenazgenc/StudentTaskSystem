@@ -3,9 +3,13 @@ import { Users, BookOpen, Trash2, CheckCircle2, Search, RefreshCw, BarChart2, Cl
 import SendNotificationModal from "../components/SendNotificationModal";
 import { userApi } from "../services/api";
 
+// Ana bileşen tanımı
 export default function AdminDashboard({ tasks, courses, users, setUsers, attachments, onRefresh, onSendNotification }) {
+  // Bileşen state (durum) tanımı
   const [searchTerm, setSearchTerm] = useState("");
+  // Bileşen state (durum) tanımı
   const [roleFilter, setRoleFilter] = useState("all");
+  // Bileşen state (durum) tanımı
   const [showNotificationModal, setShowNotificationModal] = useState(false);
 
   const totalTasks = tasks.length;
@@ -24,6 +28,7 @@ export default function AdminDashboard({ tasks, courses, users, setUsers, attach
     ? Math.round((actualSubmissionsCount / expectedSubmissionsCount) * 100)
     : 0;
 
+  // Olay (event) işleyici fonksiyon
   const handleDeleteUser = async (userId) => {
     const userObj = users.find((u) => u.userId === userId);
     const userName = userObj ? `${userObj.firstName} ${userObj.lastName}` : "kullanıcıyı";
